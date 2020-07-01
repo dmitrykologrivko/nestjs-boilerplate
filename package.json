@@ -6,6 +6,7 @@
   "license": "ISC",
   "main": "dist/index.js",
   "scripts": {
+    "prepare": "npm run build",
     "build": "rimraf dist && tsc -p tsconfig.build.json",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "tslint -p tsconfig.json -c tslint.json",
