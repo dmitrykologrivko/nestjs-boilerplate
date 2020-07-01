@@ -4,11 +4,11 @@
   "description": "",
   "author": "Dmitry Kologrivko",
   "license": "ISC",
-  "main": "dist/index.js",
+  "types": "dist",
   "scripts": {
     "prepare": "npm run build",
-    "build": "rimraf dist && tsc -p tsconfig.build.json",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "format": "prettier --write \"**/*.ts\"",
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "prepublish:npm": "npm run build",
     "publish:npm": "npm publish --access public",
@@ -17,7 +17,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:debug": "node --inspect-brk -r -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config test/jest-e2e.json --runInBand"
   },
   "dependencies": {
@@ -25,8 +25,8 @@
     "dotenv": "^8.2.0",
     "minimist": "^1.2.5",
     "prompt-sync": "^4.2.0",
-    "rimraf": "^3.0.2",
-    "sqlite3": "^4.2.0"
+    "sqlite3": "^4.2.0",
+    "create-ts-index": "^1.13.3"
   },
   "devDependencies": {
     "@nestjs/common": "^6.11.11",
@@ -42,7 +42,6 @@
     "@types/supertest": "^2.0.10",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.11.1",
-    "create-ts-index": "^1.13.3",
     "rxjs": "^6.5.5",
     "reflect-metadata": "^0.1.13",
     "jest": "^26.1.0",
@@ -52,7 +51,6 @@
     "ts-jest": "^26.1.1",
     "ts-loader": "^6.2.2",
     "ts-node": "^8.10.2",
-    "tsconfig-paths": "^3.9.0",
     "tslint": "^5.20.0",
     "typeorm": "^0.2.25",
     "typescript": "^3.9.5"
