@@ -1,5 +1,5 @@
 # source
-src
+lib
 package-lock.json
 tslint.json
 tsconfig.json
