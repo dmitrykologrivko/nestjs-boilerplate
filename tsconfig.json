@@ -3,15 +3,13 @@
     "module": "commonjs",
     "declaration": true,
     "declarationMap": true,
-    "strict": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "target": "es2017",
     "sourceMap": true,
     "outDir": "./dist",
-    "rootDir": "./lib",
-    "incremental": true
+    "rootDir": "./lib"
   },
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules"]
 }
