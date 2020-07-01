@@ -1,12 +1,12 @@
 import { Entity as TypeOrmEntity, EntityOptions as TypeOrmEntityOptions } from 'typeorm';
 import { EntitySwappableService } from './entity-swappable.service';
 
-export interface EntityOptions extends TypeOrmEntityOptions {
+export interface DatabaseEntityOptions extends TypeOrmEntityOptions {
     swappable?: boolean;
     swap?: Function;
 }
 
-export function Entity(options: EntityOptions = {}): ClassDecorator {
+export function DatabaseEntity(options: DatabaseEntityOptions = {}): ClassDecorator {
     return (constructor: Function) => {
         if (options.swappable && options.swap) {
             throw new Error(`${constructor.name} cannot be swappable and have swap entity at the same time`);

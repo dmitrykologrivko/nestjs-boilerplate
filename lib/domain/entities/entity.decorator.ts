@@ -1,7 +1,7 @@
 import {
-    Entity as DatabaseEntity,
-    EntityOptions as DatabaseEntityOptions,
-} from '../../database/entity.decorator';
+    DatabaseEntity,
+    DatabaseEntityOptions,
+} from '../../database/database-entity.decorator';
 
 export function Entity(options?: DatabaseEntityOptions) {
     return DatabaseEntity(options);

@@ -1,7 +1,7 @@
 export * from './bootstrap';
 export * from './config';
 export * from './database';
-// export * as domain from './domain';
+export * from './domain';
 export * from './environment';
 export * from './management';
 export * from './rest';
