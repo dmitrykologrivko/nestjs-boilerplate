@@ -1,5 +1,5 @@
 {
-  "name": "nest-boilerplate",
+  "name": "@nest-boilerplate/core",
   "version": "0.0.1",
   "description": "",
   "author": "Dmitry Kologrivko",
@@ -57,10 +57,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dmitrykologrivko/nest-boilerplate.git"
+    "url": "git+https://github.com/nest-boilerplate/core.git"
   },
   "bugs": {
-    "url": "https://github.com/dmitrykologrivko/nest-boilerplate/issues"
+    "url": "https://github.com/nest-boilerplate/core/issues"
   },
-  "homepage": "https://github.com/dmitrykologrivko/nest-boilerplate#readme"
+  "homepage": "https://github.com/nest-boilerplate/core#readme"
 }
