@@ -4,7 +4,8 @@
   "description": "",
   "author": "Dmitry Kologrivko",
   "license": "ISC",
-  "types": "dist",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
   "scripts": {
     "prepare": "npm run build",
     "build": "rm -rf dist && tsc -p tsconfig.json",
