@@ -18,9 +18,9 @@
     "@nestjs/common": "^6.11.11",
     "@nestjs/core": "^6.11.11",
     "@nestjs/testing": "^6.11.11",
+    "@nest-boilerplate/core": "^0.0.0",
     "@types/node": "^12.12.47",
     "class-validator": "^0.11.1",
-    "@nest-boilerplate/core": "^0.0.0",
     "tslint": "^5.20.0",
     "typescript": "^3.9.5"
   },
@@ -28,8 +28,8 @@
     "@nestjs/common": "^6.11.11",
     "@nestjs/core": "^6.11.11",
     "@nestjs/testing": "^6.11.11",
-    "class-validator": "^0.11.1",
-    "@nest-boilerplate/core": "^0.0.0"
+    "@nest-boilerplate/core": "^0.0.0",
+    "class-validator": "^0.11.1"
   },
   "repository": {
     "type": "git",

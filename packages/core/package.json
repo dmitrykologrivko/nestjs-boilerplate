@@ -16,11 +16,10 @@
   },
   "dependencies": {
     "@usefultools/monads": "^3.0.3",
+    "create-ts-index": "^1.13.3",
     "dotenv": "^8.2.0",
     "minimist": "^1.2.5",
-    "prompt-sync": "^4.2.0",
-    "sqlite3": "^4.2.0",
-    "create-ts-index": "^1.13.3"
+    "sqlite3": "^4.2.0"
   },
   "devDependencies": {
     "@nestjs/common": "^6.11.11",
