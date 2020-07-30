@@ -1,14 +1,15 @@
 {
-  "name": "@nest-boilerplate/core",
+  "name": "nest-boilerplate",
+  "private": true,
   "version": "0.0.0",
   "description": "",
   "author": "Dmitry Kologrivko",
   "license": "ISC",
-  "private": true,
   "scripts": {
-    "postinstall": "npm run bootstrap",
-    "build": "lerna run build --stream --parallel",
-    "bootstrap": "lerna bootstrap"
+    "postinstall": "npm run bootstrap && npm run build",
+    "build": "lerna run build",
+    "bootstrap": "lerna bootstrap",
+    "publish": "lerna publish"
   },
   "devDependencies": {
     "lerna": "^3.22.1"
