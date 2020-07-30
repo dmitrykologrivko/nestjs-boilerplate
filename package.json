@@ -1,66 +1,16 @@
 {
   "name": "@nest-boilerplate/core",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "",
   "author": "Dmitry Kologrivko",
   "license": "ISC",
-  "main": "./dist/index.js",
-  "typings": "./dist/index.d.ts",
+  "private": true,
   "scripts": {
-    "prepare": "npm run build",
-    "build": "rm -rf dist && tsc -p tsconfig.json",
-    "lint": "tslint -p tsconfig.json -c tslint.json",
-    "prepublish:npm": "npm run build",
-    "publish:npm": "npm publish --access public",
-    "prepublish:next": "npm run build",
-    "publish:next": "npm publish --access public --tag next"
-  },
-  "dependencies": {
-    "@usefultools/monads": "^3.0.3",
-    "dotenv": "^8.2.0",
-    "minimist": "^1.2.5",
-    "prompt-sync": "^4.2.0",
-    "sqlite3": "^4.2.0",
-    "create-ts-index": "^1.13.3"
+    "postinstall": "npm run bootstrap",
+    "build": "lerna run build --stream --parallel",
+    "bootstrap": "lerna bootstrap"
   },
   "devDependencies": {
-    "@nestjs/common": "^6.11.11",
-    "@nestjs/config": "0.0.7",
-    "@nestjs/core": "^6.11.11",
-    "@nestjs/platform-express": "^6.11.11",
-    "@nestjs/typeorm": "^6.3.4",
-    "@types/dotenv": "^8.2.0",
-    "@types/express": "^4.17.6",
-    "@types/jest": "^24.9.1",
-    "@types/minimist": "^1.2.0",
-    "@types/node": "^12.12.47",
-    "@types/supertest": "^2.0.10",
-    "class-transformer": "^0.2.3",
-    "class-validator": "^0.11.1",
-    "rxjs": "^6.5.5",
-    "reflect-metadata": "^0.1.13",
-    "tslint": "^5.20.0",
-    "typeorm": "^0.2.25",
-    "typescript": "^3.9.5"
-  },
-  "peerDependencies": {
-    "@nestjs/common": "^6.11.11",
-    "@nestjs/config": "0.0.7",
-    "@nestjs/core": "^6.11.11",
-    "@nestjs/platform-express": "^6.11.11",
-    "@nestjs/typeorm": "^6.3.4",
-    "class-transformer": "^0.2.3",
-    "class-validator": "^0.11.1",
-    "rxjs": "^6.5.5",
-    "reflect-metadata": "^0.1.13",
-    "typeorm": "^0.2.25"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/nest-boilerplate/core.git"
-  },
-  "bugs": {
-    "url": "https://github.com/nest-boilerplate/core/issues"
-  },
-  "homepage": "https://github.com/nest-boilerplate/core#readme"
+    "lerna": "^3.22.1"
+  }
 }

@@ -1,0 +1,43 @@
+{
+  "name": "@nest-boilerplate/testing",
+  "version": "0.0.0",
+  "description": "",
+  "author": "Dmitry Kologrivko",
+  "license": "ISC",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "scripts": {
+    "prepare": "npm run build",
+    "build": "rm -rf dist && tsc -p tsconfig.json",
+    "lint": "tslint -p tsconfig.json -c tslint.json",
+    "prepublish:npm": "npm run build",
+    "publish:npm": "npm publish --access public",
+    "prepublish:next": "npm run build",
+    "publish:next": "npm publish --access public --tag next"
+  },
+  "devDependencies": {
+    "@nestjs/common": "^6.11.11",
+    "@nestjs/core": "^6.11.11",
+    "@nestjs/testing": "^6.11.11",
+    "@types/node": "^12.12.47",
+    "class-validator": "^0.11.1",
+    "@nest-boilerplate/core": "^0.0.0",
+    "tslint": "^5.20.0",
+    "typescript": "^3.9.5"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^6.11.11",
+    "@nestjs/core": "^6.11.11",
+    "@nestjs/testing": "^6.11.11",
+    "class-validator": "^0.11.1",
+    "@nest-boilerplate/core": "^0.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dmitrykologrivko/nest-boilerplate.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dmitrykologrivko/nest-boilerplate/issues"
+  },
+  "homepage": "https://github.com/dmitrykologrivko/nest-boilerplate#readme"
+}
