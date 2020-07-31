@@ -8,7 +8,7 @@
   "scripts": {
     "postinstall": "npm run bootstrap && npm run build",
     "build": "lerna run build",
-    "bootstrap": "lerna bootstrap",
+    "bootstrap": "lerna bootstrap --hoist",
     "publish": "lerna publish"
   },
   "devDependencies": {
