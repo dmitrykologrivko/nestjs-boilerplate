@@ -18,7 +18,6 @@
     "@nestjs/common": "^6.11.11",
     "@nestjs/core": "^6.11.11",
     "@nestjs/testing": "^6.11.11",
-    "@nest-boilerplate/core": "^0.0.0",
     "@types/node": "^12.12.47",
     "class-validator": "^0.11.1",
     "rxjs": "^6.5.5",
