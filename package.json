@@ -12,6 +12,25 @@
     "publish": "lerna publish"
   },
   "devDependencies": {
-    "lerna": "^3.22.1"
+    "lerna": "^3.22.1",
+    "@nestjs/common": "^6.11.11",
+    "@nestjs/config": "0.0.7",
+    "@nestjs/core": "^6.11.11",
+    "@nestjs/platform-express": "^6.11.11",
+    "@nestjs/typeorm": "^6.3.4",
+    "@nestjs/testing": "^6.11.11",
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.6",
+    "@types/jest": "^24.9.1",
+    "@types/minimist": "^1.2.0",
+    "@types/node": "^12.12.47",
+    "@types/supertest": "^2.0.10",
+    "class-transformer": "^0.2.3",
+    "class-validator": "^0.11.1",
+    "rxjs": "^6.5.5",
+    "reflect-metadata": "^0.1.13",
+    "tslint": "^5.20.0",
+    "typeorm": "^0.2.25",
+    "typescript": "^3.9.7"
   }
 }
