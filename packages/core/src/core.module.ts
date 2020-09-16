@@ -1,3 +1,4 @@
+import { existsSync } from 'fs';
 import { Module, DynamicModule } from '@nestjs/common';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
 import { DEVELOPMENT_ENVIRONMENT } from './environment/environment.constants';
@@ -48,10 +49,12 @@ export class CoreModule {
     }
 
     private static connectConfig(imports: any[], options: CoreModuleOptions) {
+        const envFilePath = `${process.env.NODE_ENV || DEVELOPMENT_ENVIRONMENT}.env`;
+
         const defaultOptions = {
             isGlobal: true,
             ignoreEnvFile: isProductionEnvironment(),
-            envFilePath: `${process.env.NODE_ENV || DEVELOPMENT_ENVIRONMENT}.env`,
+            envFilePath: existsSync(envFilePath) ? envFilePath : '',
         };
 
         if (!options.config) {

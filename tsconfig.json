@@ -9,5 +9,13 @@
     "target": "es2017",
     "sourceMap": true
   },
-  "exclude": ["node_modules", "test"]
+  "exclude": [
+    "node_modules",
+    "**/node_modules",
+    "**/dist",
+    "**/test",
+    "**/e2e",
+    "**/*spec.ts",
+    "**/*e2e-spec.ts"
+  ]
 }
