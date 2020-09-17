@@ -4,7 +4,7 @@ import { User } from '../entities/user.entity';
 import { RevokedToken } from '../entities/revoked-token.entity';
 import { UserPasswordService } from '../services/user-password.service';
 import { UserJwtService } from '../services/user-jwt.service';
-import { UserFactory } from './factories/user.factory';
+import { UserFactory } from './user.factory';
 
 export class AuthTestUtils {
     private readonly _userRepository: Repository<User>;

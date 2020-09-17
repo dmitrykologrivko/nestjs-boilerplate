@@ -11,7 +11,7 @@ import { LocalStrategy } from '../../strategies/local.strategy';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../entities/user.entity';
 import { ValidateCredentialsOutput } from '../../dto/validate-credentials.output';
-import { UserFactory } from '../factories/user.factory';
+import { UserFactory } from '../user.factory';
 
 describe('LocalStrategy', () => {
     let authService: MockProxy<AuthService> & AuthService;

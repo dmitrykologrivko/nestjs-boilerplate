@@ -8,7 +8,7 @@ import { CredentialsInvalidException } from '../../exceptions/credentials-invali
 import { ResetPasswordTokenInvalidException } from '../../exceptions/reset-password-token-invalid.exception';
 import { User } from '../../entities/user.entity';
 import { UserPasswordService } from '../../services/user-password.service';
-import { UserFactory } from '../factories/user.factory';
+import { UserFactory } from '../user.factory';
 
 describe('UserPasswordService', () => {
     const ID = 1;

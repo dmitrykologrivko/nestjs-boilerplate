@@ -9,7 +9,7 @@ import { ApiController, ValidationExceptionsFilter } from '@nest-boilerplate/cor
 import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { JwtAuthService } from '../services/jwt-auth.service';
-import { User } from '../decorators/user.decorator';
+import { AuthorizedUser } from '../decorators/authorized-user.decorator';
 import { BearerToken } from '../decorators/bearer-token.decorator';
 
 @UsePipes(ValidationPipe)
@@ -22,7 +22,7 @@ export class AuthJwtController {
 
     @UseGuards(LocalAuthGuard)
     @Post('login')
-    async login(@User() user) {
+    async login(@AuthorizedUser() user) {
         const result = await this.authService.login({ username: user.username });
 
         if (result.is_err()) {

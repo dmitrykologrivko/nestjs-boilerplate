@@ -28,7 +28,7 @@ import { ForgotPasswordInput } from '../../dto/forgot-password.input';
 import { ResetPasswordInput } from '../../dto/reset-password.input';
 import { FindUserInput } from '../../dto/find-user.input';
 import { FindUserOutput } from '../../dto/find-user.output';
-import { UserFactory } from '../factories/user.factory';
+import { UserFactory } from '../user.factory';
 
 describe('UserService', () => {
     const USERNAME_QUERY = { where: { _username: UserFactory.DEFAULT_USERNAME } };

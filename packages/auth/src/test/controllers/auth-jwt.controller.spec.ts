@@ -6,7 +6,7 @@ import {
 } from '../../constants/auth.constraints';
 import { AuthJwtController } from '../../controllers/auth-jwt.controller';
 import { JwtAuthService } from '../../services/jwt-auth.service';
-import { UserFactory } from '../factories/user.factory';
+import { UserFactory } from '../user.factory';
 
 describe('AuthJwtController', () => {
     let controller: AuthJwtController;

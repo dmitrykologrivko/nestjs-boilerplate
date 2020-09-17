@@ -6,7 +6,7 @@ import { AccessTokenInvalidException } from '../../exceptions/access-token-inval
 import { User } from '../../entities/user.entity';
 import { RevokedToken } from '../../entities/revoked-token.entity';
 import { UserJwtService, Payload } from '../../services/user-jwt.service';
-import { UserFactory } from '../factories/user.factory';
+import { UserFactory } from '../user.factory';
 
 describe('UserJwtService', () => {
     const USERNAME = UserFactory.DEFAULT_USERNAME;

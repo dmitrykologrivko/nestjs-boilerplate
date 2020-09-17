@@ -2,7 +2,7 @@ import { Repository } from 'typeorm';
 import { MockProxy, mock } from 'jest-mock-extended';
 import { User } from '../../entities/user.entity';
 import { UserVerificationService } from '../../services/user-verification.service';
-import { UserFactory } from '../factories/user.factory';
+import { UserFactory } from '../user.factory';
 
 describe('UserVerificationService', () => {
     const ID = 1;

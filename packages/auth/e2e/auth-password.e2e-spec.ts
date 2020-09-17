@@ -1,7 +1,7 @@
 import * as request from 'supertest';
 import { bootstrapTestingApplication } from '@nest-boilerplate/testing';
 import { User } from '../src/entities';
-import { UserFactory } from '../src/test/factories/user.factory';
+import { UserFactory } from '../src/test/user.factory';
 import { AuthTestUtils } from '../src/test/auth-test.utils';
 import { AppModule } from './src/app.module';
 import unauthorizedResponse from './responses/unauthorized.response';

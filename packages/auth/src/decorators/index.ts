@@ -1,2 +1,2 @@
-export * from './user.decorator';
+export * from './authorized-user.decorator';
 export * from './bearer-token.decorator';

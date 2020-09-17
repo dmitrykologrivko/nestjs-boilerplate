@@ -12,7 +12,7 @@ import { CredentialsInvalidException } from '../../exceptions/credentials-invali
 import { User } from '../../entities/user.entity';
 import { ValidateCredentialsInput } from '../../dto/validate-credentials.input';
 import { ValidateCredentialsOutput } from '../../dto/validate-credentials.output';
-import { UserFactory } from '../factories/user.factory';
+import { UserFactory } from '../user.factory';
 
 describe('AuthService', () => {
     let service: AuthService;

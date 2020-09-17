@@ -3,7 +3,7 @@ import { ValidationContainerException, Ok, Err } from '@nest-boilerplate/core';
 import { AuthPasswordController } from '../../controllers/auth-password.controller';
 import { UserService } from '../../services/user.service';
 import { User } from '../../entities/user.entity';
-import { UserFactory } from '../factories/user.factory';
+import { UserFactory } from '../user.factory';
 
 describe('AuthPasswordController', () => {
     const REQUEST = { ip: '0.0.0.0' };

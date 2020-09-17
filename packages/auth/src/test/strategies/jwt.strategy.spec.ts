@@ -12,7 +12,7 @@ import { JwtStrategy } from '../../strategies/jwt.strategy';
 import { JwtAuthService } from '../../services/jwt-auth.service';
 import { User } from '../../entities/user.entity';
 import { ValidatePayloadOutput } from '../../dto/validate-payload.output';
-import { UserFactory } from '../factories/user.factory';
+import { UserFactory } from '../user.factory';
 
 describe('JwtStrategy', () => {
     const JWT_SECRET_KEY = 'qwffs453fsdf5ids78';

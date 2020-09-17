@@ -18,7 +18,7 @@ import { JwtLoginInput } from '../../dto/jwt-login.input';
 import { JwtLoginOutput } from '../../dto/jwt-login.output';
 import { JwtLogoutInput } from '../../dto/jwt-logout.input';
 import { JwtLogoutOutput } from '../../dto/jwt-logout.output';
-import { UserFactory } from '../factories/user.factory';
+import { UserFactory } from '../user.factory';
 
 describe('JwtAuthService', () => {
     const ACCESS_TOKEN = 'qf3fssf54djfsv78';
