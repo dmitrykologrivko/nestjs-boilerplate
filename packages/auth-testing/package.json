@@ -10,19 +10,19 @@
     "build": "ts-node build-package.ts && rm -rf dist && tsc -p tsconfig.json"
   },
   "peerDependencies": {
+    "@nest-boilerplate/auth": "^0.0.0",
+    "@nest-boilerplate/core": "^0.0.0",
+    "@nest-boilerplate/testing": "^0.0.0",
     "@nestjs/common": "^6.11.11",
     "@nestjs/core": "^6.11.11",
     "@nestjs/testing": "^6.11.11",
-    "@nest-boilerplate/core": "^0.0.0",
-    "@nest-boilerplate/auth": "^0.0.0",
-    "@nest-boilerplate/testing": "^0.0.0",
     "class-validator": "^0.11.1",
-    "rxjs": "^6.5.5",
-    "reflect-metadata": "^0.1.13"
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "6.6.3"
   },
   "devDependencies": {
-    "@nest-boilerplate/core": "^0.0.0",
     "@nest-boilerplate/auth": "^0.0.0",
+    "@nest-boilerplate/core": "^0.0.0",
     "@nest-boilerplate/testing": "^0.0.0",
     "create-ts-index": "^1.13.3"
   },
