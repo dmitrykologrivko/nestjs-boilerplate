@@ -9,9 +9,6 @@ export default (request: any) => {
                     resetPasswordTokenValid: 'Reset password token is not valid',
                 },
                 property: 'resetPasswordToken',
-                target: {
-                    resetPasswordToken: request.resetPasswordToken,
-                },
                 value: request.resetPasswordToken,
             },
         ],

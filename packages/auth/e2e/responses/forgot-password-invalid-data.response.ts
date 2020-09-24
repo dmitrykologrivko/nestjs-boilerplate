@@ -9,7 +9,6 @@ export default () => {
                     isEmail: 'email must be an email',
                 },
                 property: 'email',
-                target: {},
             },
         ],
         statusCode: 400,

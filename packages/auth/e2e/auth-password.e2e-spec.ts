@@ -57,7 +57,7 @@ describe('AuthPasswordController (e2e)', () => {
                 .set('Accept', 'application/json')
                 .set('Authorization', jwtAuthHeader)
                 .expect(400)
-                .expect(changePasswordInvalidDataResponse({ userId: user.id }));
+                .expect(changePasswordInvalidDataResponse());
         });
 
         it('when current password is wrong should return validation error', async () => {

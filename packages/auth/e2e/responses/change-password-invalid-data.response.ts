@@ -1,12 +1,9 @@
-export default (request: any) => {
+export default () => {
     return {
         statusCode: 400,
         error: 'Bad Request',
         message: [
             {
-                target: {
-                    userId: request.userId,
-                },
                 property: 'currentPassword',
                 children: [],
                 constraints: {
@@ -17,9 +14,6 @@ export default (request: any) => {
                 },
             },
             {
-                target: {
-                    userId: request.userId,
-                },
                 property: 'newPassword',
                 children: [],
                 constraints: {

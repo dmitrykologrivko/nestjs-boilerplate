@@ -57,7 +57,7 @@ export class ClassValidator {
         return ClassValidator.validate(cls, object, validationOptions);
     }
 
-    private static toValidationExceptions(errors: ValidationError[]): ValidationException[] {
+    static toValidationExceptions(errors: ValidationError[]): ValidationException[] {
         return errors.map(error => new ValidationException(
             error.property,
             error.value,

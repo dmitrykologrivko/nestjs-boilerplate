@@ -1,6 +1,6 @@
 /**
  * Validation exception
- * Indicates invalid data across the domain
+ * Indicates invalid data across the application
  */
 export class ValidationException {
     constructor(

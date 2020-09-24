@@ -13,18 +13,18 @@
     "@nest-boilerplate/auth": "^0.0.0",
     "@nest-boilerplate/core": "^0.0.0",
     "@nest-boilerplate/testing": "^0.0.0",
-    "@nestjs/common": "^6.11.11",
-    "@nestjs/core": "^6.11.11",
-    "@nestjs/testing": "^6.11.11",
-    "class-validator": "^0.11.1",
+    "@nestjs/common": "^7.4.4",
+    "@nestjs/core": "^7.4.4",
+    "@nestjs/testing": "^7.4.4",
+    "class-validator": "^0.12.2",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "6.6.3"
+    "rxjs": "^6.6.3"
   },
   "devDependencies": {
     "@nest-boilerplate/auth": "^0.0.0",
     "@nest-boilerplate/core": "^0.0.0",
     "@nest-boilerplate/testing": "^0.0.0",
-    "create-ts-index": "^1.13.3"
+    "create-ts-index": "^1.13.6"
   },
   "repository": {
     "type": "git",

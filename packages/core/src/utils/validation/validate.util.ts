@@ -1,5 +1,10 @@
 import { Result, Ok, Err } from '@usefultools/monads';
-import { Validator } from 'class-validator';
+import {
+    isEmail,
+    isNotEmpty,
+    minLength,
+    maxLength,
+} from 'class-validator';
 import { ValidationException } from './validation.exception';
 import { ValidationContainerException } from './validation-container.exception';
 
@@ -11,7 +16,6 @@ export type ValidationContainerResult = Result<void, ValidationContainerExceptio
  * Wrapper on "class-validator" library
  */
 export class Validate {
-    private static validator = new Validator();
 
     private exception: ValidationException;
 
@@ -19,14 +23,6 @@ export class Validate {
         private readonly key: string,
         private readonly value: unknown,
     ) {}
-
-    /**
-     * Returns validator of "class-validator" library
-     * @return "class-validator" library validator
-     */
-    static getValidator() {
-        return this.validator;
-    }
 
     /**
      * Start point to construct validation chain
@@ -61,7 +57,7 @@ export class Validate {
      * @return Validate instance
      */
     isNotEmpty(): Validate {
-        if (!Validate.getValidator().isNotEmpty(this.value)) {
+        if (!isNotEmpty(this.value)) {
             this.rejectValidation('isNotEmpty', `${this.key} is empty`);
         }
         return this;
@@ -72,7 +68,7 @@ export class Validate {
      * @return Validate instance
      */
     isEmail(): Validate {
-        if (!Validate.getValidator().isEmail(this.value)) {
+        if (!isEmail(this.value)) {
             this.rejectValidation('isEmail', `${this.key} is not email`);
         }
         return this;
@@ -84,7 +80,7 @@ export class Validate {
      * @return Validate instance
      */
     minLength(min: number): Validate {
-        if (!Validate.getValidator().minLength(this.value, min)) {
+        if (!minLength(this.value, min)) {
             this.rejectValidation('minLength', `${this.key} is short than min length`);
         }
         return this;
@@ -96,7 +92,7 @@ export class Validate {
      * @return Validate instance
      */
     maxLength(max: number): Validate {
-        if (!Validate.getValidator().maxLength(this.value, max)) {
+        if (!maxLength(this.value, max)) {
             this.rejectValidation('maxLength', `${this.key} exceeded max length`);
         }
         return this;

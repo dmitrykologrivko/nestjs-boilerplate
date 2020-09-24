@@ -8,10 +8,6 @@ export default (request: any) => {
                     emailActive: 'Email is not found',
                 },
                 property: 'email',
-                target: {
-                    email: request.email,
-                    newPassword: 'new-password',
-                },
                 value: request.email,
             },
         ],

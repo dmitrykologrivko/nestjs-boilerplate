@@ -4,7 +4,6 @@ export default (request: any) => {
         error: 'Bad Request',
         message: [
             {
-                target: request,
                 value: request.currentPassword,
                 property: 'currentPassword',
                 children: [],

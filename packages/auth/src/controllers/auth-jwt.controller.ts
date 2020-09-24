@@ -3,9 +3,12 @@ import {
     UseGuards,
     UsePipes,
     UseFilters,
-    ValidationPipe,
 } from '@nestjs/common';
-import { ApiController, ValidationExceptionsFilter } from '@nest-boilerplate/core';
+import {
+    ApiController,
+    ValidationPipe,
+    ValidationExceptionsFilter,
+} from '@nest-boilerplate/core';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { JwtAuthService } from '../services/jwt-auth.service';

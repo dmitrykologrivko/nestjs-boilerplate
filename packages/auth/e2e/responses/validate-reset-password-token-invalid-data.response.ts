@@ -9,7 +9,6 @@ export default () => {
                     resetPasswordTokenValid: 'Reset password token is not valid',
                 },
                 property: 'resetPasswordToken',
-                target: {},
             },
         ],
         statusCode: 400,

@@ -9,7 +9,6 @@ export default () => {
                     resetPasswordTokenValid: 'Reset password token is not valid',
                 },
                 property: 'resetPasswordToken',
-                target: {},
             },
             {
                 children: [],
@@ -19,7 +18,6 @@ export default () => {
                     minLength: 'newPassword must be longer than or equal to 8 characters',
                 },
                 property: 'newPassword',
-                target: {},
             },
         ],
         statusCode: 400,
