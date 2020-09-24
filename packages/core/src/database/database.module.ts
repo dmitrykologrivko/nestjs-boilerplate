@@ -96,6 +96,14 @@ export class DatabaseModule {
         };
     }
 
+    static withMigrations(
+        migrations: Function[] = [],
+        connection: DatabaseConnection = DEFAULT_CONNECTION_NAME,
+    ): DynamicModule {
+        this.addEntityOptions({ migrations, connection });
+        return { module: DatabaseModule };
+    }
+
     static withEntityOptions(options: EntityOptions): DynamicModule {
         this.addEntityOptions(options);
         return { module: DatabaseModule };
