@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import {
     ApiController,
-    ValidationPipe,
+    ValidationExceptionsPipe,
     ValidationExceptionsFilter,
 } from '@nest-boilerplate/core';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
@@ -21,7 +21,7 @@ import { ResetPasswordInput } from '../dto/reset-password.input';
 import { ValidateResetPasswordTokenRequest } from '../dto/validate-reset-password-token.request';
 import { BindSelfInterceptor } from '../interceptors/bind-self.interceptor';
 
-@UsePipes(ValidationPipe)
+@UsePipes(ValidationExceptionsPipe)
 @UseFilters(ValidationExceptionsFilter)
 @ApiController('auth/password')
 export class AuthPasswordController {

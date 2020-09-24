@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import {
     ApiController,
-    ValidationPipe,
+    ValidationExceptionsPipe,
     ValidationExceptionsFilter,
 } from '@nest-boilerplate/core';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
@@ -15,7 +15,7 @@ import { JwtAuthService } from '../services/jwt-auth.service';
 import { AuthorizedUser } from '../decorators/authorized-user.decorator';
 import { BearerToken } from '../decorators/bearer-token.decorator';
 
-@UsePipes(ValidationPipe)
+@UsePipes(ValidationExceptionsPipe)
 @UseFilters(ValidationExceptionsFilter)
 @ApiController('auth')
 export class AuthJwtController {

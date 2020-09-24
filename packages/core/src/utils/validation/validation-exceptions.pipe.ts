@@ -1,16 +1,16 @@
 import {
-    ValidationPipe as NestValidationPipe,
+    ValidationPipe,
     ValidationPipeOptions,
     BadRequestException
 } from '@nestjs/common';
 import { ClassValidator } from './class-validator.util';
 
 /**
- * Extension of NestJS ValidationPipe.
+ * Extension of NestJS ValidationExceptionsPipe.
  * Throw an array of the ValidationException objects converted from
  * ValidationError objects returned by the class-validator package.
  */
-export class ValidationPipe extends NestValidationPipe {
+export class ValidationExceptionsPipe extends ValidationPipe {
     constructor(options: ValidationPipeOptions) {
         super({
             ...options,
