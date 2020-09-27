@@ -67,7 +67,10 @@ const jwtAsyncOptions = {
 @Module({
     imports: [
         ConfigModule.forFeature(authConfig),
-        DatabaseModule.withEntities([User, Group, Permission, RevokedToken]),
+        DatabaseModule.withEntities(
+            [User, Group, Permission, RevokedToken],
+            { cli: { entities: __dirname + '/**/*.entity{.ts,.js}' } },
+        ),
         PassportModule,
         JwtModule.registerAsync(jwtAsyncOptions),
     ],

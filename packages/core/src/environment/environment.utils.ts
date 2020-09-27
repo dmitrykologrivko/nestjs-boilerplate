@@ -9,7 +9,7 @@ export function isProductionEnvironment() {
 }
 
 export function isDevelopmentEnvironment() {
-    return process.env.NODE_ENV === DEVELOPMENT_ENVIRONMENT;
+    return !process.env.NODE_ENV || process.env.NODE_ENV === DEVELOPMENT_ENVIRONMENT;
 }
 
 export function isTestEnvironment() {
