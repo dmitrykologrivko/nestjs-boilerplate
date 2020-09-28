@@ -2,7 +2,7 @@ import * as crypto from 'crypto';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { MockProxy, mock } from 'jest-mock-extended';
-import { PropertyConfigService } from '@nest-boilerplate/core';
+import { PropertyConfigService } from '@nestjs-boilerplate/core';
 import { AUTH_PASSWORD_RESET_TIMEOUT_PROPERTY } from '../../constants/auth.properties';
 import { CredentialsInvalidException } from '../../exceptions/credentials-invalid.exception';
 import { ResetPasswordTokenInvalidException } from '../../exceptions/reset-password-token-invalid.exception';

@@ -6,8 +6,8 @@ import {
     ValidationContainerException,
     PropertyConfigService,
     Ok,
-} from '@nest-boilerplate/core';
-import { SimpleIocContainer, createClassValidatorContainer } from '@nest-boilerplate/testing';
+} from '@nestjs-boilerplate/core';
+import { SimpleIocContainer, createClassValidatorContainer } from '@nestjs-boilerplate/testing';
 import { AUTH_PASSWORD_SALT_ROUNDS_PROPERTY } from '../../constants/auth.properties';
 import { UserNotFoundException } from '../../exceptions/user-not-found-exception';
 import { UserService } from '../../services/user.service';

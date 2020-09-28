@@ -1,3 +1,3 @@
-import { EntityNotFoundException } from '@nest-boilerplate/core';
+import { EntityNotFoundException } from '@nestjs-boilerplate/core';
 
 export class UserNotFoundException extends EntityNotFoundException {}

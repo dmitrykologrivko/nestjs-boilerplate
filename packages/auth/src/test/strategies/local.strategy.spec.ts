@@ -5,7 +5,7 @@ import {
     NonFieldValidationException,
     Ok,
     Err,
-} from '@nest-boilerplate/core';
+} from '@nestjs-boilerplate/core';
 import { CREDENTIALS_VALID_CONSTRAINT } from '../../constants/auth.constraints';
 import { LocalStrategy } from '../../strategies/local.strategy';
 import { AuthService } from '../../services/auth.service';

@@ -8,7 +8,7 @@ import {
     ApiController,
     ValidationExceptionsPipe,
     ValidationExceptionsFilter,
-} from '@nest-boilerplate/core';
+} from '@nestjs-boilerplate/core';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { JwtAuthService } from '../services/jwt-auth.service';

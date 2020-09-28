@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { Result, Ok, Err } from '@nest-boilerplate/core';
+import { Result, Ok, Err } from '@nestjs-boilerplate/core';
 import { User } from '../entities/user.entity';
 import { BaseLoginInput } from '../dto/base-login.input';
 import { BaseLoginOutput } from '../dto/base-login.output';

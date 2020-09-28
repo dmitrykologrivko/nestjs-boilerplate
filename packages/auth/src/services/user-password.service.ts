@@ -9,7 +9,7 @@ import {
     Result,
     Ok,
     Err,
-} from '@nest-boilerplate/core';
+} from '@nestjs-boilerplate/core';
 import { AUTH_PASSWORD_RESET_TIMEOUT_PROPERTY } from '../constants/auth.properties';
 import { User } from '../entities/user.entity';
 import { UserNotFoundException } from '../exceptions/user-not-found-exception';

@@ -5,7 +5,7 @@ import {
     Validate,
     ValidationContainerException,
     Result
-} from '@nest-boilerplate/core';
+} from '@nestjs-boilerplate/core';
 import { Permission } from './permission.entity';
 
 export const GROUP_NAME_MAX_LENGTH = 150;

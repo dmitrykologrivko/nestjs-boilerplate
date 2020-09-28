@@ -1,5 +1,5 @@
 import { Exclude, Expose } from 'class-transformer';
-import { EntityDto } from '@nest-boilerplate/core';
+import { EntityDto } from '@nestjs-boilerplate/core';
 
 @Exclude()
 export class UserDto extends EntityDto {

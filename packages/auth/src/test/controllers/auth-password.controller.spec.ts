@@ -1,5 +1,5 @@
 import { MockProxy, mock } from 'jest-mock-extended';
-import { ValidationContainerException, Ok, Err } from '@nest-boilerplate/core';
+import { ValidationContainerException, Ok, Err } from '@nestjs-boilerplate/core';
 import { AuthPasswordController } from '../../controllers/auth-password.controller';
 import { UserService } from '../../services/user.service';
 import { User } from '../../entities/user.entity';

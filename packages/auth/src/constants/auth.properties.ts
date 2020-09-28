@@ -1,4 +1,4 @@
-import { Property } from '@nest-boilerplate/core';
+import { Property } from '@nestjs-boilerplate/core';
 
 export const AUTH_PASSWORD_SALT_ROUNDS_PROPERTY: Property<number> = { path: 'auth.password.saltRounds' };
 export const AUTH_PASSWORD_RESET_TIMEOUT_PROPERTY: Property<string> = { path: 'auth.password.resetTimeout' };

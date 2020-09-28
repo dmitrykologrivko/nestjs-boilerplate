@@ -10,7 +10,7 @@ import { execSync } from 'child_process';
 
 const PACKAGE_SRC_DIR = `${process.cwd()}/src`;
 
-const AUTH_MODULE_IMPORT = `from '@nest-boilerplate/auth'`;
+const AUTH_MODULE_IMPORT = `from '@nestjs-boilerplate/auth'`;
 const REPLACE_IMPORT_REGEX = /from.+'(\.\..*)'|"(.*)"/g;
 
 function makeUserFactory() {

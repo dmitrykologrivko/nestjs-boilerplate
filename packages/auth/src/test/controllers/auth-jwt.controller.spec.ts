@@ -1,5 +1,5 @@
 import { MockProxy, mock } from 'jest-mock-extended';
-import { ValidationException, Ok, Err } from '@nest-boilerplate/core';
+import { ValidationException, Ok, Err } from '@nestjs-boilerplate/core';
 import {
     JWT_TOKEN_VALID_CONSTRAINT,
     USERNAME_ACTIVE_CONSTRAINT,

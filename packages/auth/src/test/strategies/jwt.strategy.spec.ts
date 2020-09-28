@@ -6,7 +6,7 @@ import {
     ValidationException,
     Ok,
     Err,
-} from '@nest-boilerplate/core';
+} from '@nestjs-boilerplate/core';
 import { PAYLOAD_VALID_CONSTRAINT } from '../../constants/auth.constraints';
 import { JwtStrategy } from '../../strategies/jwt.strategy';
 import { JwtAuthService } from '../../services/jwt-auth.service';

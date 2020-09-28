@@ -5,7 +5,7 @@ import {
     ValidationException,
     Ok,
     Err,
-} from '@nest-boilerplate/core';
+} from '@nestjs-boilerplate/core';
 import { UserNotFoundException } from '../../exceptions/user-not-found-exception';
 import { AccessTokenInvalidException } from '../../exceptions/access-token-invalid.exception';
 import { JwtAuthService } from '../../services/jwt-auth.service';

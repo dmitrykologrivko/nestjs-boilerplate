@@ -6,7 +6,7 @@ import {
     Validate,
     ValidationContainerException,
     Result,
-} from '@nest-boilerplate/core';
+} from '@nestjs-boilerplate/core';
 import { User } from './user.entity';
 
 @Entity()

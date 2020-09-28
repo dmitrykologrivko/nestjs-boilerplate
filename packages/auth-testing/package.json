@@ -1,5 +1,5 @@
 {
-  "name": "@nest-boilerplate/auth-testing",
+  "name": "@nestjs-boilerplate/auth-testing",
   "version": "0.0.0",
   "description": "",
   "author": "Dmitry Kologrivko",
@@ -10,9 +10,9 @@
     "build": "ts-node build-package.ts && rm -rf dist && tsc -p tsconfig.json"
   },
   "peerDependencies": {
-    "@nest-boilerplate/auth": "^0.0.0",
-    "@nest-boilerplate/core": "^0.0.0",
-    "@nest-boilerplate/testing": "^0.0.0",
+    "@nestjs-boilerplate/auth": "^0.0.0",
+    "@nestjs-boilerplate/core": "^0.0.0",
+    "@nestjs-boilerplate/testing": "^0.0.0",
     "@nestjs/common": "^7.4.4",
     "@nestjs/core": "^7.4.4",
     "@nestjs/testing": "^7.4.4",
@@ -21,17 +21,17 @@
     "rxjs": "^6.6.3"
   },
   "devDependencies": {
-    "@nest-boilerplate/auth": "^0.0.0",
-    "@nest-boilerplate/core": "^0.0.0",
-    "@nest-boilerplate/testing": "^0.0.0",
+    "@nestjs-boilerplate/auth": "^0.0.0",
+    "@nestjs-boilerplate/core": "^0.0.0",
+    "@nestjs-boilerplate/testing": "^0.0.0",
     "create-ts-index": "^1.13.6"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dmitrykologrivko/nest-boilerplate.git"
+    "url": "git+https://github.com/dmitrykologrivko/nestjs-boilerplate.git"
   },
   "bugs": {
-    "url": "https://github.com/dmitrykologrivko/nest-boilerplate/issues"
+    "url": "https://github.com/dmitrykologrivko/nestjs-boilerplate/issues"
   },
-  "homepage": "https://github.com/dmitrykologrivko/nest-boilerplate#readme"
+  "homepage": "https://github.com/dmitrykologrivko/nestjs-boilerplate#readme"
 }

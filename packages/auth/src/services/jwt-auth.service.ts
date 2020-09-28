@@ -7,7 +7,7 @@ import {
     AsyncResult,
     ClassTransformer,
     ValidationException,
-} from '@nest-boilerplate/core';
+} from '@nestjs-boilerplate/core';
 import { BaseAuthService } from './base-auth.service';
 import { UserJwtService } from './user-jwt.service';
 import {

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { CoreModule } from '@nest-boilerplate/core';
+import { CoreModule } from '@nestjs-boilerplate/core';
 import { AuthModule } from '../../src/auth.module';
 import appConfig from './app.config';
 

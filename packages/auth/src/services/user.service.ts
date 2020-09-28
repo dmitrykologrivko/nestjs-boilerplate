@@ -10,7 +10,7 @@ import {
     Result,
     Ok,
     Err,
-} from '@nest-boilerplate/core';
+} from '@nestjs-boilerplate/core';
 import { AUTH_PASSWORD_SALT_ROUNDS_PROPERTY } from '../constants/auth.properties';
 import { UserNotFoundException } from '../exceptions/user-not-found-exception';
 import { User } from '../entities/user.entity';

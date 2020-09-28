@@ -1,5 +1,5 @@
 {
-  "name": "@nest-boilerplate/auth",
+  "name": "@nestjs-boilerplate/auth",
   "version": "0.0.0",
   "description": "",
   "author": "Dmitry Kologrivko",
@@ -15,11 +15,11 @@
     "uuid": "^8.2.0"
   },
   "devDependencies": {
-    "@nest-boilerplate/core": "^0.0.0",
-    "@nest-boilerplate/testing": "^0.0.0"
+    "@nestjs-boilerplate/core": "^0.0.0",
+    "@nestjs-boilerplate/testing": "^0.0.0"
   },
   "peerDependencies": {
-    "@nest-boilerplate/core": "^0.0.0",
+    "@nestjs-boilerplate/core": "^0.0.0",
     "@nestjs/common": "^7.4.4",
     "@nestjs/jwt": "^7.1.0",
     "@nestjs/passport": "^7.1.0",
@@ -32,10 +32,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dmitrykologrivko/nest-boilerplate.git"
+    "url": "git+https://github.com/dmitrykologrivko/nestjs-boilerplate.git"
   },
   "bugs": {
-    "url": "https://github.com/dmitrykologrivko/nest-boilerplate/issues"
+    "url": "https://github.com/dmitrykologrivko/nestjs-boilerplate/issues"
   },
-  "homepage": "https://github.com/dmitrykologrivko/nest-boilerplate#readme"
+  "homepage": "https://github.com/dmitrykologrivko/nestjs-boilerplate#readme"
 }

@@ -12,7 +12,7 @@ import {
     ApiController,
     ValidationExceptionsPipe,
     ValidationExceptionsFilter,
-} from '@nest-boilerplate/core';
+} from '@nestjs-boilerplate/core';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { UserService } from '../services/user.service';
 import { ChangePasswordInput } from '../dto/change-password.input';

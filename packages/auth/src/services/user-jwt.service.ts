@@ -8,7 +8,7 @@ import {
     AsyncResult,
     Ok,
     Err,
-} from '@nest-boilerplate/core';
+} from '@nestjs-boilerplate/core';
 import { User } from '../entities/user.entity';
 import { RevokedToken } from '../entities/revoked-token.entity';
 import { AccessTokenInvalidException } from '../exceptions/access-token-invalid.exception';

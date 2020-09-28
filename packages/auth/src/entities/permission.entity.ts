@@ -5,7 +5,7 @@ import {
     Validate,
     ValidationContainerException,
     Result
-} from '@nest-boilerplate/core';
+} from '@nestjs-boilerplate/core';
 
 export const PERMISSION_NAME_MAX_LENGTH = 255;
 export const CODENAME_MAX_LENGTH = 100;

@@ -1,6 +1,6 @@
 import * as promptSync from 'prompt-sync';
 import { Logger } from '@nestjs/common';
-import { Command, Handler, CliArgument } from '@nest-boilerplate/core';
+import { Command, Handler, CliArgument } from '@nestjs-boilerplate/core';
 import { UserService } from '../services/user.service';
 
 const prompt = promptSync({ sigint: true });

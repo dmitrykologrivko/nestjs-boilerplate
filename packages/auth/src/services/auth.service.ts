@@ -6,7 +6,7 @@ import {
     NonFieldValidationException,
     AsyncResult,
     Result,
-} from '@nest-boilerplate/core';
+} from '@nestjs-boilerplate/core';
 import { BaseAuthService } from './base-auth.service';
 import { CREDENTIALS_VALID_CONSTRAINT } from '../constants/auth.constraints';
 import { User } from '../entities/user.entity';

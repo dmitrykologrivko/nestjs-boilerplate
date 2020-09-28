@@ -1,5 +1,5 @@
 import * as request from 'supertest';
-import { bootstrapTestingApplication } from '@nest-boilerplate/testing';
+import { bootstrapTestingApplication } from '@nestjs-boilerplate/testing';
 import { User } from '../src/entities';
 import { UserFactory } from '../src/test/user.factory';
 import { AuthTestUtils } from '../src/test/auth-test.utils';

@@ -5,7 +5,7 @@ import {
     Ok,
     Err,
     NonFieldValidationException,
-} from '@nest-boilerplate/core';
+} from '@nestjs-boilerplate/core';
 import { AuthService } from '../../services/auth.service';
 import { UserPasswordService } from '../../services/user-password.service';
 import { CredentialsInvalidException } from '../../exceptions/credentials-invalid.exception';

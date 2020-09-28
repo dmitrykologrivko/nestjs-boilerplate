@@ -7,7 +7,7 @@ import {
     SECRET_KEY_PROPERTY,
     DatabaseModule,
     isUndefined,
-} from '@nest-boilerplate/core';
+} from '@nestjs-boilerplate/core';
 import { AUTH_JWT_EXPIRES_IN_PROPERTY } from './constants/auth.properties';
 import { User } from './entities/user.entity';
 import { Group } from './entities/group.entity';

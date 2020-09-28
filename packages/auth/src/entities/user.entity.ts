@@ -10,7 +10,7 @@ import {
     Result,
     Ok,
     Err,
-} from '@nest-boilerplate/core';
+} from '@nestjs-boilerplate/core';
 import { Permission } from './permission.entity';
 import { Group } from './group.entity';
 
