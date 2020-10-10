@@ -23,16 +23,18 @@ export class Validate {
     private constructor(
         private readonly key: string,
         private readonly value: unknown,
+        private readonly nullable: boolean = false,
     ) {}
 
     /**
      * Start point to construct validation chain
      * @param key property key
      * @param value property value
+     * @param nullable should skip validation rules if value is nullable
      * @return Validate instance
      */
-    static withProperty(key: string, value: unknown): Validate {
-        return new Validate(key, value);
+    static withProperty(key: string, value: unknown, nullable: boolean = false): Validate {
+        return new Validate(key, value, nullable);
     }
 
     /**
@@ -58,9 +60,14 @@ export class Validate {
      * @return Validate instance
      */
     isNotEmpty(): Validate {
+        if (this.nullable && !this.value) {
+            return this;
+        }
+
         if (!isNotEmpty(this.value)) {
             this.rejectValidation('isNotEmpty', `${this.key} is empty`);
         }
+
         return this;
     }
 
@@ -69,9 +76,14 @@ export class Validate {
      * @return Validate instance
      */
     isEmail(): Validate {
+        if (this.nullable && !this.value) {
+            return this;
+        }
+
         if (!isEmail(this.value)) {
             this.rejectValidation('isEmail', `${this.key} is not email`);
         }
+
         return this;
     }
 
@@ -81,9 +93,14 @@ export class Validate {
      * @return Validate instance
      */
     minLength(min: number): Validate {
+        if (this.nullable && !this.value) {
+            return this;
+        }
+
         if (!minLength(this.value, min)) {
             this.rejectValidation('minLength', `${this.key} is short than min length`);
         }
+
         return this;
     }
 
@@ -93,9 +110,14 @@ export class Validate {
      * @return Validate instance
      */
     maxLength(max: number): Validate {
+        if (this.nullable && !this.value) {
+            return this;
+        }
+
         if (!maxLength(this.value, max)) {
             this.rejectValidation('maxLength', `${this.key} exceeded max length`);
         }
+
         return this;
     }
 
@@ -106,9 +128,26 @@ export class Validate {
      * @return Validate instance
      */
     length(min: number, max: number): Validate {
+        if (this.nullable && !this.value) {
+            return this;
+        }
+
         if (!length(this.value, min, max)) {
             this.rejectValidation('length', `${this.key} exceeded length range`);
         }
+
+        return this;
+    }
+
+    custom(constraint: string, message: string, fn: (value: unknown) => boolean,): Validate {
+        if (this.nullable && !this.value) {
+            return this;
+        }
+
+        if (!fn(this.value)) {
+            this.rejectValidation(constraint, `${this.key} ${message}`);
+        }
+
         return this;
     }
 
