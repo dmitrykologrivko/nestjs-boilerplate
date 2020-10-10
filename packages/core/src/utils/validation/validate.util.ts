@@ -4,6 +4,7 @@ import {
     isNotEmpty,
     minLength,
     maxLength,
+    length,
 } from 'class-validator';
 import { ValidationException } from './validation.exception';
 import { ValidationContainerException } from './validation-container.exception';
@@ -94,6 +95,19 @@ export class Validate {
     maxLength(max: number): Validate {
         if (!maxLength(this.value, max)) {
             this.rejectValidation('maxLength', `${this.key} exceeded max length`);
+        }
+        return this;
+    }
+
+    /**
+     * Checks if value is exceed length range
+     * @param min min length
+     * @param max max length
+     * @return Validate instance
+     */
+    length(min: number, max: number): Validate {
+        if (!length(this.value, min, max)) {
+            this.rejectValidation('length', `${this.key} exceeded length range`);
         }
         return this;
     }
