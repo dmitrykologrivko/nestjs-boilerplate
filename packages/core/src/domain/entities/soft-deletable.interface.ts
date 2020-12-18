@@ -1,3 +1,3 @@
 export interface SoftDeletable {
-    isRemoved: boolean;
+    deleted: Date;
 }

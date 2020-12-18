@@ -3,6 +3,8 @@ export * from './base-soft-deletable.entity';
 export * from './base.value-object';
 export * from './soft-deletable.interface';
 export * from './time-stamped.interface';
+export * from './identifiable.interface';
+export * from './entity-not-found.exception';
 export * from './entity.decorator';
 export * from './value-object.decorator';
 export * from './embedded-value-object.decorator';
