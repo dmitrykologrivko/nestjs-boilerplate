@@ -1,7 +1,7 @@
 import { UseFilters } from '@nestjs/common';
 import { ValidationExceptionsFilter } from '../filters/validation-exceptions.filter';
-import { PermissionDeniedExceptionFilter } from '../exception_filters/permission-denied-exception.filter';
-import { EntityNotFoundExceptionFilter } from '../exception_filters/entity-not-found-exception.filter';
+import { PermissionDeniedExceptionFilter } from '../filters/permission-denied-exception.filter';
+import { EntityNotFoundExceptionFilter } from '../filters/entity-not-found-exception.filter';
 import { BaseCrudService, IdentifiableObject } from '../../domain/crud/base-crud.service';
 import { ListQuery } from '../../domain/crud/list-query.interface';
 
