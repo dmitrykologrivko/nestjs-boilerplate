@@ -1,8 +1,8 @@
 import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
 import { Response } from 'express';
-import { ValidationException } from './validation.exception';
-import { NonFieldValidationException } from './non-field-validation.exception';
-import { ValidationContainerException } from './validation-container.exception';
+import { ValidationException } from '../../utils/validation/validation.exception';
+import { NonFieldValidationException } from '../../utils/validation/non-field-validation.exception';
+import { ValidationContainerException } from '../../utils/validation/validation-container.exception';
 
 @Catch(ValidationException, NonFieldValidationException, ValidationContainerException)
 export class ValidationExceptionsFilter implements ExceptionFilter {

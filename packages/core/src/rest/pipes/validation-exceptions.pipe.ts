@@ -3,7 +3,7 @@ import {
     ValidationPipeOptions,
     BadRequestException
 } from '@nestjs/common';
-import { ClassValidator } from './class-validator.util';
+import { ClassValidator } from '../../utils/validation/class-validator.util';
 
 /**
  * Extension of NestJS ValidationExceptionsPipe.
