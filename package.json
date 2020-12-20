@@ -10,7 +10,7 @@
     "build": "lerna run build",
     "bootstrap": "lerna bootstrap --hoist",
     "version": "lerna version --no-git-tag-version --no-push",
-    "publish": "lerna publish",
+    "publish": "lerna publish --canary --no-git-tag-version --no-push",
     "update:packages": "lernaupdate",
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "test": "jest --config jest.json",
