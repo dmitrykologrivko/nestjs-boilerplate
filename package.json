@@ -9,7 +9,7 @@
     "build": "lerna run build",
     "bootstrap": "lerna bootstrap --hoist",
     "publish:release": "npm run build && lerna publish",
-    "publish:alpha": "npm run build && lerna publish --canary preminor --preid alpha",
+    "publish:alpha": "lerna publish --canary preminor --preid alpha",
     "update:packages": "lernaupdate",
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "test": "jest --config jest.json",
