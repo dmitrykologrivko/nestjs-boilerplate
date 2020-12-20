@@ -1,7 +1,7 @@
 {
   "name": "nestjs-boilerplate",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0-alpha.0",
   "description": "",
   "author": "Dmitry Kologrivko",
   "license": "ISC",
@@ -9,6 +9,7 @@
     "postinstall": "npm run bootstrap && npm run build",
     "build": "lerna run build",
     "bootstrap": "lerna bootstrap --hoist",
+    "version": "lerna version --no-git-tag-version --no-push",
     "publish": "lerna publish",
     "update:packages": "lernaupdate",
     "lint": "tslint -p tsconfig.json -c tslint.json",
