@@ -6,7 +6,6 @@ import {
     PropertyConfigService,
     SECRET_KEY_PROPERTY,
     DatabaseModule,
-    isUndefined,
 } from '@nestjs-boilerplate/core';
 import { AUTH_JWT_EXPIRES_IN_PROPERTY } from './constants/auth.properties';
 import { User } from './entities/user.entity';
@@ -114,11 +113,11 @@ export class AuthModule {
     static forRoot(options: AuthModuleOptions = {}): DynamicModule {
         const controllers = [];
 
-        if (isUndefined(options.enableAuthJwtApi) || options.enableAuthJwtApi === true) {
+        if (!options.enableAuthJwtApi || options.enableAuthJwtApi === true) {
             controllers.push(AuthJwtController);
         }
 
-        if (isUndefined(options.enableAuthPasswordApi) || options.enableAuthPasswordApi === true) {
+        if (!options.enableAuthPasswordApi || options.enableAuthPasswordApi === true) {
             controllers.push(AuthPasswordController);
         }
 
