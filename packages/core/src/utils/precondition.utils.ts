@@ -1,14 +1,6 @@
-export function isDefined(arg: any) {
-    return arg !== undefined && arg !== null;
-}
-
-export function isUndefined(arg: any) {
-    return !isDefined(arg);
-}
-
-export function allDefined(...args: any[]) {
-    for (const arg in args) {
-        if (isUndefined(arg)) {
+export function all(args: any[]) {
+    for (const arg of args) {
+        if (!arg) {
             return false;
         }
     }
@@ -16,28 +8,34 @@ export function allDefined(...args: any[]) {
     return true;
 }
 
+export function any(args: any[]) {
+    for (const arg of args) {
+        if (arg) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 export function isEmpty(arg: string | any[] | Map<any, any> | Set<any>) {
-    if (isUndefined(arg)) {
+    if (!arg) {
         return true;
     }
 
-    if (typeof arg === 'string' && arg.length !== 0) {
-        return false;
+    if (arg instanceof Array && arg.length === 0) {
+        return true;
     }
 
-    if (arg instanceof Array && arg.length !== 0) {
-        return false;
+    if (arg instanceof Map && arg.size === 0) {
+        return true;
     }
 
-    if (arg instanceof Map && arg.size !== 0) {
-        return false;
+    if (arg instanceof Set && arg.size === 0) {
+        return true;
     }
 
-    if (arg instanceof Set && arg.size !== 0) {
-        return false;
-    }
-
-    return true;
+    return false;
 }
 
 export function isNotEmpty(arg: string | any[] | Map<any, any> | Set<any>) {
