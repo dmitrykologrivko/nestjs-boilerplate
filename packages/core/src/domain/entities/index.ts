@@ -6,5 +6,6 @@ export * from './time-stamped.interface';
 export * from './identifiable.interface';
 export * from './entity-not-found.exception';
 export * from './entity.decorator';
+export * from './child-entity.decorator';
 export * from './value-object.decorator';
 export * from './embedded-value-object.decorator';
