@@ -1,4 +1,4 @@
-import { Result, Ok, Err } from '@usefultools/monads';
+import { Result, Ok, Err } from '../monads/result';
 import {
     isEmail,
     isNotEmpty,

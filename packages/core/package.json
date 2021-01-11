@@ -10,7 +10,6 @@
     "build": "rm -rf dist && tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@usefultools/monads": "^3.0.3",
     "create-ts-index": "^1.13.6",
     "dotenv": "^8.2.0",
     "minimist": "^1.2.5",

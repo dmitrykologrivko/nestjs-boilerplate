@@ -1,0 +1,193 @@
+import { Monad } from './monad.interface';
+
+export enum ResultType {
+    OK = 'ok',
+    ERR = 'err',
+}
+
+export class Result<T, E, R extends ResultType = ResultType> implements Monad<T> {
+    private constructor(
+        private readonly type: R,
+        private readonly value: R extends ResultType.OK ? T : E,
+    ) {}
+
+    static ok<T, E>(value: T): Result<T, E> {
+        return new Result<T, E, ResultType.OK>(ResultType.OK, value);
+    }
+
+    static err<T, E>(value: E): Result<T, E> {
+        return new Result<T, E, ResultType.ERR>(ResultType.ERR, value);
+    }
+
+    static map<T, E, U>(fn: (value: T) => Promise<U>) {
+        return (result: Result<T, E>): Promise<Result<U, E>> => result.mapAsync(fn);
+    }
+
+    static mapErr<T, E, U>(fn: (err: E) => Promise<U>) {
+        return (result: Result<T, E>): Promise<Result<T, U>> => result.mapErrAsync(fn);
+    }
+
+    static proceed<T, E, U, V>(fn: (value: T) => Promise<Result<U, E | V>>) {
+        return (result: Result<T, E>): Promise<Result<U, E | V>> => result.proceedAsync(fn);
+    }
+
+    static fallback<T, E, U, V>(fn: (err: E) => Promise<Result<T, E>>) {
+        return (result: Result<T, E>): Promise<Result<T, E>> => result.fallbackAsync(fn);
+    }
+
+    isOk() {
+        return this.type === ResultType.OK;
+    }
+
+    isErr() {
+        return this.type === ResultType.ERR;
+    }
+
+    unwrap(): T {
+        if (this.isOk()) {
+            return this.value as T;
+        }
+        throw ReferenceError('Cannot unwrap OK value of ResultType.ERR');
+    }
+
+    unwrapOr(value: T): T {
+        if (this.isOk()) {
+            return this.value as T;
+        }
+        return value;
+    }
+
+    unwrapOrElse(fn: (err: E) => T): T {
+        if (this.isOk()) {
+            return this.value as T;
+        }
+        return fn(this.value as E);
+    }
+
+    unwrapErr(): E {
+        if (this.isErr()) {
+            return this.value as E;
+        }
+        throw ReferenceError('Cannot unwrap ERR value of ResultType.OK');
+    }
+
+    map<U>(fn: (value: T) => U): Result<U, E> {
+        if (this.isErr()) {
+            return Result.err<U, E>(this.value as E);
+        }
+        return Result.ok<U, E>(fn(this.value as T));
+    }
+
+    mapAsync<U>(fn: (value: T) => Promise<U>): Promise<Result<U, E>> {
+        if (this.isErr()) {
+            return Promise.resolve(Result.err<U, E>(this.value as E));
+        }
+        return fn(this.value as T).then(mappedValue => Result.ok<U, E>(mappedValue));
+    }
+
+    mapErr<U>(fn: (err: E) => U): Result<T, U> {
+        if (this.isErr()) {
+            return Result.err<T, U>(fn(this.value as E));
+        }
+        return Result.ok<T, U>(this.value as T);
+    }
+
+    mapErrAsync<U>(fn: (err: E) => Promise<U>): Promise<Result<T, U>> {
+        if (this.isErr()) {
+            return fn(this.value as E).then(mappedError => Result.err<T, U>(mappedError));
+        }
+        return Promise.resolve(Result.ok<T, U>(this.value as T));
+    }
+
+    proceed<U, V>(fn: (value: T) => Result<U, E | V>): Result<U, E | V>  {
+        if (this.isErr()) {
+            return Result.err<U, E | V>(this.value as E);
+        }
+        return fn(this.value as T);
+    }
+
+    proceedAsync<U, V>(fn: (value: T) => Promise<Result<U, E | V>>): Promise<Result<U, E | V>>  {
+        if (this.isErr()) {
+            return Promise.resolve(Result.err<U, E | V>(this.value as E));
+        }
+        return fn(this.value as T);
+    }
+
+    fallback(fn: (err: E) => Result<T, E>): Result<T, E> {
+        if (this.isErr()) {
+            return fn(this.value as E);
+        }
+        return this;
+    }
+
+    fallbackAsync(fn: (err: E) => Promise<Result<T, E>>): Promise<Result<T, E>> {
+        if (this.isErr()) {
+            return fn(this.value as E);
+        }
+        return Promise.resolve(this);
+    }
+
+    /**
+     * @deprecated
+     * @param fn
+     */
+    and_then<U, V>(fn: (value: T) => Result<U, E | V>): Result<U, E | V>  {
+        return this.proceed(fn);
+    }
+
+    /**
+     * @deprecated
+     */
+    unwrap_err(): E {
+        return this.unwrapErr();
+    }
+
+    /**
+     * @deprecated
+     */
+    is_ok() {
+        return this.type === ResultType.OK;
+    }
+
+    /**
+     * @deprecated
+     */
+    is_err() {
+        return this.type === ResultType.ERR;
+    }
+
+    /**
+     * @deprecated
+     * @param fn
+     */
+    map_err<U>(fn: (err: E) => U): Result<T, U> {
+        return this.mapErr(fn);
+    }
+}
+
+export const {
+    ok,
+    err,
+    map,
+    mapErr,
+    proceed,
+    fallback,
+} = Result;
+
+/**
+ * @deprecated
+ * @param value
+ * @constructor
+ */
+export function Ok<T, E>(value: T): Result<T, E> {
+    return Result.ok<T, E>(value);
+}
+
+/**
+ * @deprecated
+ * @param value
+ * @constructor
+ */
+export function Err<T, E>(value: E): Result<T, E> {
+    return Result.err<T, E>(value);
+}

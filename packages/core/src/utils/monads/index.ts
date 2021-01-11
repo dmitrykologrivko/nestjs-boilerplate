@@ -1,2 +1,3 @@
-export { Result, Ok, Err } from '@usefultools/monads';
+export * from './monad.interface';
+export * from './result';
 export * from './async-result';

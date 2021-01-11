@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { validate, ValidationOptions, ValidationError } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import { ClassType } from 'class-transformer/ClassTransformer';
-import { Result, Ok, Err } from '@usefultools/monads';
+import { Result, Ok, Err } from '../monads/result';
 import { ValidationException } from './validation.exception';
 import { ValidationContainerException } from './validation-container.exception';
 
