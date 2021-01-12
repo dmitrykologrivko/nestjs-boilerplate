@@ -11,6 +11,202 @@ export class Result<T, E, R extends ResultType = ResultType> implements Monad<T>
         private readonly value: R extends ResultType.OK ? T : E,
     ) {}
 
+    static merge<T1, E1>(
+        results: [Result<T1, E1>],
+    ): Result<[T1], E1>;
+    static merge<T1, E1, T2, E2>(
+        results: [Result<T1, E1>, Result<T2, E2>],
+    ): Result<[T1, T2], E1 | E2>;
+    static merge<T1, E1, T2, E2, T3, E3>(
+        results: [Result<T1, E1>, Result<T2, E2>, Result<T3, E3>],
+    ): Result<[T1, T2, T3], E1 | E2 | E3>;
+    static merge<T1, E1, T2, E2, T3, E3, T4, E4>(
+        results: [
+            Result<T1, E1>,
+            Result<T2, E2>,
+            Result<T3, E3>,
+            Result<T4, E4>,
+        ],
+    ): Result<[T1, T2, T3, T4], E1 | E2 | E3 | E4>;
+    static merge<T1, E1, T2, E2, T3, E3, T4, E4, T5, E5>(
+        results: [
+            Result<T1, E1>,
+            Result<T2, E2>,
+            Result<T3, E3>,
+            Result<T4, E4>,
+            Result<T5, E5>,
+        ],
+    ): Result<[T1, T2, T3, T4, T5], E1 | E2 | E3 | E4 | E5>;
+    static merge<T1, E1, T2, E2, T3, E3, T4, E4, T5, E5, T6, E6>(
+        results: [
+            Result<T1, E1>,
+            Result<T2, E2>,
+            Result<T3, E3>,
+            Result<T4, E4>,
+            Result<T5, E5>,
+            Result<T6, E6>,
+        ],
+    ): Result<[T1, T2, T3, T4, T5, T6], E1 | E2 | E3 | E4 | E5 | E6>;
+    static merge<T1, E1, T2, E2, T3, E3, T4, E4, T5, E5, T6, E6, T7, E7>(
+        results: [
+            Result<T1, E1>,
+            Result<T2, E2>,
+            Result<T3, E3>,
+            Result<T4, E4>,
+            Result<T5, E5>,
+            Result<T6, E6>,
+            Result<T7, E7>,
+        ],
+    ): Result<[T1, T2, T3, T4, T5, T6, T7], E1 | E2 | E3 | E4 | E5 | E6 | E7>;
+    static merge<T1, E1, T2, E2, T3, E3, T4, E4, T5, E5, T6, E6, T7, E7, T8, E8>(
+        results: [
+            Result<T1, E1>,
+            Result<T2, E2>,
+            Result<T3, E3>,
+            Result<T4, E4>,
+            Result<T5, E5>,
+            Result<T6, E6>,
+            Result<T7, E7>,
+            Result<T8, E8>,
+        ],
+    ): Result<[T1, T2, T3, T4, T5, T6, T7, T8], E1 | E2 | E3 | E4 | E5 | E6 | E7 | E8>;
+    static merge<T1, E1, T2, E2, T3, E3, T4, E4, T5, E5, T6, E6, T7, E7, T8, E8, T9, E9>(
+        results: [
+            Result<T1, E1>,
+            Result<T2, E2>,
+            Result<T3, E3>,
+            Result<T4, E4>,
+            Result<T5, E5>,
+            Result<T6, E6>,
+            Result<T7, E7>,
+            Result<T8, E8>,
+            Result<T9, E9>,
+        ],
+    ): Result<[T1, T2, T3, T4, T5, T6, T7, T8, T9], E1 | E2 | E3 | E4 | E5 | E6 | E7 | E8 | E9>;
+    static merge<T1, E1, T2, E2, T3, E3, T4, E4, T5, E5, T6, E6, T7, E7, T8, E8, T9, E9, T10, E10>(
+        results: [
+            Result<T1, E1>,
+            Result<T2, E2>,
+            Result<T3, E3>,
+            Result<T4, E4>,
+            Result<T5, E5>,
+            Result<T6, E6>,
+            Result<T7, E7>,
+            Result<T8, E8>,
+            Result<T9, E9>,
+            Result<T10, E10>,
+        ],
+    ): Result<[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10], E1 | E2 | E3 | E4 | E5 | E6 | E7 | E8 | E9 | E10>;
+    static merge(results: Result<unknown, unknown>[]) {
+        return results.reduce(
+            (prev: Result<unknown[], unknown>, current: Result<unknown, unknown>) => {
+                return current.proceed(
+                    currentValue => prev.map(prevValue => prevValue.concat([currentValue])),
+                );
+            },
+            Result.ok<unknown[], unknown>([]),
+        );
+    }
+
+    static mergeAsync<T1, E1>(
+        results: [Promise<Result<T1, E1>>],
+    ): Promise<Result<[T1], E1>>;
+    static mergeAsync<T1, E1, T2, E2>(
+        results: [Promise<Result<T1, E1>>, Promise<Result<T2, E2>>],
+    ): Promise<Result<[T1, T2], E1 | E2>>;
+    static mergeAsync<T1, E1, T2, E2, T3, E3>(
+        results: [Promise<Result<T1, E1>>, Promise<Result<T2, E2>>, Promise<Result<T3, E3>>],
+    ): Promise<Result<[T1, T2, T3], E1 | E2 | E3>>;
+    static mergeAsync<T1, E1, T2, E2, T3, E3, T4, E4>(
+        results: [
+            Promise<Result<T1, E1>>,
+            Promise<Result<T2, E2>>,
+            Promise<Result<T3, E3>>,
+            Promise<Result<T4, E4>>,
+        ],
+    ): Promise<Result<[T1, T2, T3, T4], E1 | E2 | E3 | E4>>;
+    static mergeAsync<T1, E1, T2, E2, T3, E3, T4, E4, T5, E5>(
+        results: [
+            Promise<Result<T1, E1>>,
+            Promise<Result<T2, E2>>,
+            Promise<Result<T3, E3>>,
+            Promise<Result<T4, E4>>,
+            Promise<Result<T5, E5>>,
+        ],
+    ): Promise<Result<[T1, T2, T3, T4, T5], E1 | E2 | E3 | E4 | E5>>;
+    static mergeAsync<T1, E1, T2, E2, T3, E3, T4, E4, T5, E5, T6, E6>(
+        results: [
+            Promise<Result<T1, E1>>,
+            Promise<Result<T2, E2>>,
+            Promise<Result<T3, E3>>,
+            Promise<Result<T4, E4>>,
+            Promise<Result<T5, E5>>,
+            Promise<Result<T6, E6>>,
+        ],
+    ): Promise<Result<[T1, T2, T3, T4, T5, T6], E1 | E2 | E3 | E4 | E5 | E6>>;
+    static mergeAsync<T1, E1, T2, E2, T3, E3, T4, E4, T5, E5, T6, E6, T7, E7>(
+        results: [
+            Promise<Result<T1, E1>>,
+            Promise<Result<T2, E2>>,
+            Promise<Result<T3, E3>>,
+            Promise<Result<T4, E4>>,
+            Promise<Result<T5, E5>>,
+            Promise<Result<T6, E6>>,
+            Promise<Result<T7, E7>>,
+        ],
+    ): Promise<Result<[T1, T2, T3, T4, T5, T6, T7], E1 | E2 | E3 | E4 | E5 | E6 | E7>>;
+    static mergeAsync<T1, E1, T2, E2, T3, E3, T4, E4, T5, E5, T6, E6, T7, E7, T8, E8>(
+        results: [
+            Promise<Result<T1, E1>>,
+            Promise<Result<T2, E2>>,
+            Promise<Result<T3, E3>>,
+            Promise<Result<T4, E4>>,
+            Promise<Result<T5, E5>>,
+            Promise<Result<T6, E6>>,
+            Promise<Result<T7, E7>>,
+            Promise<Result<T8, E8>>,
+        ],
+    ): Promise<Result<[T1, T2, T3, T4, T5, T6, T7, T8], E1 | E2 | E3 | E4 | E5 | E6 | E7 | E8>>;
+    static mergeAsync<T1, E1, T2, E2, T3, E3, T4, E4, T5, E5, T6, E6, T7, E7, T8, E8, T9, E9>(
+        results: [
+            Promise<Result<T1, E1>>,
+            Promise<Result<T2, E2>>,
+            Promise<Result<T3, E3>>,
+            Promise<Result<T4, E4>>,
+            Promise<Result<T5, E5>>,
+            Promise<Result<T6, E6>>,
+            Promise<Result<T7, E7>>,
+            Promise<Result<T8, E8>>,
+            Promise<Result<T9, E9>>,
+        ],
+    ): Promise<Result<[T1, T2, T3, T4, T5, T6, T7, T8, T9], E1 | E2 | E3 | E4 | E5 | E6 | E7 | E8 | E9>>;
+    static mergeAsync<T1, E1, T2, E2, T3, E3, T4, E4, T5, E5, T6, E6, T7, E7, T8, E8, T9, E9, T10, E10>(
+        results: [
+            Promise<Result<T1, E1>>,
+            Promise<Result<T2, E2>>,
+            Promise<Result<T3, E3>>,
+            Promise<Result<T4, E4>>,
+            Promise<Result<T5, E5>>,
+            Promise<Result<T6, E6>>,
+            Promise<Result<T7, E7>>,
+            Promise<Result<T8, E8>>,
+            Promise<Result<T9, E9>>,
+            Promise<Result<T10, E10>>,
+        ],
+    ): Promise<Result<[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10], E1 | E2 | E3 | E4 | E5 | E6 | E7 | E8 | E9 | E10>>;
+    static mergeAsync(results: Promise<Result<unknown, unknown>>[]) {
+        return results.reduce(
+            (prev: Promise<Result<unknown[], unknown>>, current: Promise<Result<unknown, unknown>>) => {
+                return current.then(
+                    proceed(currentValue => prev.then(
+                        map(prevValue => Promise.resolve(prevValue.concat([currentValue])))),
+                    ),
+                );
+            },
+            Promise.resolve(Result.ok<unknown[], unknown>([])),
+        );
+    }
+
     static ok<T, E>(value: T): Result<T, E> {
         return new Result<T, E, ResultType.OK>(ResultType.OK, value);
     }
@@ -166,6 +362,8 @@ export class Result<T, E, R extends ResultType = ResultType> implements Monad<T>
 }
 
 export const {
+    merge,
+    mergeAsync,
     ok,
     err,
     map,
