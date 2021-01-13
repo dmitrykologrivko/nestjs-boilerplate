@@ -13,7 +13,7 @@
     "create-ts-index": "^1.13.6",
     "dotenv": "^8.2.0",
     "minimist": "^1.2.5",
-    "sqlite3": "^5.0.0"
+    "sqlite3": "5.0.0"
   },
   "peerDependencies": {
     "@nestjs/common": "^7.4.4",
