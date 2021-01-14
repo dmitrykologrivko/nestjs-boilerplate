@@ -119,7 +119,7 @@ export class AsyncResult<T, E> {
     }
 
     static from<T, E>(
-        result: Result<T, E> | Promise<Result<T, E>> | (() => Result<T, E>) | (() => Promise<Result<T, E>>),
+        result: Result<T, E> | Promise<Result<T, E>> | (() => Result<T, E> | Promise<Result<T, E>>),
     ): AsyncResult<T, E> {
         if (typeof result === 'function') {
             result = result();
@@ -133,7 +133,7 @@ export class AsyncResult<T, E> {
     }
 
     map<U>(
-        fn: ((val: T) => U) | ((val: T) => Promise<U>),
+        fn: (val: T) => U | Promise<U>,
     ): AsyncResult<U, E> {
         return new AsyncResult<U, E>(
             this._promise.then(
@@ -143,7 +143,7 @@ export class AsyncResult<T, E> {
     }
 
     mapErr<U>(
-        fn: ((val: E) => U) | ((val: E) => Promise<U>),
+        fn: (val: E) => U | Promise<U>,
     ): AsyncResult<T, U> {
         return new AsyncResult<T, U>(
             this._promise.then(
@@ -153,7 +153,7 @@ export class AsyncResult<T, E> {
     }
 
     proceed<U, V>(
-        fn: ((value: T) => Result<U, E | V>) | ((value: T) => Promise<Result<U, E | V>>),
+        fn: (value: T) => Result<U, E | V> | Promise<Result<U, E | V>>,
     ): AsyncResult<U, E | V> {
         return new AsyncResult<U, E | V>(
             this._promise.then(
@@ -163,7 +163,7 @@ export class AsyncResult<T, E> {
     }
 
     fallback(
-        fn: ((err: E) => Result<T, E>) | ((err: E) => Promise<Result<T, E>>),
+        fn: (err: E) => Result<T, E> | Promise<Result<T, E>>,
     ): AsyncResult<T, E> {
         return new AsyncResult<T, E>(
             this._promise.then(
@@ -181,7 +181,7 @@ export class AsyncResult<T, E> {
      * @param fn
      */
     and_then<U, V>(
-        fn: ((value: T) => Result<U, E | V>) | ((value: T) => Promise<Result<U, E | V>>),
+        fn: (value: T) => Result<U, E | V> | Promise<Result<U, E | V>>,
     ): AsyncResult<U, E | V>  {
         return this.proceed(fn);
     }
@@ -190,7 +190,7 @@ export class AsyncResult<T, E> {
      * @deprecated
      * @param fn
      */
-    map_err<U>(fn: ((val: E) => U) | ((val: E) => Promise<U>)): AsyncResult<T, U> {
+    map_err<U>(fn: (val: E) => U | Promise<U>): AsyncResult<T, U> {
         return this.mapErr(fn);
     }
 
