@@ -105,10 +105,10 @@ export class AsyncResult<T, E> {
         ],
     ): AsyncResult<[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10], E1 | E2 | E3 | E4 | E5 | E6 | E7 | E8 | E9 | E10>;
     static merge(results: (Result<unknown, unknown> | Promise<Result<unknown, unknown>>)[]) {
-        const asyncResult = AsyncResult.from(Result.ok<unknown[], unknown>([]));
+        let asyncResult = AsyncResult.from(Result.ok<unknown[], unknown>([]));
 
         results.forEach(result => {
-            asyncResult.proceed(prevValue => {
+            asyncResult = asyncResult.proceed(prevValue => {
                 return AsyncResult.from(result)
                     .map(currentValue => prevValue.concat([currentValue]))
                     .toPromise();
