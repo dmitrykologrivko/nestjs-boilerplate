@@ -1,4 +1,5 @@
 export * from './base-crud.service';
+export * from './crud.constants';
 export * from './crud-operations.enum';
 export * from './destroy-query.interface';
 export * from './filter-chain.util';
