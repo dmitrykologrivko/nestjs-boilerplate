@@ -1,3 +1,4 @@
+export * from './skip-validation.decorator';
 export * from './class-validator.util';
 export * from './validate.util';
 export * from './validation.exception';
