@@ -10,7 +10,7 @@ export function ReadOnly(options?: ExposeOptions) {
     ];
 
     const groups = [
-        ...options.groups || [],
+        ...options?.groups || [],
         CrudOperations.READ,
     ].filter(group => !restrictedOperations.includes(group))
 

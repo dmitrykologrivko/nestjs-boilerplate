@@ -9,7 +9,7 @@ export function WriteOnly(options?: ExposeOptions) {
     ];
 
     const groups = [
-        ...options.groups || [],
+        ...options?.groups || [],
         ...CRUD_CREATE_UPDATE_OPERATIONS,
     ].filter(group => !restrictedOperations.includes(group))
 
