@@ -1,5 +1,7 @@
+import { applyDecorators } from '@nestjs/common';
 import { Expose, ExposeOptions } from 'class-transformer';
 import { CrudOperations } from './crud-operations.enum';
+import { SkipValidation } from '../../utils/validation/skip-validation.decorator';
 
 export function ReadOnly(options?: ExposeOptions) {
     const restrictedOperations = [
@@ -14,5 +16,8 @@ export function ReadOnly(options?: ExposeOptions) {
         CrudOperations.READ,
     ].filter(group => !restrictedOperations.includes(group))
 
-    return Expose({ ...options, groups });
+    return applyDecorators(
+        SkipValidation({ always: true }),
+        Expose({ ...options, groups }),
+    );
 }
