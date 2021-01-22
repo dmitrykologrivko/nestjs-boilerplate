@@ -1,3 +1,5 @@
+export * from './aggregate-root.decorator';
+export * from './base.aggregate-root';
 export * from './base.entity';
 export * from './base-soft-deletable.entity';
 export * from './base.value-object';
