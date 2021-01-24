@@ -5,5 +5,5 @@ export function ElementCollection<T>(
     inverseSide: string | ((object: T) => any),
     options?: RelationOptions
 ) {
-    return OneToMany(() => type, inverseSide, { ...options, cascade: true, onDelete: 'CASCADE' })
+    return OneToMany(() => type, inverseSide, { ...options, cascade: true, onDelete: 'CASCADE', primary: true })
 }
