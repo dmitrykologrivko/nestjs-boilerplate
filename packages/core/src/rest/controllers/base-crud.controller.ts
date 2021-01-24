@@ -19,8 +19,8 @@ export abstract class BaseCrudController<D extends IdentifiableObject> {
     async list(filter: ListQuery) {
         const result = await this.service.list(filter);
 
-        if (result.is_err()) {
-            throw result.unwrap_err();
+        if (result.isErr()) {
+            throw result.unwrapErr();
         }
 
         return result.unwrap();
@@ -29,8 +29,8 @@ export abstract class BaseCrudController<D extends IdentifiableObject> {
     async retrieve(id: any) {
         const result = await this.service.retrieve({ id });
 
-        if (result.is_err()) {
-            throw result.unwrap_err();
+        if (result.isErr()) {
+            throw result.unwrapErr();
         }
 
         return result.unwrap();
@@ -39,8 +39,8 @@ export abstract class BaseCrudController<D extends IdentifiableObject> {
     async create(input: D) {
         const result = await this.service.create(input);
 
-        if (result.is_err()) {
-            throw result.unwrap_err();
+        if (result.isErr()) {
+            throw result.unwrapErr();
         }
 
         return result.unwrap();
@@ -49,8 +49,8 @@ export abstract class BaseCrudController<D extends IdentifiableObject> {
     async replace(id: any, input: D) {
         const result = await this.service.update({ ...input, id });
 
-        if (result.is_err()) {
-            throw result.unwrap_err();
+        if (result.isErr()) {
+            throw result.unwrapErr();
         }
 
         return result.unwrap();
@@ -59,8 +59,8 @@ export abstract class BaseCrudController<D extends IdentifiableObject> {
     async partial_update(id: any, input: D) {
         const result = await this.service.update({ ...input, id }, true);
 
-        if (result.is_err()) {
-            throw result.unwrap_err();
+        if (result.isErr()) {
+            throw result.unwrapErr();
         }
 
         return result.unwrap();
@@ -69,8 +69,8 @@ export abstract class BaseCrudController<D extends IdentifiableObject> {
     async destroy(id: any) {
         const result = await this.service.destroy({ id });
 
-        if (result.is_err()) {
-            throw result.unwrap_err();
+        if (result.isErr()) {
+            throw result.unwrapErr();
         }
 
         return result.unwrap();
