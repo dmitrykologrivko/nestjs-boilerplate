@@ -1,9 +1,3 @@
-import { DeleteDateColumn } from 'typeorm';
-import { BaseEntity } from './base.entity';
-import { SoftDeletable } from './soft-deletable.interface';
+import { BaseSoftDeletableEntity } from './base-soft-deletable.entity';
 
-export abstract class BaseSoftDeletableAggregateRoot<T> extends BaseEntity<T> implements SoftDeletable {
-
-    @DeleteDateColumn()
-    deleted: Date;
-}
+export abstract class BaseSoftDeletableAggregateRoot<T> extends BaseSoftDeletableEntity<T> {}

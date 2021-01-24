@@ -1,8 +1,8 @@
 import {
-    DatabaseEntity,
     DatabaseEntityOptions,
 } from '../../database/database-entity.decorator';
+import { Entity } from './entity.decorator';
 
 export function AggregateRoot(options?: DatabaseEntityOptions) {
-    return DatabaseEntity(options);
+    return Entity(options);
 }
