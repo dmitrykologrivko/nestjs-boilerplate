@@ -1,9 +1,5 @@
-import { applyDecorators } from '@nestjs/common';
-import { OneToOne, JoinColumn } from 'typeorm';
+import { OneToOne } from 'typeorm';
 
 export function SeparateElement(type: Function) {
-    return applyDecorators(
-        OneToOne(() => type, { cascade: true, onDelete: 'CASCADE', primary: true }),
-        JoinColumn(),
-    );
+    return OneToOne(() => type, { cascade: true });
 }
