@@ -3,6 +3,6 @@ import {
 } from '../../database/database-entity.decorator';
 import { Entity } from './entity.decorator';
 
-export function AggregateRoot(options?: DatabaseEntityOptions) {
+export function RootEntity(options?: DatabaseEntityOptions) {
     return Entity(options);
 }
