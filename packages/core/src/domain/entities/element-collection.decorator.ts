@@ -1,6 +1,7 @@
 import { OneToMany, RelationOptions, ObjectType } from 'typeorm';
+import { BaseValueObject } from './base.value-object';
 
-export function ElementCollection<T>(
+export function ElementCollection<T extends BaseValueObject>(
     type: ObjectType<T>,
     inverseSide: string | ((object: T) => any),
     options?: RelationOptions
