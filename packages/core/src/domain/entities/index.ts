@@ -12,5 +12,5 @@ export * from './entity.decorator';
 export * from './child-entity.decorator';
 export * from './value-object.decorator';
 export * from './embedded.decorator';
-export * from './separate-element.decorator';
+export * from './element.decorator';
 export * from './element-collection.decorator';

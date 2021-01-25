@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { validate, ValidationOptions, ValidationError } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import { ClassType } from 'class-transformer/ClassTransformer';
-import { Result, Ok, Err } from '../monads/result';
+import { Result, ok, err } from '../monads/result';
 import { ValidationException } from './validation.exception';
 import { ValidationContainerException } from './validation-container.exception';
 
@@ -34,12 +34,12 @@ export class ClassValidator {
         const errors = await validate(validatableObject, validationOptions);
 
         if (errors !== undefined && errors.length !== 0) {
-            return Err(
+            return err(
                 new ValidationContainerException(ClassValidator.toValidationExceptions(errors)),
             );
         }
 
-        return Ok(null);
+        return ok(null);
     }
 
     /**

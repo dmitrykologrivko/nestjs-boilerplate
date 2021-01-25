@@ -1,12 +1,12 @@
 import { Entity, EntityOptions, PrimaryGeneratedColumn } from 'typeorm';
 
 export interface ValueObjectOptions extends EntityOptions {
-    separatable: boolean;
+    segregated: boolean;
 }
 
 export function ValueObject(options?: ValueObjectOptions): ClassDecorator {
     return (constructor: Function) => {
-        if (options?.separatable) {
+        if (options?.segregated) {
             Object.defineProperty(
                 constructor.prototype,
                 '_id',

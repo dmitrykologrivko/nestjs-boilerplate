@@ -1,4 +1,4 @@
-import { Result, Ok, Err } from '../monads/result';
+import { Result, ok, err } from '../monads/result';
 import {
     isEmail,
     isNotEmpty,
@@ -44,15 +44,15 @@ export class Validate {
      * @return single validation result
      */
     static withResults(results: ValidationResult[]): ValidationContainerResult {
-        const errorResults = results.filter(result => result.is_err());
+        const errorResults = results.filter(result => result.isErr());
 
         if (errorResults.length > 0) {
-            return Err(
-                new ValidationContainerException(errorResults.map(result => result.unwrap_err())),
+            return err(
+                new ValidationContainerException(errorResults.map(result => result.unwrapErr())),
             );
         }
 
-        return Ok(null);
+        return ok(null);
     }
 
     /**
@@ -157,9 +157,9 @@ export class Validate {
      */
     isValid(): ValidationResult {
         if (this.exception) {
-            return Err(this.exception);
+            return err(this.exception);
         }
-        return Ok(null);
+        return ok(null);
     }
 
     private rejectValidation(constraint: string, message: string) {
