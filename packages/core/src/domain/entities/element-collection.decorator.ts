@@ -1,14 +1,5 @@
-import { OneToMany, RelationOptions, ObjectType } from 'typeorm';
-import { BaseValueObject } from './base.value-object';
+import { OneToMany, ObjectType } from 'typeorm';
 
-export function ElementCollection<T extends BaseValueObject>(
-    type: ObjectType<T>,
-    inverseSide: string | ((object: T) => any),
-    options?: RelationOptions
-) {
-    return OneToMany(
-        () => type,
-        inverseSide,
-        { ...options, cascade: true, eager: true, primary: true },
-    );
+export function ElementCollection<T>(type: (type?: any) => ObjectType<T>) {
+    return OneToMany(type, '_parent', { cascade: true, eager: true });
 }

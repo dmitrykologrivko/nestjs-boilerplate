@@ -139,7 +139,13 @@ export class Validate {
         return this;
     }
 
-    custom(constraint: string, message: string, fn: (value: unknown) => boolean,): Validate {
+    /**
+     * Allows to execute custom validation function
+     * @param constraint name of validation constraint
+     * @param message validation error message
+     * @param fn validation function
+     */
+    custom(constraint: string, message: string, fn: (value: unknown) => boolean): Validate {
         if (this.nullable && !this.value) {
             return this;
         }
@@ -160,6 +166,12 @@ export class Validate {
             return err(this.exception);
         }
         return ok(null);
+    }
+
+    assertValid() {
+        if (this.exception) {
+            throw this.exception;
+        }
     }
 
     private rejectValidation(constraint: string, message: string) {
