@@ -16,22 +16,10 @@ const DELETED_PROPERTY = 'deleted';
 
 export function ChildEntity(options?: DatabaseChildEntityOptions): ClassDecorator {
     return (target: Function) => {
-        if (target.prototype[ID_PROPERTY]) {
-            PrimaryGeneratedColumn()(target.prototype, ID_PROPERTY);
-        }
-
-        if (target.prototype[CREATED_PROPERTY]) {
-            CreateDateColumn()(target.prototype, CREATED_PROPERTY)
-        }
-
-        if (target.prototype[UPDATED_PROPERTY]) {
-            UpdateDateColumn()(target.prototype, UPDATED_PROPERTY)
-        }
-
-        if (target.prototype[DELETED_PROPERTY]) {
-            DeleteDateColumn()(target.prototype, DELETED_PROPERTY)
-        }
-
+        PrimaryGeneratedColumn()(target.prototype, ID_PROPERTY);
+        CreateDateColumn()(target.prototype, CREATED_PROPERTY);
+        UpdateDateColumn()(target.prototype, UPDATED_PROPERTY);
+        DeleteDateColumn()(target.prototype, DELETED_PROPERTY);
         DatabaseChildEntity(options)(target);
     };
 }
