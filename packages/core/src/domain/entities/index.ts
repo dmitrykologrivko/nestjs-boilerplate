@@ -1,3 +1,4 @@
+export * from './base.element';
 export * from './base.root-entity';
 export * from './base.entity';
 export * from './base.value-object';
