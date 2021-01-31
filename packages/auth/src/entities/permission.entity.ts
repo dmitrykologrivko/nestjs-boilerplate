@@ -1,7 +1,7 @@
 import { Column } from 'typeorm';
 import {
     Entity,
-    BaseEntity,
+    BaseTypeormEntity,
     Validate,
     ValidationContainerException,
     Result
@@ -11,7 +11,7 @@ export const PERMISSION_NAME_MAX_LENGTH = 255;
 export const CODENAME_MAX_LENGTH = 100;
 
 @Entity()
-export class Permission extends BaseEntity {
+export class Permission extends BaseTypeormEntity {
 
     @Column({
         name: 'name',

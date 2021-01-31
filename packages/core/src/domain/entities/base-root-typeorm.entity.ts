@@ -2,7 +2,7 @@ import { PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'type
 import { BaseRootEntity } from './base.root-entity';
 import { TimeStamped } from './time-stamped.interface';
 
-export abstract class BaseRootTypeormEntity<T> extends BaseRootEntity<T> implements TimeStamped {
+export abstract class BaseRootTypeormEntity<T = number> extends BaseRootEntity<T> implements TimeStamped {
 
     @PrimaryGeneratedColumn()
     id: T;

@@ -1,7 +1,7 @@
 import { Column, ManyToOne } from 'typeorm';
 import {
     Entity,
-    BaseEntity,
+    BaseTypeormEntity,
     getTargetName,
     Validate,
     ValidationContainerException,
@@ -10,7 +10,7 @@ import {
 import { User } from './user.entity';
 
 @Entity()
-export class RevokedToken extends BaseEntity {
+export class RevokedToken extends BaseTypeormEntity {
 
     @Column({
         name: 'token',

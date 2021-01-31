@@ -1,7 +1,7 @@
 import { Column, ManyToMany, JoinTable } from 'typeorm';
 import {
     Entity,
-    BaseEntity,
+    BaseTypeormEntity,
     Validate,
     ValidationContainerException,
     Result
@@ -11,7 +11,7 @@ import { Permission } from './permission.entity';
 export const GROUP_NAME_MAX_LENGTH = 150;
 
 @Entity()
-export class Group extends BaseEntity {
+export class Group extends BaseTypeormEntity {
 
     @Column({
         name: 'name',

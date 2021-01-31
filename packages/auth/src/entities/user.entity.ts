@@ -2,7 +2,7 @@ import * as bcrypt from 'bcrypt';
 import { Column, JoinTable, ManyToMany } from 'typeorm';
 import {
     Entity,
-    BaseEntity,
+    BaseTypeormEntity,
     Validate,
     ValidationResult,
     ValidationContainerResult,
@@ -22,7 +22,7 @@ export const FIRST_NAME_MAX_LENGTH = 30;
 export const LAST_NAME_MAX_LENGTH = 150;
 
 @Entity({ swappable: true })
-export class User extends BaseEntity {
+export class User extends BaseTypeormEntity {
 
     @Column({
         name: 'username',
