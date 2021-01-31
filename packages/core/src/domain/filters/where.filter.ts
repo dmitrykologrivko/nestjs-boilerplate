@@ -124,10 +124,10 @@ export class WhereFilter<E> extends BaseFilter<E> {
                     whereCondition = [`${field} LIKE :${index}`, { [index]: `%${queryValue}` }];
                     break;
                 case QUERY_CONDITIONS.cont:
-                    whereCondition = [`${field} LINE :${index}`, { [index]: `%${queryValue}%` }];
+                    whereCondition = [`${field} LIKE :${index}`, { [index]: `%${queryValue}%` }];
                     break;
                 case QUERY_CONDITIONS.excl:
-                    whereCondition = [`${field} NOT LINE :${index}`, { [index]: `%${queryValue}%` }];
+                    whereCondition = [`${field} NOT LIKE :${index}`, { [index]: `%${queryValue}%` }];
                     break;
                 case QUERY_CONDITIONS.in:
                     whereCondition = [

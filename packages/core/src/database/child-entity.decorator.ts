@@ -4,7 +4,7 @@ export interface DatabaseChildEntityOptions {
     discriminatorValue?: any;
 }
 
-export function DatabaseChildEntity(options: DatabaseChildEntityOptions = {}): ClassDecorator {
+export function ChildEntity(options: DatabaseChildEntityOptions = {}): ClassDecorator {
     return (constructor: Function) => {
         TypeOrmChildEntity(options.discriminatorValue)(constructor);
     };

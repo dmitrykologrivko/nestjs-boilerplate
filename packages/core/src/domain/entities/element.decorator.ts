@@ -1,15 +1,10 @@
 import {
     Entity,
     EntityOptions,
-    PrimaryGeneratedColumn,
     OneToOne,
     ManyToOne,
-    JoinColumn,
     ObjectType,
 } from 'typeorm';
-
-const ID_PROPERTY = '_id';
-const PARENT_PROPERTY = '_parent';
 
 export interface ElementOptions<T> extends EntityOptions {
     single?: boolean;
@@ -18,33 +13,11 @@ export interface ElementOptions<T> extends EntityOptions {
 
 export function Element<T>(options: ElementOptions<T>): ClassDecorator {
     return (constructor: Function) => {
-        Object.defineProperty(
-            constructor.prototype,
-            ID_PROPERTY,
-            {
-                configurable: true,
-                writable: true,
-            }
-        )
-
-        PrimaryGeneratedColumn({ name: 'id' })(constructor.prototype, ID_PROPERTY);
-
-        Object.defineProperty(
-            constructor.prototype,
-            PARENT_PROPERTY,
-            {
-                configurable: true,
-                writable: true,
-            }
-        )
-
         if (options?.single) {
-            OneToOne(options.parent, { onDelete: 'CASCADE' })(constructor.prototype, PARENT_PROPERTY);
+            OneToOne(options.parent, { onDelete: 'CASCADE' })(constructor.prototype, '_parent');
         } else {
-            ManyToOne(options.parent, { onDelete: 'CASCADE' })(constructor.prototype, PARENT_PROPERTY);
+            ManyToOne(options.parent, { onDelete: 'CASCADE' })(constructor.prototype, '_parent');
         }
-
-        JoinColumn({ name: 'parent' })(constructor.prototype, PARENT_PROPERTY);
 
         const parentName = typeof options.parent === 'string'
             ? options.parent
