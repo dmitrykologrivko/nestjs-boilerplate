@@ -1,12 +1,11 @@
-import { PrimaryGeneratedColumn, JoinColumn } from 'typeorm';
+import { PrimaryGeneratedColumn } from 'typeorm';
 import { BaseValueObject } from './base.value-object';
 
-export abstract class BaseElement<T, V = number> extends BaseValueObject {
+export abstract class BaseElement<T, K = number> extends BaseValueObject {
 
     @PrimaryGeneratedColumn({ name: 'id' })
-    private _id: V;
+    private _id: K;
 
-    @JoinColumn({ name: 'parent' })
-    protected _parent: T;
+    private _parent: T;
 
 }

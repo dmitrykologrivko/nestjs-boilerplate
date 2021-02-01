@@ -3,8 +3,11 @@ import {
     EntityOptions,
     OneToOne,
     ManyToOne,
+    JoinColumn,
     ObjectType,
 } from 'typeorm';
+
+const PARENT_PROPERTY = '_parent';
 
 export interface ElementOptions<T> extends EntityOptions {
     single?: boolean;
@@ -13,21 +16,14 @@ export interface ElementOptions<T> extends EntityOptions {
 
 export function Element<T>(options: ElementOptions<T>): ClassDecorator {
     return (constructor: Function) => {
-        if (options?.single) {
-            OneToOne(options.parent, { onDelete: 'CASCADE' })(constructor.prototype, '_parent');
+        if (options.single) {
+            OneToOne(options.parent, { onDelete: 'CASCADE' })(constructor.prototype, PARENT_PROPERTY);
         } else {
-            ManyToOne(options.parent, { onDelete: 'CASCADE' })(constructor.prototype, '_parent');
+            ManyToOne(options.parent, { onDelete: 'CASCADE' })(constructor.prototype, PARENT_PROPERTY);
         }
 
-        const parentName = typeof options.parent === 'string'
-            ? options.parent
-            : options.parent().name;
+        JoinColumn()(constructor.prototype, PARENT_PROPERTY);
 
-        Entity(
-            {
-                ...options,
-                name: `${parentName}__${options.name || constructor.name}`,
-            },
-        )(constructor);
+        Entity(options)(constructor);
     }
 }
