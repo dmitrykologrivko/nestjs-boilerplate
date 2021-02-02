@@ -3,7 +3,7 @@ import { ClassType } from 'class-transformer/ClassTransformer';
 import { ClassTransformer } from '../../utils/class-transformer.util';
 import { ClassValidator } from '../../utils/validation/class-validator.util';
 import { ValidationContainerException } from '../../utils/validation/validation-container.exception';
-import { Result, Ok, Err } from '../../utils/monads';
+import { Result, ok, err } from '../../utils/monads';
 import { EntityNotFoundException } from '../entities/entity-not-found.exception';
 import { BaseDomainPermission } from '../permissions/base-domain.permission';
 import { PermissionDeniedException } from '../permissions/permission-denied.exception';
@@ -31,10 +31,10 @@ export abstract class BaseCrudService<E extends IdentifiableObject, D extends Id
         input: T
     ): Promise<Result<U, PermissionDeniedException>> {
         if (!this.checkPermissions(input)) {
-            return Err(new PermissionDeniedException());
+            return err(new PermissionDeniedException());
         }
 
-        const queryBuilder = this.getListQuery();
+        const queryBuilder = this.getListQuery(input);
 
         const chain = FilterChain.create<E>(queryBuilder);
 
@@ -57,36 +57,36 @@ export abstract class BaseCrudService<E extends IdentifiableObject, D extends Id
             })) as U;
         }
 
-        return Ok(output);
+        return ok(output);
     }
 
     async retrieve<T extends RetrieveQuery>(
         input: T,
     ): Promise<Result<D, PermissionDeniedException | EntityNotFoundException>> {
         if (!this.checkPermissions(input)) {
-            return Err(new PermissionDeniedException());
+            return err(new PermissionDeniedException());
         }
 
-        const entity = await this.getObjectQuery(input.id).getOne();
+        const entity = await this.getRetrieveObjectQuery(input).getOne();
 
         if (!entity) {
-            return Err(new EntityNotFoundException());
+            return err(new EntityNotFoundException());
         }
 
         if (!this.checkEntityPermissions(input, entity)) {
-            return Err(new PermissionDeniedException());
+            return err(new PermissionDeniedException());
         }
 
         const output = this.mapDtoOutput(entity) as D;
 
-        return Ok(output);
+        return ok(output);
     }
 
     async create(
         input: D,
     ): Promise<Result<D, PermissionDeniedException | ValidationContainerException>> {
         if (!this.checkPermissions(input)) {
-            return Err(new PermissionDeniedException());
+            return err(new PermissionDeniedException());
         }
 
         const validateResult = await ClassValidator.validate(
@@ -95,8 +95,8 @@ export abstract class BaseCrudService<E extends IdentifiableObject, D extends Id
             { groups: [CrudOperations.CREATE] },
         );
 
-        if (validateResult.is_err()) {
-            return Err(validateResult.unwrap_err());
+        if (validateResult.isErr()) {
+            return err(validateResult.unwrapErr());
         }
 
         // Transform input to omit fields not related for create operation
@@ -112,7 +112,7 @@ export abstract class BaseCrudService<E extends IdentifiableObject, D extends Id
             await this.getObjectQuery(entity.id).getOne(),
         ) as D;
 
-        return Ok(output);
+        return ok(output);
     }
 
     async update(
@@ -120,17 +120,17 @@ export abstract class BaseCrudService<E extends IdentifiableObject, D extends Id
         partial: boolean = false,
     ): Promise<Result<D, PermissionDeniedException | EntityNotFoundException | ValidationContainerException>> {
         if (!this.checkPermissions(input)) {
-            return Err(new PermissionDeniedException());
+            return err(new PermissionDeniedException());
         }
 
-        let entity = await this.getObjectQuery(input.id).getOne();
+        let entity = await this.getUpdateObjectQuery(input).getOne();
 
         if (!entity) {
-            return Err(new EntityNotFoundException());
+            return err(new EntityNotFoundException());
         }
 
         if (!this.checkEntityPermissions(input, entity)) {
-            return Err(new PermissionDeniedException());
+            return err(new PermissionDeniedException());
         }
 
         const groups = partial ? [CrudOperations.PARTIAL_UPDATE] : [CrudOperations.UPDATE];
@@ -141,8 +141,8 @@ export abstract class BaseCrudService<E extends IdentifiableObject, D extends Id
             { groups },
         );
 
-        if (validateResult.is_err()) {
-            return Err(validateResult.unwrap_err());
+        if (validateResult.isErr()) {
+            return err(validateResult.unwrapErr());
         }
 
         // Transform input to omit fields not related for update operation
@@ -158,29 +158,29 @@ export abstract class BaseCrudService<E extends IdentifiableObject, D extends Id
             await this.getObjectQuery(entity.id).getOne(),
         ) as D;
 
-        return Ok(output);
+        return ok(output);
     }
 
     async destroy<T extends DestroyQuery>(
         input: T,
     ): Promise<Result<void, PermissionDeniedException | EntityNotFoundException>> {
         if (!this.checkPermissions(input)) {
-            return Err(new PermissionDeniedException());
+            return err(new PermissionDeniedException());
         }
 
-        const entity = await this.getObjectQuery(input.id).getOne();
+        const entity = await this.getDestroyObjectQuery(input).getOne();
 
         if (!entity) {
-            return Err(new EntityNotFoundException());
+            return err(new EntityNotFoundException());
         }
 
         if (!this.checkEntityPermissions(input, entity)) {
-            return Err(new PermissionDeniedException());
+            return err(new PermissionDeniedException());
         }
 
         await this.performDestroyEntity(entity);
 
-        return Ok(null);
+        return ok(null);
     }
 
     protected async performCreateEntity(input: D): Promise<E> {
@@ -224,7 +224,7 @@ export abstract class BaseCrudService<E extends IdentifiableObject, D extends Id
         return true;
     }
 
-    protected getListQuery(): SelectQueryBuilder<E> {
+    protected getListQuery<T extends ListQuery>(input: T): SelectQueryBuilder<E> {
         return this.repository.createQueryBuilder(
             this.repository.metadata.name,
         );
@@ -235,6 +235,18 @@ export abstract class BaseCrudService<E extends IdentifiableObject, D extends Id
 
         return this.repository.createQueryBuilder(alias)
             .where(`${alias}.id = :id`, { id });
+    }
+
+    protected getRetrieveObjectQuery<T extends RetrieveQuery>(input: T): SelectQueryBuilder<E> {
+        return this.getObjectQuery(input.id);
+    }
+
+    protected getUpdateObjectQuery(input: D): SelectQueryBuilder<E> {
+        return this.getObjectQuery(input.id);
+    }
+
+    protected getDestroyObjectQuery<T extends DestroyQuery>(input: T): SelectQueryBuilder<E> {
+        return this.getObjectQuery(input.id);
     }
 
     protected getFilters<T extends ListQuery>(
