@@ -56,6 +56,35 @@ export class Validate {
     }
 
     /**
+     * Asserts if validation results are ok else throws ValidationContainerException
+     * @param results array of separated validation results
+     * @throws ValidationContainerException
+     */
+    static assertResults(results: ValidationResult[]) {
+        const result = Validate.withResults(results);
+
+        if (result.isErr()) {
+            throw result.unwrapErr();
+        }
+    }
+
+    /**
+     * Wraps construction of class object and return Result
+     * Allows to catch thrown validation exceptions
+     * @param fn function that returns new instance of class object
+     */
+    static wrapConstruction<T>(fn: () => T): Result<T, ValidationContainerException> {
+        try {
+            return ok(fn());
+        } catch (e) {
+            if (e instanceof ValidationException) {
+                return err(new ValidationContainerException([e]));
+            }
+            return err(e);
+        }
+    }
+
+    /**
      * Checks if value is not empty
      * @return Validate instance
      */
@@ -168,6 +197,10 @@ export class Validate {
         return ok(null);
     }
 
+    /**
+     * Asserts if validation is ok else throws ValidationException
+     * @throws ValidationException
+     */
     assertValid() {
         if (this.exception) {
             throw this.exception;
