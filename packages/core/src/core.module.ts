@@ -3,6 +3,8 @@ import { Module, DynamicModule } from '@nestjs/common';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
 import { DEVELOPMENT_ENVIRONMENT } from './environment/environment.constants';
 import { isProductionEnvironment } from './environment/environment.utils';
+import { DEFAULT_CONNECTION_NAME } from './database/database.constants';
+import { isNotEmpty } from './utils/precondition.utils';
 import {
     ConfigModule,
     ConfigModuleOptions,
@@ -11,12 +13,10 @@ import {
 import {
     DatabaseModule,
     DatabaseModuleOptions,
-    DEFAULT_CONNECTION_NAME,
-} from './database';
-import { ServerModule } from './server';
-import { ManagementModule } from './management';
-import { UtilsModule } from './utils';
-import { isNotEmpty } from './utils/precondition.utils';
+} from './database/database.module';
+import { HttpModule } from './http/http.module';
+import { ManagementModule } from './management/management.module';
+import { UtilsModule } from './utils/utils.module';
 
 export interface CoreModuleOptions extends Pick<ModuleMetadata, 'imports'> {
     config?: ConfigModuleOptions | ConfigFactory[];
@@ -29,7 +29,7 @@ export interface CoreModuleOptions extends Pick<ModuleMetadata, 'imports'> {
 
 @Module({
     imports: [
-        ServerModule,
+        HttpModule,
         ManagementModule,
         UtilsModule,
     ],
