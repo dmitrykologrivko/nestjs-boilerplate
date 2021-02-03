@@ -4,7 +4,7 @@ export * from './database';
 export * from './domain';
 export * from './environment';
 export * from './management';
-export * from './rest';
+export * from './http';
 export * from './server';
 export * from './utils';
 export * from './core.module';
