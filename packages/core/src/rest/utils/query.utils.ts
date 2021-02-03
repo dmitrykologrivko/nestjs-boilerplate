@@ -3,6 +3,9 @@ import { OrderingQuery } from '../../domain/filters/ordering.filter';
 import { WhereQuery, QUERY_NAME_CONDITION_REGEX } from '../../domain/filters/where.filter';
 import { PagePaginationQuery } from '../../domain/pagination/page.pagination';
 import { LimitOffsetPaginationQuery } from '../../domain/pagination/limit-offset.pagination';
+import { ListQuery } from '../../domain/crud/list-query.interface';
+import { RetrieveQuery } from '../../domain/crud/retrieve-query.interface';
+import { DestroyQuery } from '../../domain/crud/destroy-query.interface';
 
 export function extractSearchQuery(request): SearchQuery {
     const { query } = request;
@@ -94,4 +97,24 @@ export function extractLimitOffsetPaginationQuery(request): LimitOffsetPaginatio
         offset: query.offset ? parseInt(query.offset.toString(), 10) : undefined,
         path: buildUrlFromRequest(request),
     }
+}
+
+export function extractListQuery(request, fieldSeparator = '__'): ListQuery {
+    return {
+        ...extractOrderingQuery(request, fieldSeparator),
+        ...extractSearchQuery(request),
+        ...extractWhereQuery(request, fieldSeparator),
+        ...extractPagePaginationQuery(request),
+        ...extractLimitOffsetPaginationQuery(request),
+    }
+}
+
+export function extractRetrieveQuery(request): RetrieveQuery {
+    const { params } = request;
+    return { id: params.id };
+}
+
+export function extractDestroyQuery(request): DestroyQuery {
+    const { params } = request;
+    return { id: params.id };
 }

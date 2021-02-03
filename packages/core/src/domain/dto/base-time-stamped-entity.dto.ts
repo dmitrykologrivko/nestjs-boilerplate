@@ -1,8 +1,8 @@
 import { Expose } from 'class-transformer';
-import { Identifiable } from '../entities/identifiable.interface';
 import { TimeStamped } from '../entities/time-stamped.interface';
+import { BaseEntityDto } from './base-entity.dto';
 
-export class TimeStampedEntityDto<T = number> implements Identifiable<T>, TimeStamped {
+export abstract class BaseTimeStampedEntityDto<T = number> extends BaseEntityDto<T> implements TimeStamped {
 
     @Expose()
     id: T;
@@ -12,4 +12,5 @@ export class TimeStampedEntityDto<T = number> implements Identifiable<T>, TimeSt
 
     @Expose()
     updated: Date;
+
 }

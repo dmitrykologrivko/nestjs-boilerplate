@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { extractPagePaginationQuery } from './decorators.utils';
+import { extractPagePaginationQuery } from '../utils/query.utils';
 
 export const Page = createParamDecorator(
     (data: unknown, ctx: ExecutionContext) => {

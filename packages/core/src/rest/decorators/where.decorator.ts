@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { extractWhereQuery } from './decorators.utils';
+import { extractWhereQuery } from '../utils/query.utils';
 
 export const Where = (fieldSeparator?: string): ParameterDecorator => {
     return createParamDecorator((data: any, ctx: ExecutionContext) => {

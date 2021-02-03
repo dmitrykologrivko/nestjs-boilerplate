@@ -9,7 +9,7 @@
   "typings": "./dist/main.d.ts",
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.json",
-    "start": "npm run build && node dist/main"
+    "start": "node dist/main"
   },
   "devDependencies": {
     "@nestjs-boilerplate/auth": "^0.0.0",
