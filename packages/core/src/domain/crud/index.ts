@@ -8,6 +8,6 @@ export * from './list.input';
 export * from './list-query.interface';
 export * from './partial-update.decorator';
 export * from './read-only.decorator';
-export * from './list.input';
+export * from './retrieve.input';
 export * from './retrieve-query.interface';
 export * from './write-only.decorator';

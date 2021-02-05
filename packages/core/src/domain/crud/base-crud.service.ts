@@ -23,19 +23,26 @@ import { ListInput } from './list.input';
 import { RetrieveInput } from './retrieve.input';
 import { DestroyInput } from './destroy.input';
 
+interface CrudServiceOptions<E, D, CI, UI> {
+    entityCls: ClassType<E>;
+    dtoCls: ClassType<D>;
+    createInputCls: ClassType<CI>;
+    updateInputCls: ClassType<UI>;
+}
+
 export abstract class BaseCrudService<E extends object & BaseEntity, D extends BaseEntityDto,
     LI extends ListQuery = ListInput,
     RI extends RetrieveQuery = RetrieveInput,
     CI extends BaseDto = D,
     UI extends BaseEntityDto = D,
-    DI extends DestroyQuery = DestroyInput> {
+    DI extends DestroyQuery = DestroyInput,
+    CE = any,
+    UE = any,
+    DE = any> {
 
     protected constructor(
         protected readonly repository: Repository<E>,
-        protected readonly entityCls: ClassType<E>,
-        protected readonly dtoCls: ClassType<D>,
-        protected readonly createInputCls: ClassType<CI>,
-        protected readonly updateInputCls: ClassType<UI>,
+        protected readonly options: CrudServiceOptions<E, D, CI, UI>,
     ) {}
 
     async list(
@@ -95,13 +102,13 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
 
     async create(
         input: CI,
-    ): Promise<Result<D, PermissionDeniedException | ValidationContainerException>> {
+    ): Promise<Result<D, PermissionDeniedException | ValidationContainerException | CE>> {
         if (!this.checkPermissions(input)) {
             return err(new PermissionDeniedException());
         }
 
         const validateResult = await ClassValidator.validate(
-            this.createInputCls,
+            this.options.createInputCls,
             input,
             { groups: [CrudOperations.CREATE] },
         );
@@ -112,12 +119,18 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
 
         // Transform input to omit fields not related for create operation
         const omittedInput = ClassTransformer.toClassObject(
-            this.createInputCls,
+            this.options.createInputCls,
             input,
             { groups: [CrudOperations.CREATE] },
         );
 
-        const entity = await this.performCreateEntity(omittedInput);
+        const createEntityResult = await this.performCreateEntity(omittedInput);
+
+        if (createEntityResult.isErr()) {
+            return err(createEntityResult.unwrapErr());
+        }
+
+        const entity = createEntityResult.unwrap();
 
         const output = this.mapDtoOutput(
             await this.getObjectQuery(entity).getOne(),
@@ -129,7 +142,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
     async update(
         input: UI,
         partial: boolean = false,
-    ): Promise<Result<D, PermissionDeniedException | EntityNotFoundException | ValidationContainerException>> {
+    ): Promise<Result<D, PermissionDeniedException | EntityNotFoundException | ValidationContainerException | UE>> {
         if (!this.checkPermissions(input)) {
             return err(new PermissionDeniedException());
         }
@@ -147,7 +160,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         const groups = partial ? [CrudOperations.PARTIAL_UPDATE] : [CrudOperations.UPDATE];
 
         const validateResult = await ClassValidator.validate(
-            this.updateInputCls,
+            this.options.updateInputCls,
             input,
             { groups },
         );
@@ -158,12 +171,18 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
 
         // Transform input to omit fields not related for update operation
         const omittedInput = ClassTransformer.toClassObject(
-            this.updateInputCls,
+            this.options.updateInputCls,
             input,
             { groups },
         );
 
-        entity = await this.performUpdateEntity(omittedInput, entity);
+        const updateEntityResult = await this.performUpdateEntity(omittedInput, entity);
+
+        if (updateEntityResult.isErr()) {
+            return err(updateEntityResult.unwrapErr());
+        }
+
+        entity = updateEntityResult.unwrap();
 
         const output = this.mapDtoOutput(
             await this.getObjectQuery(entity).getOne(),
@@ -174,7 +193,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
 
     async destroy(
         input: DI,
-    ): Promise<Result<void, PermissionDeniedException | EntityNotFoundException>> {
+    ): Promise<Result<void, PermissionDeniedException | EntityNotFoundException | DE>> {
         if (!this.checkPermissions(input)) {
             return err(new PermissionDeniedException());
         }
@@ -189,26 +208,29 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
             return err(new PermissionDeniedException());
         }
 
-        await this.performDestroyEntity(entity);
-
-        return ok(null);
+        return await this.performDestroyEntity(entity);
     }
 
-    protected async performCreateEntity(input: CI): Promise<E> {
-        return await this.repository.save(
-            ClassTransformer.toClassObject(this.entityCls, { ...input, id: null }),
+    protected async performCreateEntity(input: CI): Promise<Result<E, CE>> {
+        return ok(
+            await this.repository.save(
+                ClassTransformer.toClassObject(this.options.entityCls, { ...input, id: null }),
+            ),
         );
     }
 
-    protected async performUpdateEntity(input: UI, entity: E): Promise<E> {
+    protected async performUpdateEntity(input: UI, entity: E): Promise<Result<E, UE>> {
         // Typeorm always doing partial update by excluding undefiled fields from input
-        return await this.repository.save(
-            ClassTransformer.toClassObject(this.entityCls, { ...entity, ...input, id: entity.id }),
+        return ok(
+            await this.repository.save(
+                ClassTransformer.toClassObject(this.options.entityCls, { ...entity, ...input, id: entity.id }),
+            ),
         );
     }
 
-    protected async performDestroyEntity(entity: E) {
+    protected async performDestroyEntity(entity: E): Promise<Result<void, DE>> {
         await this.repository.remove(entity);
+        return ok(null);
     }
 
     protected checkPermissions(input: any) {
@@ -277,7 +299,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
 
     protected mapListDto(entities: E[]): D[] {
         return ClassTransformer.toClassObjects(
-            this.dtoCls,
+            this.options.dtoCls,
             entities,
             { groups: [CrudOperations.READ] },
         );
@@ -285,7 +307,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
 
     protected mapDtoOutput(entity: E): D {
         return ClassTransformer.toClassObject(
-            this.dtoCls,
+            this.options.dtoCls,
             entity,
             { groups: [CrudOperations.READ] },
         );
