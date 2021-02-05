@@ -15,7 +15,15 @@ export class NoteService extends BaseCrudService<Note, NoteDto> {
         @InjectRepository(Note)
         private noteRepository: Repository<Note>,
     ) {
-        super(noteRepository, Note, NoteDto, NoteDto, NoteDto);
+        super(
+            noteRepository,
+            {
+                entityCls: Note,
+                dtoCls: NoteDto,
+                createInputCls: NoteDto,
+                updateInputCls: NoteDto,
+            },
+        );
     }
 
     protected getPagination(input: ListInput): (qb: SelectQueryBuilder<Note>) => PagePagination<Note> {
