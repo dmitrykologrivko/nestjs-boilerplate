@@ -26,6 +26,7 @@ import {
     PermissionDeniedExceptionFilter,
 )
 export abstract class BaseCrudController<D extends BaseEntityDto,
+    PC extends BasePaginatedContainer<D> = BasePaginatedContainer<D>,
     LI extends ListQuery = ListInput,
     RI extends RetrieveQuery = RetrieveInput,
     CI extends BaseDto = D,
@@ -33,10 +34,10 @@ export abstract class BaseCrudController<D extends BaseEntityDto,
     DI extends DestroyQuery = DestroyInput> {
 
     protected constructor(
-        protected readonly service: BaseCrudService<any, D, LI, RI, CI, UI, DI>,
+        protected readonly service: BaseCrudService<any, D, PC, LI, RI, CI, UI, DI>,
     ) {}
 
-    async list(req: Request): Promise<BasePaginatedContainer<D>> {
+    async list(req: Request): Promise<PC> {
         const result = await this.service.list(this.mapListInput(req));
 
         if (result.isErr()) {

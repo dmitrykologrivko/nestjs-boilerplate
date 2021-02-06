@@ -14,7 +14,6 @@ import { Identifiable } from '../entities/identifiable.interface';
 import { BaseFilter } from '../filters/base.filter';
 import { BasePagination } from '../pagination/base.pagination';
 import { BasePaginatedContainer } from '../pagination/base-paginated-container.interface';
-import { PaginatedContainer } from '../pagination/paginated-container.interface';
 import { FilterChain } from './filter-chain.util';
 import { ListQuery } from './list-query.interface';
 import { RetrieveQuery } from './retrieve-query.interface';

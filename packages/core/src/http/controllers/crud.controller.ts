@@ -18,16 +18,18 @@ import { BaseEntityDto } from '../../domain/dto/base-entity.dto';
 import { ListInput } from '../../domain/crud/list.input';
 import { RetrieveInput } from '../../domain/crud/retrieve.input';
 import { DestroyInput } from '../../domain/crud/destroy.input';
+import { BasePaginatedContainer } from '../../domain/pagination/base-paginated-container.interface';
 import { BaseCrudController } from './base-crud.controller';
 
 export abstract class CrudController<D extends BaseEntityDto,
+    PC extends BasePaginatedContainer<D> = BasePaginatedContainer<D>,
     LI extends ListQuery = ListInput,
     RI extends RetrieveQuery = RetrieveInput,
     CI extends BaseDto = D,
     UI extends BaseEntityDto = D,
-    DI extends DestroyQuery = DestroyInput> extends BaseCrudController<D, LI, RI, CI, UI, DI> {
+    DI extends DestroyQuery = DestroyInput> extends BaseCrudController<D, PC, LI, RI, CI, UI, DI> {
 
-    protected constructor(service: BaseCrudService<any, D, LI, RI, CI, UI, DI>) {
+    protected constructor(service: BaseCrudService<any, D, PC, LI, RI, CI, UI, DI>) {
         super(service);
     }
 
