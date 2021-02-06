@@ -209,7 +209,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
             return err(new PermissionDeniedException());
         }
 
-        return await this.performDestroyEntity(entity);
+        return await this.performDestroyEntity(input, entity);
     }
 
     protected async performCreateEntity(input: CI): Promise<Result<E, CE>> {
@@ -229,7 +229,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         );
     }
 
-    protected async performDestroyEntity(entity: E): Promise<Result<void, DE>> {
+    protected async performDestroyEntity(input: DI, entity: E): Promise<Result<void, DE>> {
         await this.repository.remove(entity);
         return ok(null);
     }
