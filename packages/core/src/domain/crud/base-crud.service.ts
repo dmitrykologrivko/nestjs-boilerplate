@@ -41,10 +41,14 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
     UE = any,
     DE = any> {
 
+    protected readonly alias: string;
+
     protected constructor(
         protected readonly repository: Repository<E>,
         protected readonly options: CrudServiceOptions<E, D, CI, UI>,
-    ) {}
+    ) {
+        this.alias = repository.metadata.name;
+    }
 
     async list(
         input: LI,
@@ -258,16 +262,17 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         return true;
     }
 
-    protected getListQuery(input: LI): SelectQueryBuilder<E> {
-        return this.repository.createQueryBuilder(
-            this.repository.metadata.name,
-        );
+    protected getQuery(): SelectQueryBuilder<E> {
+        return this.repository.createQueryBuilder(this.alias);
     }
 
     protected getObjectQuery(id: Identifiable): SelectQueryBuilder<E> {
-        const alias = this.repository.metadata.name;
-        return this.repository.createQueryBuilder(alias)
-            .where(`${alias}.id = :id`, { 'id': id.id });
+        return this.getQuery()
+            .andWhere(`${this.alias}.id = :id`, { 'id': id.id });
+    }
+
+    protected getListQuery(input: LI): SelectQueryBuilder<E> {
+        return this.getQuery();
     }
 
     protected getRetrieveObjectQuery(input: RI): SelectQueryBuilder<E> {
