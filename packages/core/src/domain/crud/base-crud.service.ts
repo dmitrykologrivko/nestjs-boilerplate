@@ -14,6 +14,7 @@ import { Identifiable } from '../entities/identifiable.interface';
 import { BaseFilter } from '../filters/base.filter';
 import { BasePagination } from '../pagination/base.pagination';
 import { BasePaginatedContainer } from '../pagination/base-paginated-container.interface';
+import { PaginatedContainer } from '../pagination/paginated-container.interface';
 import { FilterChain } from './filter-chain.util';
 import { ListQuery } from './list-query.interface';
 import { RetrieveQuery } from './retrieve-query.interface';
@@ -31,6 +32,7 @@ interface CrudServiceOptions<E, D, CI, UI> {
 }
 
 export abstract class BaseCrudService<E extends object & BaseEntity, D extends BaseEntityDto,
+    PC extends BasePaginatedContainer<D> = BasePaginatedContainer<D>,
     LI extends ListQuery = ListInput,
     RI extends RetrieveQuery = RetrieveInput,
     CI extends BaseDto = D,
@@ -47,7 +49,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
 
     async list(
         input: LI,
-    ): Promise<Result<BasePaginatedContainer<D>, PermissionDeniedException>> {
+    ): Promise<Result<PC, PermissionDeniedException>> {
         if (!this.checkPermissions(input)) {
             return err(new PermissionDeniedException());
         }
@@ -62,17 +64,17 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
 
         chain.setPagination(this.getPagination(input));
 
-        let output: BasePaginatedContainer<D>;
+        let output: PC;
 
         if (chain.hasPagination()) {
             output = await chain.mapPaginatedContainer(response => ({
                 ...response,
                 results: this.mapListDto(response.results),
-            })) as BasePaginatedContainer<D>;
+            })) as PC;
         } else {
             output = await chain.reduceEntities(data => ({
                 results: this.mapListDto(data),
-            })) as BasePaginatedContainer<D>;
+            })) as PC;
         }
 
         return ok(output);
