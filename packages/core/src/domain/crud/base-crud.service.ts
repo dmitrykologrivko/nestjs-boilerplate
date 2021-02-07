@@ -137,9 +137,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
 
         const entity = createEntityResult.unwrap();
 
-        const output = this.mapDtoOutput(
-            await this.getObjectQuery(entity).getOne(),
-        ) as D;
+        const output = this.mapDtoOutput(entity) as D;
 
         return ok(output);
     }
@@ -189,9 +187,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
 
         entity = updateEntityResult.unwrap();
 
-        const output = this.mapDtoOutput(
-            await this.getObjectQuery(entity).getOne(),
-        ) as D;
+        const output = this.mapDtoOutput(entity) as D;
 
         return ok(output);
     }
