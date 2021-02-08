@@ -1,1 +1,1 @@
-export class PermissionDeniedException {}
+export class PermissionDeniedException extends Error {}

@@ -4,13 +4,13 @@ import { ValidationExceptionsFilter } from '../filters/validation-exceptions.fil
 import { PermissionDeniedExceptionFilter } from '../filters/permission-denied-exception.filter';
 import { EntityNotFoundExceptionFilter } from '../filters/entity-not-found-exception.filter';
 import { BasePaginatedContainer } from '../../domain/pagination/base-paginated-container.interface';
-import { BaseCrudService } from '../../domain/crud/base-crud.service';
-import { ListQuery } from '../../domain/crud/list-query.interface';
-import { RetrieveQuery } from '../../domain/crud/retrieve-query.interface';
-import { DestroyQuery } from '../../domain/crud/destroy-query.interface';
-import { ListInput } from '../../domain/crud/list.input';
-import { RetrieveInput } from '../../domain/crud/retrieve.input';
-import { DestroyInput } from '../../domain/crud/destroy.input';
+import { BaseCrudService } from '../../domain/services/base-crud.service';
+import { ListQuery } from '../../domain/dto/list-query.interface';
+import { RetrieveQuery } from '../../domain/dto/retrieve-query.interface';
+import { DestroyQuery } from '../../domain/dto/destroy-query.interface';
+import { ListInput } from '../../domain/dto/list.input';
+import { RetrieveInput } from '../../domain/dto/retrieve.input';
+import { DestroyInput } from '../../domain/dto/destroy.input';
 import { BaseDto } from '../../domain/dto/base.dto';
 import { BaseEntityDto } from '../../domain/dto/base-entity.dto';
 

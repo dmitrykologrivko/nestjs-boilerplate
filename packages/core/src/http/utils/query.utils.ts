@@ -3,9 +3,9 @@ import { OrderingQuery } from '../../domain/filters/ordering.filter';
 import { WhereQuery, QUERY_NAME_CONDITION_REGEX } from '../../domain/filters/where.filter';
 import { PagePaginationQuery } from '../../domain/pagination/page.pagination';
 import { LimitOffsetPaginationQuery } from '../../domain/pagination/limit-offset.pagination';
-import { ListQuery } from '../../domain/crud/list-query.interface';
-import { RetrieveQuery } from '../../domain/crud/retrieve-query.interface';
-import { DestroyQuery } from '../../domain/crud/destroy-query.interface';
+import { ListQuery } from '../../domain/dto/list-query.interface';
+import { RetrieveQuery } from '../../domain/dto/retrieve-query.interface';
+import { DestroyQuery } from '../../domain/dto/destroy-query.interface';
 
 export function extractSearchQuery(request): SearchQuery {
     const { query } = request;

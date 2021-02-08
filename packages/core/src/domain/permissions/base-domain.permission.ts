@@ -1,9 +1,11 @@
 export abstract class BaseDomainPermission<I = any, E = any> {
-    hasPermission(input: I): boolean | undefined {
+    constructor(readonly message: string) {}
+
+    async hasPermission(input: I): Promise<boolean | undefined> {
         return undefined;
     }
 
-    hasEntityPermission(input: I, entity: E): boolean | undefined {
+    async hasEntityPermission(input: I, entity: E): Promise<boolean | undefined> {
         return undefined;
     }
 }
