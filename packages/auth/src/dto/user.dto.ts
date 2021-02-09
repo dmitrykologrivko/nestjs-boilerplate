@@ -4,6 +4,9 @@ import { BaseEntityDto } from '@nestjs-boilerplate/core';
 @Exclude()
 export class UserDto extends BaseEntityDto {
 
+    @Expose()
+    id: number;
+
     @Expose({ name: '_username' })
     username: string;
 
@@ -24,4 +27,5 @@ export class UserDto extends BaseEntityDto {
 
     @Expose({ name: '_isSuperuser' })
     isSuperuser: boolean;
+
 }
