@@ -31,6 +31,19 @@ interface CrudServiceOptions<E, D, CI, UI> {
     returnShallow?: boolean;
 }
 
+enum InputType {
+    LIST_INPUT = 'list_input',
+    RETRIEVE_INPUT = 'retrieve_input',
+    CREATE_INPUT = 'create_input',
+    UPDATE_INPUT = 'update_input',
+    DESTROY_INPUT = 'destroy_input',
+}
+
+interface InputWrapper<T = any> {
+    type: InputType;
+    input: T;
+}
+
 export abstract class BaseCrudService<E extends object & BaseEntity, D extends BaseEntityDto,
     PC extends BasePaginatedContainer<D> = BasePaginatedContainer<D>,
     LI extends ListQuery = ListInput,
@@ -56,7 +69,9 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
     ): Promise<Result<PC, PermissionDeniedException>> {
         return AsyncResult.from(this.checkPermissions(input))
             .proceed(async () => {
-                const chain = FilterChain.create<E>(this.getListQuery(input));
+                const chain = FilterChain.create<E>(
+                    this.getQuery({ type: InputType.LIST_INPUT, input }),
+                );
 
                 // Apply filters
                 for (const factory of this.getFilters(input)) {
@@ -71,11 +86,11 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
                 if (chain.hasPagination()) {
                     output = await chain.mapPaginatedContainer(response => ({
                         ...response,
-                        results: this.mapListDto(response.results),
+                        results: this.mapListDto(response.results, input),
                     })) as PC;
                 } else {
                     output = await chain.reduceEntities(data => ({
-                        results: this.mapListDto(data),
+                        results: this.mapListDto(data, input),
                     })) as PC;
                 }
 
@@ -88,7 +103,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         input: RI,
     ): Promise<Result<D, PermissionDeniedException | EntityNotFoundException>> {
         return AsyncResult.from(this.checkPermissions(input))
-            .proceed(() => this.getObject(input, this.getRetrieveObjectQuery(input)))
+            .proceed(() => this.getObject(input, { type: InputType.RETRIEVE_INPUT, input }))
             .map(entity => this.mapDtoOutput(entity) as D)
             .toPromise();
     }
@@ -118,7 +133,8 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
                 this.mapDtoOutput(
                     this.options.returnShallow
                         ? entity
-                        : await this.getCreateObjectQuery(entity, input).getOne(),
+                        : await this.getObjectQuery(entity, { type: InputType.CREATE_INPUT, input })
+                            .getOne(),
                 ) as D,
             )
             .toPromise();
@@ -137,7 +153,8 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
                     { groups }
                 ),
             )
-            .proceed(() => this.getObject(input, this.getUpdateObjectQuery(input)))
+            .proceed(() => this.getObject(input, { type: InputType.UPDATE_INPUT, input })
+            )
             .proceed(entity =>
                 this.performUpdateEntity(
                     // Transform input to omit fields not related for update operation
@@ -154,7 +171,8 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
                 this.mapDtoOutput(
                     this.options.returnShallow
                         ? entity
-                        : await this.getUpdateObjectQuery(input).getOne(),
+                        : await this.getObjectQuery(input, { type: InputType.UPDATE_INPUT, input })
+                            .getOne(),
                 ) as D,
             )
             .toPromise();
@@ -164,7 +182,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         input: DI,
     ): Promise<Result<void, PermissionDeniedException | EntityNotFoundException | DE>> {
         return AsyncResult.from(this.checkPermissions(input))
-            .proceed(() => this.getObject(input, this.getDestroyObjectQuery(input)))
+            .proceed(() => this.getObject(input, { type: InputType.DESTROY_INPUT, input }))
             .proceed(entity => this.performDestroyEntity(input, entity))
             .toPromise();
     }
@@ -229,15 +247,15 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
     }
 
     protected async getObject(
-        input: any,
-        qb: SelectQueryBuilder<E>,
+        id: Identifiable,
+        wrapper: InputWrapper,
     ): Promise<Result<E, EntityNotFoundException | PermissionDeniedException>> {
-        const entity = await qb.getOne();
+        const entity = await this.getObjectQuery(id, wrapper).getOne();
         if (!entity) {
             return err(new EntityNotFoundException());
         }
 
-        const checkEntityPermissionsResult = await this.checkEntityPermissions(input, entity);
+        const checkEntityPermissionsResult = await this.checkEntityPermissions(wrapper.input, entity);
         if (checkEntityPermissionsResult.isErr()) {
             return err(checkEntityPermissionsResult.unwrapErr());
         }
@@ -245,33 +263,18 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         return ok(entity);
     }
 
-    protected getQuery(): SelectQueryBuilder<E> {
+    protected getQuery(
+        wrapper?: InputWrapper,
+    ): SelectQueryBuilder<E> {
         return this.repository.createQueryBuilder(this.alias);
     }
 
-    protected getObjectQuery(id: Identifiable): SelectQueryBuilder<E> {
+    protected getObjectQuery(
+        id: Identifiable,
+        wrapper?: InputWrapper,
+    ): SelectQueryBuilder<E> {
         return this.getQuery()
             .andWhere(`${this.alias}.id = :id`, { 'id': id.id });
-    }
-
-    protected getListQuery(input: LI): SelectQueryBuilder<E> {
-        return this.getQuery();
-    }
-
-    protected getRetrieveObjectQuery(input: RI): SelectQueryBuilder<E> {
-        return this.getObjectQuery(input);
-    }
-
-    protected getCreateObjectQuery(id: Identifiable, input: CI): SelectQueryBuilder<E> {
-        return this.getObjectQuery(id);
-    }
-
-    protected getUpdateObjectQuery(input: UI): SelectQueryBuilder<E> {
-        return this.getObjectQuery(input);
-    }
-
-    protected getDestroyObjectQuery(input: DI): SelectQueryBuilder<E> {
-        return this.getObjectQuery(input);
     }
 
     protected getFilters(
@@ -290,7 +293,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         return [];
     }
 
-    protected mapListDto(entities: E[]): D[] {
+    protected mapListDto(entities: E[], input?: LI): D[] {
         return ClassTransformer.toClassObjects(
             this.options.dtoCls,
             entities,
@@ -298,7 +301,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         );
     }
 
-    protected mapDtoOutput(entity: E): D {
+    protected mapDtoOutput(entity: E, input?: InputWrapper): D {
         return ClassTransformer.toClassObject(
             this.options.dtoCls,
             entity,
