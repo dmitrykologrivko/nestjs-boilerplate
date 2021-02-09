@@ -1,4 +1,4 @@
-import { Identifiable } from '../entities/identifiable.interface';
+import { Identifiable } from '../../domain/entities/identifiable.interface';
 import { ReadOnly } from './read-only.decorator';
 
 export abstract class BaseEntityDto<T = number> implements Identifiable<T> {

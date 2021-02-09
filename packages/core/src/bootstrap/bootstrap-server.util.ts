@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { useContainer } from 'class-validator';
 import { PropertyConfigService } from '../config/property-config.service';
-import { HTTP_SERVER_PORT_PROPERTY } from '../http/constants/http.properties';
+import { SERVER_PORT_PROPERTY } from '../server/server.properties';
 import { Bootstrapper, BootstrapOptions } from './bootstrap.interfaces';
 
 export async function bootstrapServer(options: BootstrapOptions): Promise<Bootstrapper> {
@@ -13,7 +13,7 @@ export async function bootstrapServer(options: BootstrapOptions): Promise<Bootst
     const config = app.get(PropertyConfigService);
 
     const start = async () => {
-        await app.listen(config.get(HTTP_SERVER_PORT_PROPERTY));
+        await app.listen(config.get(SERVER_PORT_PROPERTY));
     };
 
     return {

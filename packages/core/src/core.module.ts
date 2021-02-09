@@ -14,7 +14,7 @@ import {
     DatabaseModule,
     DatabaseModuleOptions,
 } from './database/database.module';
-import { HttpModule } from './http/http.module';
+import { ServerModule } from './server';
 import { ManagementModule } from './management/management.module';
 import { UtilsModule } from './utils/utils.module';
 
@@ -29,7 +29,7 @@ export interface CoreModuleOptions extends Pick<ModuleMetadata, 'imports'> {
 
 @Module({
     imports: [
-        HttpModule,
+        ServerModule,
         ManagementModule,
         UtilsModule,
     ],

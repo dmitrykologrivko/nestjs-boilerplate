@@ -1,4 +1,4 @@
-import { TimeStamped } from '../entities/time-stamped.interface';
+import { TimeStamped } from '../../domain/entities/time-stamped.interface';
 import { BaseEntityDto } from './base-entity.dto';
 import { ReadOnly } from './read-only.decorator';
 

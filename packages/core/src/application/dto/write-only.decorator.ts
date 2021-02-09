@@ -1,6 +1,6 @@
 import { Expose, ExposeOptions } from 'class-transformer';
 import { CrudOperations } from '../constants/crud-operations.enum';
-import { CRUD_CREATE_UPDATE_OPERATIONS } from '../constants/domain.constants';
+import { CRUD_CREATE_UPDATE_OPERATIONS } from '../constants/application.constants';
 
 export function WriteOnly(options?: ExposeOptions) {
     const restrictedOperations = [

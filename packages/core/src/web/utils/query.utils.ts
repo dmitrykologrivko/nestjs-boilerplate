@@ -1,11 +1,11 @@
-import { SearchQuery } from '../../domain/filters/search.filter';
-import { OrderingQuery } from '../../domain/filters/ordering.filter';
-import { WhereQuery, QUERY_NAME_CONDITION_REGEX } from '../../domain/filters/where.filter';
-import { PagePaginationQuery } from '../../domain/pagination/page.pagination';
-import { LimitOffsetPaginationQuery } from '../../domain/pagination/limit-offset.pagination';
-import { ListQuery } from '../../domain/dto/list-query.interface';
-import { RetrieveQuery } from '../../domain/dto/retrieve-query.interface';
-import { DestroyQuery } from '../../domain/dto/destroy-query.interface';
+import { SearchQuery } from '../../application/filters/search.filter';
+import { OrderingQuery } from '../../application/filters/ordering.filter';
+import { WhereQuery, QUERY_NAME_CONDITION_REGEX } from '../../application/filters/where.filter';
+import { PagePaginationQuery } from '../../application/pagination/page.pagination';
+import { LimitOffsetPaginationQuery } from '../../application/pagination/limit-offset.pagination';
+import { ListQuery } from '../../application/dto/list-query.interface';
+import { RetrieveQuery } from '../../application/dto/retrieve-query.interface';
+import { DestroyQuery } from '../../application/dto/destroy-query.interface';
 
 export function extractSearchQuery(request): SearchQuery {
     const { query } = request;
