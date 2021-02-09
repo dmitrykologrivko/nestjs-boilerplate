@@ -116,9 +116,9 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
             )
             .map(async entity =>
                 this.mapDtoOutput(
-                this.options.returnShallow
-                    ? entity
-                    : await this.getCreateObjectQuery(entity, input).getOne(),
+                    this.options.returnShallow
+                        ? entity
+                        : await this.getCreateObjectQuery(entity, input).getOne(),
                 ) as D,
             )
             .toPromise();
@@ -152,9 +152,9 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
             )
             .map(async entity =>
                 this.mapDtoOutput(
-                this.options.returnShallow
-                    ? entity
-                    : await this.getUpdateObjectQuery(input).getOne(),
+                    this.options.returnShallow
+                        ? entity
+                        : await this.getUpdateObjectQuery(input).getOne(),
                 ) as D,
             )
             .toPromise();
