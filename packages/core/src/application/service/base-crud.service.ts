@@ -39,9 +39,9 @@ export enum InputType {
     DESTROY_INPUT = 'destroy_input',
 }
 
-export interface InputWrapper<T = any> {
+export interface InputWrapper<LI, RI, CI, UI, DI> {
     type: InputType;
-    input: T;
+    input: LI | RI | CI | UI | DI;
 }
 
 export abstract class BaseCrudService<E extends object & BaseEntity, D extends BaseEntityDto,
@@ -249,7 +249,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
 
     protected async getObject(
         id: Identifiable,
-        wrapper?: InputWrapper,
+        wrapper?: InputWrapper<LI, RI, CI, UI, DI>,
     ): Promise<Result<E, EntityNotFoundException>> {
         const entity = await this.getQuery(wrapper)
             .andWhere(`${this.alias}.id = :id`, { 'id': id.id })
@@ -263,7 +263,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
     }
 
     protected getQuery(
-        wrapper?: InputWrapper,
+        wrapper?: InputWrapper<LI, RI, CI, UI, DI>,
     ): SelectQueryBuilder<E> {
         return this.repository.createQueryBuilder(this.alias);
     }
@@ -284,7 +284,11 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         return [];
     }
 
-    protected mapListDto(entities: E[], input?: LI, context?: object): D[] {
+    protected mapListDto(
+        entities: E[],
+        input?: LI,
+        context?: object,
+    ): D[] {
         return ClassTransformer.toClassObjects(
             this.options.dtoCls,
             entities.map(value => ({ ...value, context })),
@@ -292,7 +296,11 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         );
     }
 
-    protected mapDtoOutput(entity: E, input?: InputWrapper, context?: object): D {
+    protected mapDtoOutput(
+        entity: E,
+        wrapper?: InputWrapper<void, RI, CI, UI, DI>,
+        context?: object,
+    ): D {
         return ClassTransformer.toClassObject(
             this.options.dtoCls,
             { ...entity, context },
