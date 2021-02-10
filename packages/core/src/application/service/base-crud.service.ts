@@ -67,11 +67,10 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
     async list(
         input: LI,
     ): Promise<Result<PC, PermissionDeniedException>> {
+        const wrapper = { type: InputType.LIST_INPUT, input };
         return AsyncResult.from(this.checkPermissions(input))
             .proceed(async () => {
-                const chain = FilterChain.create<E>(
-                    this.getQuery(null, { type: InputType.LIST_INPUT, input }),
-                );
+                const chain = FilterChain.create<E>(this.getQuery(wrapper));
 
                 // Apply filters
                 for (const factory of this.getFilters(input)) {
@@ -102,21 +101,24 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
     async retrieve(
         input: RI,
     ): Promise<Result<D, PermissionDeniedException | EntityNotFoundException>> {
+        const wrapper = { type: InputType.RETRIEVE_INPUT, input };
         return AsyncResult.from(this.checkPermissions(input))
-            .proceed(() => this.getObject(input, { type: InputType.RETRIEVE_INPUT, input }))
-            .map(entity => this.mapDtoOutput(entity, { type: InputType.RETRIEVE_INPUT, input }) as D)
+            .proceed(() => this.getObject({ id: input.id }, wrapper))
+            .proceed(entity => this.checkEntityPermissions(input, entity))
+            .map(entity => this.mapDtoOutput(entity, wrapper) as D)
             .toPromise();
     }
 
     async create(
         input: CI,
     ): Promise<Result<D, PermissionDeniedException | ValidationContainerException | CE>> {
+        const wrapper = { type: InputType.CREATE_INPUT, input };
         return AsyncResult.from(this.checkPermissions(input))
             .proceed(() =>
                 ClassValidator.validate(
                     this.options.createInputCls,
                     input,
-                    { groups: [CrudOperations.CREATE] }
+                    { groups: [CrudOperations.CREATE] },
                 )
             )
             .proceed(() =>
@@ -129,15 +131,12 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
                     ),
                 ),
             )
-            .map(async entity =>
-                this.mapDtoOutput(
-                    this.options.returnShallow
-                        ? entity
-                        : await this.getQuery(entity, { type: InputType.CREATE_INPUT, input })
-                            .getOne(),
-                    { type: InputType.CREATE_INPUT, input },
-                ) as D,
-            )
+            .map(async entity => {
+                if (!this.options.returnShallow) {
+                    entity = (await this.getObject({ id: entity.id }, wrapper)).unwrap();
+                }
+                return this.mapDtoOutput(entity, wrapper) as D
+            })
             .toPromise();
     }
 
@@ -145,17 +144,18 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         input: UI,
         partial: boolean = false,
     ): Promise<Result<D, PermissionDeniedException | EntityNotFoundException | ValidationContainerException | UE>> {
+        const wrapper = { type: InputType.UPDATE_INPUT, input };
         const groups = partial ? [CrudOperations.PARTIAL_UPDATE] : [CrudOperations.UPDATE];
         return AsyncResult.from(this.checkPermissions(input))
             .proceed(() =>
                 ClassValidator.validate(
                     this.options.updateInputCls,
                     input,
-                    { groups }
+                    { groups },
                 ),
             )
-            .proceed(() => this.getObject(input, { type: InputType.UPDATE_INPUT, input })
-            )
+            .proceed(() => this.getObject({ id: input.id }, wrapper))
+            .proceed(entity => this.checkEntityPermissions(input, entity))
             .proceed(entity =>
                 this.performUpdateEntity(
                     // Transform input to omit fields not related for update operation
@@ -168,23 +168,22 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
                     entity,
                 ),
             )
-            .map(async entity =>
-                this.mapDtoOutput(
-                    this.options.returnShallow
-                        ? entity
-                        : await this.getQuery(input, { type: InputType.UPDATE_INPUT, input })
-                            .getOne(),
-                    { type: InputType.UPDATE_INPUT, input },
-                ) as D,
-            )
+            .map(async entity => {
+                if (!this.options.returnShallow) {
+                    entity = (await this.getObject({ id: entity.id }, wrapper)).unwrap();
+                }
+                return this.mapDtoOutput(entity, wrapper) as D
+            })
             .toPromise();
     }
 
     async destroy(
         input: DI,
     ): Promise<Result<void, PermissionDeniedException | EntityNotFoundException | DE>> {
+        const wrapper = { type: InputType.DESTROY_INPUT, input };
         return AsyncResult.from(this.checkPermissions(input))
-            .proceed(() => this.getObject(input, { type: InputType.DESTROY_INPUT, input }))
+            .proceed(() => this.getObject({ id: input.id }, wrapper))
+            .proceed(entity => this.checkEntityPermissions(input, entity))
             .proceed(entity => this.performDestroyEntity(input, entity))
             .toPromise();
     }
@@ -234,7 +233,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
     protected async checkEntityPermissions(
         input: any,
         entity: E,
-    ): Promise<Result<void, PermissionDeniedException>> {
+    ): Promise<Result<E, PermissionDeniedException>> {
         for (const permission of this.getPermissions()) {
             const hasEntityPermission = await permission.hasEntityPermission(input, entity);
 
@@ -245,37 +244,28 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
             }
         }
 
-        return ok(null);
+        return ok(entity);
     }
 
     protected async getObject(
         id: Identifiable,
-        wrapper: InputWrapper,
-    ): Promise<Result<E, EntityNotFoundException | PermissionDeniedException>> {
-        const entity = await this.getQuery(id, wrapper).getOne();
-        if (!entity) {
+        wrapper?: InputWrapper,
+    ): Promise<Result<E, EntityNotFoundException>> {
+        const entity = await this.getQuery(wrapper)
+            .andWhere(`${this.alias}.id = :id`, { 'id': id.id })
+            .getOne();
+
+        if (entity) {
+            return ok(entity);
+        } else {
             return err(new EntityNotFoundException());
         }
-
-        const checkEntityPermissionsResult = await this.checkEntityPermissions(wrapper.input, entity);
-        if (checkEntityPermissionsResult.isErr()) {
-            return err(checkEntityPermissionsResult.unwrapErr());
-        }
-
-        return ok(entity);
     }
 
     protected getQuery(
-        id?: Identifiable,
         wrapper?: InputWrapper,
     ): SelectQueryBuilder<E> {
-        const qb = this.repository.createQueryBuilder(this.alias);
-
-        if (id) {
-            qb.andWhere(`${this.alias}.id = :id`, { 'id': id.id });
-        }
-
-        return qb;
+        return this.repository.createQueryBuilder(this.alias);
     }
 
     protected getFilters(
