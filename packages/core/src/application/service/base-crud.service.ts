@@ -287,11 +287,10 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
     protected mapListDto(
         entities: E[],
         input?: LI,
-        context?: object,
     ): D[] {
         return ClassTransformer.toClassObjects(
             this.options.dtoCls,
-            entities.map(value => ({ ...value, context })),
+            entities,
             { groups: [CrudOperations.READ] },
         );
     }
@@ -299,11 +298,10 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
     protected mapDtoOutput(
         entity: E,
         wrapper?: InputWrapper<void, RI, CI, UI, DI>,
-        context?: object,
     ): D {
         return ClassTransformer.toClassObject(
             this.options.dtoCls,
-            { ...entity, context },
+            entity,
             { groups: [CrudOperations.READ] },
         );
     }
