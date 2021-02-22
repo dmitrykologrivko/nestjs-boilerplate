@@ -223,11 +223,11 @@ export class Result<T, E, R extends ResultType = ResultType> implements Monad<T>
         return (result: Result<T, E>): Promise<Result<T, U>> => result.mapErrAsync(fn);
     }
 
-    static proceed<T, E, U, V>(fn: (value: T) => Promise<Result<U, E | V>>) {
+    static proceed<T, E, U, V>(fn: (value: T) => Promise<Result<U, V>>) {
         return (result: Result<T, E>): Promise<Result<U, E | V>> => result.proceedAsync(fn);
     }
 
-    static fallback<T, E, U, V>(fn: (err: E) => Promise<Result<T, E>>) {
+    static fallback<T, E>(fn: (err: E) => Promise<Result<T, E>>) {
         return (result: Result<T, E>): Promise<Result<T, E>> => result.fallbackAsync(fn);
     }
 
