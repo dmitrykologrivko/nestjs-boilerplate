@@ -147,15 +147,15 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         const wrapper = { type: InputType.UPDATE_INPUT, input };
         const groups = partial ? [CrudOperations.PARTIAL_UPDATE] : [CrudOperations.UPDATE];
         return AsyncResult.from(this.checkPermissions(input))
-            .proceed(() =>
-                ClassValidator.validate(
+            .proceed(() => this.getObject({ id: input.id }, wrapper))
+            .proceed(entity => this.checkEntityPermissions(input, entity))
+            .proceed(async entity =>
+                (await ClassValidator.validate(
                     this.options.updateInputCls,
                     input,
                     { groups },
-                ),
+                )).map(() => entity),
             )
-            .proceed(() => this.getObject({ id: input.id }, wrapper))
-            .proceed(entity => this.checkEntityPermissions(input, entity))
             .proceed(entity =>
                 this.performUpdateEntity(
                     // Transform input to omit fields not related for update operation
@@ -297,7 +297,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
 
     protected mapDtoOutput(
         entity: E,
-        wrapper?: InputWrapper<void, RI, CI, UI, DI>,
+        wrapper?: InputWrapper<never, RI, CI, UI, DI>,
     ): D {
         return ClassTransformer.toClassObject(
             this.options.dtoCls,
