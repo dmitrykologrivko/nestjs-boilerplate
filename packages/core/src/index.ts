@@ -4,6 +4,7 @@ export * from './config';
 export * from './database';
 export * from './domain';
 export * from './environment';
+export * from './mail';
 export * from './management';
 export * from './server';
 export * from './utils';

@@ -15,6 +15,10 @@ import {
     DatabaseModuleOptions,
 } from './database/database.module';
 import { ServerModule } from './server';
+import {
+    MailModule,
+    MailModuleOptions,
+} from './mail/mail.module';
 import { ManagementModule } from './management/management.module';
 import { UtilsModule } from './utils/utils.module';
 
@@ -25,6 +29,7 @@ export interface CoreModuleOptions extends Pick<ModuleMetadata, 'imports'> {
         options?: DatabaseModuleOptions | DatabaseModuleOptions[];
         connections?: string[];
     };
+    mail?: MailModuleOptions;
 }
 
 @Module({
@@ -41,6 +46,7 @@ export class CoreModule {
 
         this.connectConfig(imports, options);
         this.connectDatabase(imports, options);
+        this.connectMail(imports, options);
 
         return {
             module: CoreModule,
@@ -97,5 +103,9 @@ export class CoreModule {
         for (const connection of connections) {
             imports.push(DatabaseModule.withConfig(connection));
         }
+    }
+
+    private static connectMail(imports: any[], options: CoreModuleOptions) {
+        imports.push(MailModule.forRoot(options.mail));
     }
 }

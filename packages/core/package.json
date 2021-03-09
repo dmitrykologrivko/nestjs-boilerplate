@@ -13,7 +13,8 @@
     "create-ts-index": "^1.13.6",
     "dotenv": "^8.2.0",
     "minimist": "^1.2.5",
-    "sqlite3": "5.0.0"
+    "sqlite3": "5.0.0",
+    "nodemailer": "^6.5.0"
   },
   "peerDependencies": {
     "@nestjs/common": "^7.4.4",
@@ -26,6 +27,9 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.6.3",
     "typeorm": "^0.2.26"
+  },
+  "devDependencies": {
+    "@types/nodemailer": "^6.4.0"
   },
   "repository": {
     "type": "git",
