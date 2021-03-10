@@ -20,15 +20,15 @@ export class NodemailerService extends BaseMailService {
             port: options.port,
             secure: options.secure,
             auth: {
-                user: options.auth.user,
-                pass: options.auth.password,
+                user: options.auth?.user,
+                pass: options.auth?.password,
             },
         });
     }
 
     async sendMail(mail: Mail): Promise<Result<void, SendMailFailedException>> {
         try {
-            const info = await this.transporter.sendMail({
+            await this.transporter.sendMail({
                 subject: mail.subject,
                 text: mail.text,
                 html: mail.html,
