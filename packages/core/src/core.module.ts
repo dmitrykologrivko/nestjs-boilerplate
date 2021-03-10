@@ -1,6 +1,11 @@
 import { existsSync } from 'fs';
 import { Module, DynamicModule } from '@nestjs/common';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
+import {
+    ServeStaticModuleOptions,
+    ServeStaticModuleAsyncOptions,
+    ServeStaticModule,
+} from '@nestjs/serve-static';
 import { DEVELOPMENT_ENVIRONMENT } from './environment/environment.constants';
 import { isProductionEnvironment } from './environment/environment.utils';
 import { DEFAULT_CONNECTION_NAME } from './database/database.constants';
@@ -30,6 +35,7 @@ export interface CoreModuleOptions extends Pick<ModuleMetadata, 'imports'> {
         connections?: string[];
     };
     mail?: MailModuleOptions;
+    serveStatic?: ServeStaticModuleOptions | ServeStaticModuleOptions[] | ServeStaticModuleAsyncOptions;
 }
 
 @Module({
@@ -47,6 +53,7 @@ export class CoreModule {
         this.connectConfig(imports, options);
         this.connectDatabase(imports, options);
         this.connectMail(imports, options);
+        this.connectStatic(imports, options);
 
         return {
             module: CoreModule,
@@ -91,7 +98,9 @@ export class CoreModule {
                     imports.push(DatabaseModule.withOptions(currentOptions));
                 }
             } else {
-                imports.push(DatabaseModule.withOptions(options.database.options as DatabaseModuleOptions));
+                imports.push(
+                    DatabaseModule.withOptions(options.database.options as DatabaseModuleOptions),
+                );
             }
             return;
         }
@@ -107,5 +116,26 @@ export class CoreModule {
 
     private static connectMail(imports: any[], options: CoreModuleOptions) {
         imports.push(MailModule.forRoot(options.mail));
+    }
+
+    private static connectStatic(imports: any[], options: CoreModuleOptions) {
+        if (!options.serveStatic) {
+            return;
+        }
+
+        if (options.serveStatic.hasOwnProperty('imports')) {
+            imports.push(
+                ServeStaticModule.forRootAsync(options.serveStatic as ServeStaticModuleAsyncOptions),
+            );
+            return;
+        }
+
+        if (Array.isArray(options.serveStatic)) {
+            imports.push(ServeStaticModule.forRoot(...options.serveStatic));
+        } else {
+            imports.push(
+                ServeStaticModule.forRoot(options.serveStatic as ServeStaticModuleOptions),
+            );
+        }
     }
 }

@@ -10,11 +10,12 @@
     "build": "rm -rf dist && tsc -p tsconfig.json"
   },
   "dependencies": {
+    "@nestjs/serve-static": "^2.1.4",
     "create-ts-index": "^1.13.6",
     "dotenv": "^8.2.0",
     "minimist": "^1.2.5",
-    "sqlite3": "5.0.0",
-    "nodemailer": "^6.5.0"
+    "nodemailer": "^6.5.0",
+    "sqlite3": "5.0.0"
   },
   "peerDependencies": {
     "@nestjs/common": "^7.4.4",
