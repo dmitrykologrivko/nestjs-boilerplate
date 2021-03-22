@@ -394,7 +394,7 @@ Example:\
 `useTypescript` if this flag is provided then ts-node will be used to run original typeorm cli command.
 (use this only in development mode) This is can be helpful if you use Webpack bundling.
 
-#### Generate migration
+### Generate migration
 
 To generate automatic migration you can run `migrations:generate` command.
 (see [official docs](https://typeorm.io/#/migrations/generating-migrations) for reference)
@@ -412,7 +412,7 @@ None
 `useTypescript` if this flag is provided then ts-node will be used to run original typeorm cli command.
 (use this only in development mode) This is can be helpful if you use Webpack bundling. 
 
-#### Run migrations
+### Run migrations
 
 To apply pending migrations you can run `migrations:run` command.
 (see [official docs](https://typeorm.io/#/migrations/running-and-reverting-migrations) for reference)
