@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { CoreModule, DatabaseModule } from '@nestjs-boilerplate/core';
+import { CoreModule, ConfigModule, DatabaseModule } from '@nestjs-boilerplate/core';
 import { AuthModule } from '@nestjs-boilerplate/auth';
 import { Note } from './note.entity';
 import { NoteService } from './note.service';
@@ -9,9 +9,9 @@ import appConfig from './app.config';
 @Module({
     imports: [
         CoreModule.forRoot({
-            config: {
+            config: ConfigModule.forRoot({
                 load: [appConfig],
-            },
+            }),
         }),
         AuthModule.forRoot(),
         DatabaseModule.withEntities([Note]),
