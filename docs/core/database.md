@@ -30,8 +30,7 @@ import { DatabaseModule } from '@nestjs-boilerplate/core';
         }]),
     ],
 })
-export class AppModule {
-}
+export class AppModule {}
 ```
 
 Also, you can load database connection options from `ormconfig.json` file
@@ -58,8 +57,7 @@ import { DatabaseModule, DEFAULT_CONNECTION_NAME } from '@nestjs-boilerplate/cor
         ),
     ],
 })
-export class AppModule {
-}
+export class AppModule {}
 ```
 
 You can connect your databases by using `withConfig` method which provides a way to load `DatabaseModuleOptions`
