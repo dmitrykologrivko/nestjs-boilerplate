@@ -20,10 +20,6 @@ export class EntitySwappableService {
         throw new Error(`${entity.name} is not allowed to be swapped`);
     }
 
-    static swapEntities<E extends Function, S extends E>(entities: Array<[E, S]>) {
-        entities.forEach(el => EntitySwappableService.swapEntity(el[0], el[1]));
-    }
-
     static findSwappable(entity: Function) {
         return EntitySwappableService.swappableEntities.get(entity.name);
     }

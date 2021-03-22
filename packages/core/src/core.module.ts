@@ -8,34 +8,29 @@ import {
 } from '@nestjs/serve-static';
 import { DEVELOPMENT_ENVIRONMENT } from './environment/environment.constants';
 import { isProductionEnvironment } from './environment/environment.utils';
-import { DEFAULT_CONNECTION_NAME } from './database/database.constants';
-import { isNotEmpty } from './utils/precondition.utils';
 import {
     ConfigModule,
     ConfigModuleOptions,
-    ConfigFactory,
 } from './config/config.module';
-import {
-    DatabaseModule,
-    DatabaseModuleOptions,
-} from './database/database.module';
-import { ServerModule } from './server';
+import { Property } from './config/property.interface';
+import { DatabaseModule } from './database/database.module';
+import { DatabaseModuleOptions } from './database/database.interfaces';
 import {
     MailModule,
     MailModuleOptions,
 } from './mail/mail.module';
+import { ServerModule } from './server';
 import { ManagementModule } from './management/management.module';
 import { UtilsModule } from './utils/utils.module';
 
 export interface CoreModuleOptions extends Pick<ModuleMetadata, 'imports'> {
-    config?: ConfigModuleOptions | ConfigFactory[];
-    database?: {
-        useConfigFile?: boolean;
-        options?: DatabaseModuleOptions | DatabaseModuleOptions[];
-        connections?: string[];
-    };
+    config?: ConfigModuleOptions;
+    database?: DatabaseModule;
     mail?: MailModuleOptions;
-    serveStatic?: ServeStaticModuleOptions | ServeStaticModuleOptions[] | ServeStaticModuleAsyncOptions;
+    serveStatic?: {
+        options?: ServeStaticModuleOptions | ServeStaticModuleOptions[];
+        asyncOptions?: ServeStaticModuleAsyncOptions;
+    };
 }
 
 @Module({
@@ -62,6 +57,11 @@ export class CoreModule {
     }
 
     private static connectConfig(imports: any[], options: CoreModuleOptions) {
+        if (options.config && options.config instanceof ConfigModule) {
+            imports.push(options.config);
+            return;
+        }
+
         const envFilePath = `${process.env.NODE_ENV || DEVELOPMENT_ENVIRONMENT}.env`;
 
         const defaultOptions = {
@@ -70,48 +70,19 @@ export class CoreModule {
             envFilePath: existsSync(envFilePath) ? envFilePath : '',
         };
 
-        if (!options.config) {
-            imports.push(ConfigModule.forRoot(defaultOptions));
-            return;
-        }
-
-        if (Array.isArray(options.config)) {
-            imports.push(ConfigModule.forRoot({
-                ...defaultOptions,
-                load: options.config,
-            }));
-            return;
-        }
-
-        imports.push(ConfigModule.forRoot(options.config));
+        imports.push(ConfigModule.forRoot({
+            ...defaultOptions,
+            ...options.config,
+        }));
     }
 
     private static connectDatabase(imports: any[], options: CoreModuleOptions) {
-        if (options.database?.useConfigFile) {
-            imports.push(DatabaseModule.withConfigFile());
+        if (options.database) {
+            imports.push(options.database);
             return;
         }
 
-        if (options.database?.options) {
-            if (Array.isArray(options.database.options)) {
-                for (const currentOptions of options.database.options) {
-                    imports.push(DatabaseModule.withOptions(currentOptions));
-                }
-            } else {
-                imports.push(
-                    DatabaseModule.withOptions(options.database.options as DatabaseModuleOptions),
-                );
-            }
-            return;
-        }
-
-        const connections = isNotEmpty(options.database?.connections)
-            ? options.database.connections
-            : [DEFAULT_CONNECTION_NAME];
-
-        for (const connection of connections) {
-            imports.push(DatabaseModule.withConfig(connection));
-        }
+        imports.push(DatabaseModule.withConfig());
     }
 
     private static connectMail(imports: any[], options: CoreModuleOptions) {
@@ -119,23 +90,23 @@ export class CoreModule {
     }
 
     private static connectStatic(imports: any[], options: CoreModuleOptions) {
-        if (!options.serveStatic) {
-            return;
+        if (options.serveStatic?.options) {
+            if (Array.isArray(options.serveStatic.options)) {
+                imports.push(
+                    ServeStaticModule.forRoot(...options.serveStatic.options as ServeStaticModuleOptions[]),
+                );
+            } else {
+                imports.push(
+                    ServeStaticModule.forRoot(options.serveStatic.options as ServeStaticModuleOptions),
+                );
+            }
         }
 
-        if (options.serveStatic.hasOwnProperty('imports')) {
+        if (options.serveStatic?.asyncOptions) {
             imports.push(
-                ServeStaticModule.forRootAsync(options.serveStatic as ServeStaticModuleAsyncOptions),
+                ServeStaticModule.forRootAsync(options.serveStatic.asyncOptions as ServeStaticModuleAsyncOptions),
             );
             return;
-        }
-
-        if (Array.isArray(options.serveStatic)) {
-            imports.push(ServeStaticModule.forRoot(...options.serveStatic));
-        } else {
-            imports.push(
-                ServeStaticModule.forRoot(options.serveStatic as ServeStaticModuleOptions),
-            );
         }
     }
 }

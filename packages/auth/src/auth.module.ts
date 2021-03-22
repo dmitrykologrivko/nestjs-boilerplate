@@ -68,7 +68,7 @@ const jwtAsyncOptions = {
         ConfigModule.forFeature(authConfig),
         DatabaseModule.withEntities(
             [User, Group, Permission, RevokedToken],
-            { cli: { entities: __dirname + '/**/*.entity{.ts,.js}' } },
+            { cli: __dirname + '/**/*.entity{.ts,.js}' },
         ),
         PassportModule,
         JwtModule.registerAsync(jwtAsyncOptions),

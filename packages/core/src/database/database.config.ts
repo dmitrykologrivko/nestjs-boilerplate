@@ -1,8 +1,10 @@
 export default () => ({
-    databases: [{
-        type: 'sqlite',
-        database: 'database',
-        autoLoadEntities: true,
-        synchronize: true,
-    }],
+    databases: {
+        default: {
+            type: 'sqlite',
+            database: 'database',
+            autoLoadEntities: true,
+            synchronize: true,
+        },
+    },
 });

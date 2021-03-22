@@ -11,14 +11,14 @@ import {
     generateMigration,
     runMigrations,
 } from './typeorm.utils';
-import { EntityMetadataStorage } from './entity-metadata-storage.service';
+import { MetadataStorageService } from './metadata-storage.service';
 import { DEFAULT_CONNECTION_NAME } from './database.constants';
 
 @Command({ name: 'migrations' })
 export class MigrationsCommand {
     constructor(
         private readonly moduleRef: ModuleRef,
-        private readonly metadataStorage: EntityMetadataStorage,
+        private readonly metadataStorage: MetadataStorageService,
     ) {}
 
     @Handler({ shortcut: 'create' })
@@ -126,29 +126,29 @@ export class MigrationsCommand {
     }
 
     private overrideConnectionOptions(connection: Connection): ConnectionOptions {
-        const entityOptions = this.metadataStorage.getEntityOptionsByConnection(connection);
+        const metadata = this.metadataStorage.getMetadataByConnection(connection);
 
-        if (!entityOptions) {
+        if (!metadata) {
             return connection.options;
         }
 
         let entities = connection.options.entities || [];
         let migrations = connection.options.migrations || [];
 
-        for (const options of entityOptions) {
-            if (options.cli?.entities) {
-                if (Array.isArray(options.cli.entities)) {
-                    entities = entities.concat(options.cli.entities);
+        for (const item of metadata) {
+            if (item.type === 'entities' && item.cli) {
+                if (Array.isArray(item.cli)) {
+                    entities = entities.concat(item.cli);
                 } else {
-                    entities.push(options.cli.entities);
+                    entities.push(item.cli);
                 }
             }
 
-            if (options.cli?.migrations) {
-                if (Array.isArray(options.cli.migrations)) {
-                    migrations = migrations.concat(options.cli.migrations);
+            if (item.type === 'migrations' && item.cli) {
+                if (Array.isArray(item.cli)) {
+                    migrations = migrations.concat(item.cli);
                 } else {
-                    migrations.push(options.cli.migrations);
+                    migrations.push(item.cli);
                 }
             }
         }

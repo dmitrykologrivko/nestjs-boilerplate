@@ -6,7 +6,9 @@ import appConfig from './app.config';
 @Module({
   imports: [
       CoreModule.forRoot({
-          config: [appConfig],
+          config: {
+              load: [appConfig],
+          },
       }),
       AuthModule.forRoot(),
   ],
