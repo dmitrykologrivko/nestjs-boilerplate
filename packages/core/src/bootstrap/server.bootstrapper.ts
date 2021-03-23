@@ -6,8 +6,8 @@ import { BaseBootstrapper } from './base.bootstrapper';
 
 export class ServerBootstrapper extends BaseBootstrapper<INestApplication, NestApplicationOptions> {
 
-    protected async createContainer(module: any, options: NestApplicationOptions): Promise<INestApplication> {
-        return NestFactory.create(module, options);
+    protected async createContainer(): Promise<INestApplication> {
+        return NestFactory.create(this.meta.module, this.meta.options);
     }
 
     protected async onStart(container: INestApplication): Promise<void> {

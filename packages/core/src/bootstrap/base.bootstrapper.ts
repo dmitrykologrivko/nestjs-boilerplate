@@ -16,17 +16,17 @@ export abstract class BaseBootstrapper<T extends INestApplicationContext = INest
         protected meta: BootstrapperMeta<T, V>,
     ) {}
 
-    protected abstract async createContainer(module: any, options: V): Promise<T>;
+    protected abstract async createContainer(): Promise<T>;
 
-    protected abstract async onStart(container: T): Promise<void>;
+    protected abstract async onStart(container: T): Promise<T | void>;
 
     protected async onInit(container: T) {
         // Set dependency injection container for class validator
         useContainer(container.select(this.meta.module), { fallbackOnErrors: true });
     }
 
-    async start(): Promise<void> {
-        const container = await this.createContainer(this.meta.module, this.meta.options);
+    async start(): Promise<T> {
+        const container = await this.createContainer();
 
         await this.onInit(container);
 
@@ -34,6 +34,6 @@ export abstract class BaseBootstrapper<T extends INestApplicationContext = INest
             await this.meta.onCustomInit(container);
         }
 
-        await this.onStart(container);
+        return (await this.onStart(container)) || container;
     }
 }

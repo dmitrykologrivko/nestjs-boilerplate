@@ -1,5 +1,5 @@
 import * as request from 'supertest';
-import { bootstrapTestingApplication } from '@nestjs-boilerplate/testing';
+import { bootstrapTestApplication } from '@nestjs-boilerplate/testing';
 import { User } from '../src/entities';
 import { UserFactory } from '../src/test/user.factory';
 import { AuthTestUtils } from '../src/test/auth-test.utils';
@@ -22,10 +22,7 @@ describe('AuthPasswordController (e2e)', () => {
     let jwtAuthHeader: string;
 
     beforeAll(async () => {
-        const bootstrapper = await bootstrapTestingApplication({ module: AppModule });
-        app = bootstrapper.container;
-        await bootstrapper.init();
-
+        app = await bootstrapTestApplication({ module: AppModule });
         authTestUtils = new AuthTestUtils(app);
     });
 

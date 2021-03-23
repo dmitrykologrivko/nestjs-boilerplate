@@ -9,7 +9,11 @@
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.json"
   },
+  "devDependencies": {
+    "@nestjs-boilerplate/core": "^0.0.0"
+  },
   "peerDependencies": {
+    "@nestjs-boilerplate/core": "^0.0.0",
     "@nestjs/common": "^7.4.4",
     "@nestjs/core": "^7.4.4",
     "@nestjs/testing": "^7.4.4",

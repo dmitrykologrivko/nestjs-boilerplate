@@ -1,17 +1,19 @@
-import { INestApplication, NestApplicationOptions } from '@nestjs/common';
-import { BootstrapperMeta } from './base.bootstrapper';
+import { INestApplicationContext, INestApplication, NestApplicationOptions } from '@nestjs/common';
+import { BootstrapperMeta, BaseBootstrapper } from './base.bootstrapper';
 import { ServerBootstrapper } from './server.bootstrapper';
 import { ManagementBootstrapper } from './management.bootstrapper';
 import { COMMAND_ARG } from '../management/management.constants';
 
 export async function bootstrapApplication(
-    options: BootstrapperMeta<INestApplication, NestApplicationOptions>,
-): Promise<void> {
+    meta: BootstrapperMeta<INestApplication, NestApplicationOptions>,
+): Promise<INestApplicationContext> {
+    let bootstrapper: BaseBootstrapper;
+
     if (process.argv.includes(COMMAND_ARG)) {
-        await new ManagementBootstrapper({ module: options.module })
-            .start();
+        bootstrapper = new ManagementBootstrapper({ module: meta.module });
     } else {
-        await new ServerBootstrapper(options)
-            .start();
+        bootstrapper = new ServerBootstrapper(meta);
     }
+
+    return await bootstrapper.start();
 }
