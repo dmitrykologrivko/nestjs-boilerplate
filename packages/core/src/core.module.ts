@@ -1,6 +1,5 @@
 import { Module, DynamicModule } from '@nestjs/common';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
-import { ServeStaticModule } from '@nestjs/serve-static';
 import { ConfigModule } from './config/config.module';
 import { DatabaseModule } from './database/database.module';
 import { MailModule } from './mail/mail.module';
@@ -13,7 +12,6 @@ export interface CoreModuleOptions extends Pick<ModuleMetadata, 'imports'> {
     config?: ConfigModule;
     database?: DatabaseModule;
     mail?: MailModule;
-    serveStatic?: ServeStaticModule;
     template?: TemplateModule;
 }
 
@@ -32,7 +30,6 @@ export class CoreModule {
         this.connectConfig(imports, options);
         this.connectDatabase(imports, options);
         this.connectMail(imports, options);
-        this.connectStatic(imports, options);
         this.connectTemplate(imports, options);
 
         return {
@@ -66,12 +63,6 @@ export class CoreModule {
         }
 
         imports.push(MailModule.forRoot());
-    }
-
-    private static connectStatic(imports: any[], options: CoreModuleOptions) {
-        if (options.serveStatic) {
-            imports.push(options.serveStatic);
-        }
     }
 
     private static connectTemplate(imports: any[], options: CoreModuleOptions) {

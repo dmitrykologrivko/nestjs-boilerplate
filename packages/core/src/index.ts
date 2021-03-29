@@ -1,4 +1,3 @@
-export * from '@nestjs/serve-static';
 export * from './application';
 export * from './bootstrap';
 export * from './config';
