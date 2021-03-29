@@ -8,6 +8,7 @@ export * from './environment';
 export * from './mail';
 export * from './management';
 export * from './server';
+export * from './template';
 export * from './utils';
 export * from './web';
 export * from './core.module';

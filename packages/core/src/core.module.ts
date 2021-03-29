@@ -6,6 +6,7 @@ import { DatabaseModule } from './database/database.module';
 import { MailModule } from './mail/mail.module';
 import { ServerModule } from './server';
 import { ManagementModule } from './management/management.module';
+import { TemplateModule } from './template/template.module';
 import { UtilsModule } from './utils/utils.module';
 
 export interface CoreModuleOptions extends Pick<ModuleMetadata, 'imports'> {
@@ -13,6 +14,7 @@ export interface CoreModuleOptions extends Pick<ModuleMetadata, 'imports'> {
     database?: DatabaseModule;
     mail?: MailModule;
     serveStatic?: ServeStaticModule;
+    template?: TemplateModule;
 }
 
 @Module({
@@ -31,6 +33,7 @@ export class CoreModule {
         this.connectDatabase(imports, options);
         this.connectMail(imports, options);
         this.connectStatic(imports, options);
+        this.connectTemplate(imports, options);
 
         return {
             module: CoreModule,
@@ -69,5 +72,14 @@ export class CoreModule {
         if (options.serveStatic) {
             imports.push(options.serveStatic);
         }
+    }
+
+    private static connectTemplate(imports: any[], options: CoreModuleOptions) {
+        if (options.template) {
+            imports.push(options.template);
+            return;
+        }
+
+        imports.push(TemplateModule.forRoot());
     }
 }

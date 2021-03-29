@@ -36,8 +36,7 @@ export class MailModule {
             module: MailModule,
             global: true,
             providers: [mailServiceProvider],
-            exports: [mailServiceProvider],
+            exports: [mailServiceProvider.provide],
         };
     }
-
 }
