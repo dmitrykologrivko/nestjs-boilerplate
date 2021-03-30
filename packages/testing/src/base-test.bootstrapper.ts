@@ -6,6 +6,7 @@ import { BootstrapperMeta, BaseBootstrapper } from '@nestjs-boilerplate/core';
 
 export interface TestBootstrapperMeta<T extends INestApplicationContext = INestApplicationContext,
     V extends NestApplicationContextOptions = NestApplicationContextOptions> extends BootstrapperMeta<T, V> {
+
     testingMetadata?: ModuleMetadata;
 }
 

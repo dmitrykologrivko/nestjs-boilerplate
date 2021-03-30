@@ -1,5 +1,6 @@
-import { bootstrapApplication } from '@nestjs-boilerplate/core';
+import { Bootstrap } from '@nestjs-boilerplate/core';
 import { AppModule } from './app.module';
 
-bootstrapApplication({ module: AppModule })
+new Bootstrap(AppModule)
+    .startApplication()
     .then();

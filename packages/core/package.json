@@ -29,6 +29,11 @@
     "rxjs": "^6.6.3",
     "typeorm": "^0.2.26"
   },
+  "peerDependenciesMeta": {
+    "@nestjs/platform-express": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@types/nodemailer": "^6.4.0",
     "@types/nunjucks": "^3.1.4"
