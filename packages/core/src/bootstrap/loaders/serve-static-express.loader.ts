@@ -1,6 +1,5 @@
 import { INestApplication } from '@nestjs/common';
-import { loadPackage } from '@nestjs/common/utils/load-package.util';
-import { BaseBootstrapperLoader } from '../base-bootstrapper.loader';
+import { AbstractExpressLoader } from './abstract-express.loader';
 
 /**
  * Express service static middleware options
@@ -33,19 +32,19 @@ export interface ServiceStaticOptions {
     setHeaders?: (res: any, path: string, stat: any) => any;
 }
 
-export class ServeStaticExpressLoader extends BaseBootstrapperLoader<INestApplication> {
+export class ServeStaticExpressLoader extends AbstractExpressLoader {
     constructor(
         protected rootPath: string,
         protected url: string,
         protected options?: ServiceStaticOptions,
     ) {
-        super();
+        super('ServeStaticExpressLoader');
     }
 
     async load(container: INestApplication): Promise<void> {
-        const express = loadPackage('express', 'StaticExpressLoader', () =>
-            require('express')
-        );
+        await super.load(container);
+
+        const express = this.loadExpress();
 
         container.use(
             this.url,

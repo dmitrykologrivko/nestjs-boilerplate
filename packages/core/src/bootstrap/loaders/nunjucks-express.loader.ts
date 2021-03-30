@@ -1,10 +1,14 @@
-import { INestApplicationContext } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import { NUNJUCKS_TOKEN } from '../../template/template.constants';
-import { BaseBootstrapperLoader } from '../base-bootstrapper.loader';
+import { AbstractExpressLoader } from './abstract-express.loader';
 
-export class NunjucksExpressLoader extends BaseBootstrapperLoader {
+export class NunjucksExpressLoader extends AbstractExpressLoader {
+    constructor() {
+        super('NunjucksExpressLoader');
+    }
 
-    async load(container: INestApplicationContext): Promise<void> {
+    async load(container: INestApplication): Promise<void> {
+        await super.load(container);
         container.get(NUNJUCKS_TOKEN)?.express(container);
     }
 }
