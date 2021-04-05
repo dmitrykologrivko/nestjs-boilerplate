@@ -4,7 +4,7 @@ import { AbstractExpressLoader } from './abstract-express.loader';
 
 export class NunjucksExpressLoader extends AbstractExpressLoader {
     constructor() {
-        super('NunjucksExpressLoader');
+        super(NunjucksExpressLoader.name);
     }
 
     async load(container: INestApplication): Promise<void> {

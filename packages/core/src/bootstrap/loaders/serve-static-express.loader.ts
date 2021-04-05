@@ -38,7 +38,7 @@ export class ServeStaticExpressLoader extends AbstractExpressLoader {
         protected url: string,
         protected options?: ServiceStaticOptions,
     ) {
-        super('ServeStaticExpressLoader');
+        super(ServeStaticExpressLoader.name);
     }
 
     async load(container: INestApplication): Promise<void> {

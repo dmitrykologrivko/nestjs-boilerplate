@@ -1,8 +1,8 @@
 import { INestApplication, Logger } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
-import { BaseBootstrapperLoader } from '../base-bootstrapper.loader';
+import { BaseLoader } from '../base.loader';
 
-export abstract class AbstractExpressLoader extends BaseBootstrapperLoader<INestApplication> {
+export abstract class AbstractExpressLoader extends BaseLoader<INestApplication> {
     constructor(
         protected readonly context: string,
     ) {

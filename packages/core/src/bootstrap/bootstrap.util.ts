@@ -16,10 +16,23 @@ import { MicroserviceBootstrapper } from './microservice.bootstrapper';
 import { ManagementBootstrapper } from './management.bootstrapper';
 import { COMMAND_ARG } from '../management/management.constants';
 
+interface AlternativeBootstrapper {
+    bootstrapper: BaseBootstrapper;
+    isApplicable: boolean;
+}
+
 export class Bootstrap {
     constructor(
-        protected module: any,
-    ) {}
+        protected readonly module: any,
+        protected readonly altBootstrappers: AlternativeBootstrapper[] = [],
+    ) {
+        this.altBootstrappers.push(
+            {
+                bootstrapper: new ManagementBootstrapper({ module: this.module }),
+                isApplicable: process.argv.includes(COMMAND_ARG),
+            },
+        );
+    }
 
     async startApplication<T extends INestApplication = INestApplication,
         V extends NestApplicationOptions = NestApplicationOptions>(
@@ -40,11 +53,13 @@ export class Bootstrap {
     }
 
     protected async start(bootstrapper: BaseBootstrapper) {
-        if (process.argv.includes(COMMAND_ARG)) {
-            await new ManagementBootstrapper({ module: this.module })
-                .start();
-        } else {
-            await bootstrapper.start();
+        for (const altBootstrapper of this.altBootstrappers) {
+            if (altBootstrapper.isApplicable) {
+                await altBootstrapper.bootstrapper.start();
+                return;
+            }
         }
+
+        await bootstrapper.start();
     }
 }
