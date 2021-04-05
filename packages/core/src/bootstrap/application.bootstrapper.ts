@@ -4,17 +4,17 @@ import { PropertyConfigService } from '../config/property-config.service';
 import { SERVER_PORT_PROPERTY } from '../server/server.properties';
 import { BaseBootstrapper, BootstrapperMeta } from './base.bootstrapper';
 
-export interface ApplicationBootstrapperMeta<T extends INestApplication = INestApplication,
-    V extends NestApplicationOptions = NestApplicationOptions> extends BootstrapperMeta<T, V> {
+export interface ApplicationBootstrapperMeta<T extends INestApplication = INestApplication>
+    extends BootstrapperMeta<T, NestApplicationOptions> {
 
     adapter?: AbstractHttpAdapter;
 }
 
-export class ApplicationBootstrapper<T extends INestApplication = INestApplication,
-    V extends NestApplicationOptions = NestApplicationOptions> extends BaseBootstrapper<T, V> {
+export class ApplicationBootstrapper<T extends INestApplication = INestApplication>
+    extends BaseBootstrapper<T, NestApplicationOptions> {
 
     constructor(
-        protected meta: ApplicationBootstrapperMeta<T, V>,
+        protected meta: ApplicationBootstrapperMeta<T>,
     ) {
         super(meta);
     }

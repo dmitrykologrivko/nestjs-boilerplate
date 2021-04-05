@@ -3,17 +3,17 @@ import { INestMicroservice } from '@nestjs/common';
 import { NestMicroserviceOptions } from '@nestjs/common/interfaces/microservices/nest-microservice-options.interface';
 import { BaseBootstrapper } from './base.bootstrapper';
 
-export class MicroserviceBootstrapper<T extends INestMicroservice = INestMicroservice,
-    V extends NestMicroserviceOptions = NestMicroserviceOptions> extends BaseBootstrapper<T, V> {
+export class MicroserviceBootstrapper<T extends NestMicroserviceOptions = NestMicroserviceOptions>
+    extends BaseBootstrapper<INestMicroservice, T> {
 
-    protected async createContainer(): Promise<T> {
-        return await NestFactory.createMicroservice<V>(
+    protected async createContainer(): Promise<INestMicroservice> {
+        return await NestFactory.createMicroservice<T>(
             this.meta.module,
             this.meta.options,
-        ) as T;
+        );
     }
 
-    protected async onStart(container: T): Promise<void | T> {
+    protected async onStart(container: INestMicroservice): Promise<void | INestMicroservice> {
         return await container.listenAsync();
     }
 }

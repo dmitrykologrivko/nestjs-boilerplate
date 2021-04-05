@@ -1,6 +1,5 @@
 import {
     INestApplication,
-    NestApplicationOptions,
     INestMicroservice,
 } from '@nestjs/common';
 import { NestMicroserviceOptions } from '@nestjs/common/interfaces/microservices/nest-microservice-options.interface';
@@ -34,21 +33,19 @@ export class Bootstrap {
         );
     }
 
-    async startApplication<T extends INestApplication = INestApplication,
-        V extends NestApplicationOptions = NestApplicationOptions>(
-        meta?: Pick<ApplicationBootstrapperMeta<T, V>, 'adapter' | 'options' | 'onCustomInit' | 'loaders'>,
+    async startApplication<T extends INestApplication = INestApplication>(
+        meta?: Pick<ApplicationBootstrapperMeta<T>, 'adapter' | 'options' | 'onCustomInit' | 'loaders'>,
     ) {
         await this.start(
-            new ApplicationBootstrapper<T, V>({ module: this.module, ...meta }),
+            new ApplicationBootstrapper<T>({ module: this.module, ...meta }),
         );
     }
 
-    async startMicroservice<T extends INestMicroservice = INestMicroservice,
-        V extends NestMicroserviceOptions = NestMicroserviceOptions>(
-        meta?: Pick<BootstrapperMeta<T, V>, 'options' | 'onCustomInit' | 'loaders'>,
+    async startMicroservice<T extends NestMicroserviceOptions = NestMicroserviceOptions>(
+        meta?: Pick<BootstrapperMeta<INestMicroservice, T>, 'options' | 'onCustomInit' | 'loaders'>,
     ) {
         await this.start(
-            new MicroserviceBootstrapper<T, V>({ module: this.module, ...module }),
+            new MicroserviceBootstrapper<T>({ module: this.module, ...module }),
         );
     }
 
