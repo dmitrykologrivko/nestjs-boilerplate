@@ -250,7 +250,7 @@ export class TemplateExpressLoader extends BaseLoader<NestExpressApplication> {
         protected readonly staticAssetsDir: string,
         protected readonly baseViewsDir: string,
     ) {
-        super(TemplateExpressLoader.name);
+        super();
     }
 
     async load(container: NestExpressApplication): Promise<void> {
