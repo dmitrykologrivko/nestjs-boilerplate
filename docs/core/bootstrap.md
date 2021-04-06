@@ -280,5 +280,5 @@ new ApplicationBootstrapper({
 ```
 
 NestJS Boilerplate contains build-in loaders such as:\
-`NunjucksExpressLoader` implements configure logic of nunjucks template library and express based application.\
-`ServeStaticExpressLoader` implements configure logic of serving static files for express based application.
+`NunjucksExpressLoader` implements configure logic of nunjucks template library and Express HTTP provider.\
+`ServeStaticExpressLoader` implements configure logic of serving static files for Express HTTP provider.
