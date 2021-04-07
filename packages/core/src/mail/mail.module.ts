@@ -7,8 +7,8 @@ import { ConsoleMailService } from './console-mail.service';
 import { DummyMailService } from './dummy-mail.service';
 import mailConfig from './mail.config';
 
-export interface MailModuleOptions {
-    service?: Constructor & typeof BaseMailService;
+export interface MailModuleOptions<T extends BaseMailService = NodemailerService> {
+    service?: Constructor<T>;
 }
 
 @Global()

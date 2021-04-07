@@ -9,8 +9,8 @@ const TEMPLATE_PATHS_LOADER_TOKEN = 'TEMPLATE_PATHS_LOADER_TOKEN';
 const TEMPLATE_GLOBAL_PATHS_TOKEN = 'TEMPLATE_GLOBAL_PATHS_TOKEN';
 const TEMPLATE_MODULE_PATHS_TOKEN = 'TEMPLATE_MODULE_PATHS_TOKEN';
 
-export interface TemplateModuleOptions {
-    service?: Constructor & typeof BaseTemplateService;
+export interface TemplateModuleOptions<T extends BaseTemplateService = NunjucksService> {
+    service?: Constructor<T>;
     path?: string | string[];
 }
 
