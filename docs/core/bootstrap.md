@@ -254,9 +254,9 @@ export class TemplateExpressLoader extends BaseLoader<NestExpressApplication> {
     }
 
     async load(container: NestExpressApplication): Promise<void> {
-        app.useStaticAssets(this.staticAssetsDir);
-        app.setBaseViewsDir(this.baseViewsDir);
-        app.setViewEngine('hbs');
+        container.useStaticAssets(this.staticAssetsDir);
+        container.setBaseViewsDir(this.baseViewsDir);
+        container.setViewEngine('hbs');
     }
 }
 ```
