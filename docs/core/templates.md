@@ -253,7 +253,7 @@ import { HandlebarService } from './handlebars.service';
 @Module({
     imports: [
         CoreModule.forRoot({
-            template: TemplateModule.forRoot({
+            template: TemplateModule.forRoot<HandlebarsService>({
                 path: join(__dirname, '..', 'templates'),
                 service: HandlebarsService,
             }),

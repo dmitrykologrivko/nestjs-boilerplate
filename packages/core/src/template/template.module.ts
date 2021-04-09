@@ -26,7 +26,9 @@ export interface TemplateModuleOptions<T extends BaseTemplateService = NunjucksS
 })
 export class TemplateModule {
 
-    static forRoot(options: TemplateModuleOptions = {}): DynamicModule {
+    static forRoot<T extends BaseTemplateService = NunjucksService>(
+        options: TemplateModuleOptions<T> = {}
+    ): DynamicModule {
         const templateServiceProvider = {
             provide: BaseTemplateService,
             useClass: options.service || NunjucksService,
