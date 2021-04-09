@@ -3,9 +3,6 @@ import { ConfigModule } from '../config/config.module';
 import { Constructor } from '../utils/type.utils';
 import { BaseMailService } from './base-mail.service';
 import { SmtpMailService } from './smtp-mail.service';
-import { ConsoleMailService } from './console-mail.service';
-import { DummyMailService } from './dummy-mail.service';
-import { MemoryMailService } from './memory-mail.service';
 import mailConfig from './mail.config';
 
 export interface MailModuleOptions<T extends BaseMailService = SmtpMailService> {
@@ -15,18 +12,8 @@ export interface MailModuleOptions<T extends BaseMailService = SmtpMailService> 
 @Global()
 @Module({
     imports: [ConfigModule.forFeature(mailConfig)],
-    providers: [
-        SmtpMailService,
-        ConsoleMailService,
-        DummyMailService,
-        MemoryMailService,
-    ],
-    exports: [
-        SmtpMailService,
-        ConsoleMailService,
-        DummyMailService,
-        MemoryMailService,
-    ],
+    providers: [SmtpMailService],
+    exports: [SmtpMailService],
 })
 export class MailModule {
 

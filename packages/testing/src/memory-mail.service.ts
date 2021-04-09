@@ -1,8 +1,11 @@
-import { InfrastructureService } from '../utils/infrastructure-service.decorator';
-import { Result, ok } from '../utils/monads';
-import { BaseMailService } from './base-mail.service';
-import { Mail } from './mail.interfaces';
-import { SendMailFailedException } from './send-mail-failed.exception';
+import {
+    InfrastructureService,
+    Result,
+    ok,
+    BaseMailService,
+    Mail,
+    SendMailFailedException,
+} from '@nestjs-boilerplate/core';
 
 @InfrastructureService()
 export class MemoryMailService extends BaseMailService {

@@ -4,3 +4,6 @@ export * from './base-test.bootstrapper';
 export * from './test-application.bootstrapper';
 export * from './test-microservice.bootstrapper';
 export * from './test-bootstrap.util';
+export * from './console-mail.service';
+export * from './null-mail.service';
+export * from './memory-mail.service';
