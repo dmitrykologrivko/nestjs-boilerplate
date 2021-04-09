@@ -2,12 +2,13 @@ import { Global, Module, DynamicModule } from '@nestjs/common';
 import { ConfigModule } from '../config/config.module';
 import { Constructor } from '../utils/type.utils';
 import { BaseMailService } from './base-mail.service';
-import { NodemailerService } from './nodemailer.service';
+import { SmtpMailService } from './smtp-mail.service';
 import { ConsoleMailService } from './console-mail.service';
 import { DummyMailService } from './dummy-mail.service';
+import { MemoryMailService } from './memory-mail.service';
 import mailConfig from './mail.config';
 
-export interface MailModuleOptions<T extends BaseMailService = NodemailerService> {
+export interface MailModuleOptions<T extends BaseMailService = SmtpMailService> {
     service?: Constructor<T>;
 }
 
@@ -15,22 +16,26 @@ export interface MailModuleOptions<T extends BaseMailService = NodemailerService
 @Module({
     imports: [ConfigModule.forFeature(mailConfig)],
     providers: [
-        NodemailerService,
+        SmtpMailService,
         ConsoleMailService,
         DummyMailService,
+        MemoryMailService,
     ],
     exports: [
-        NodemailerService,
+        SmtpMailService,
         ConsoleMailService,
         DummyMailService,
+        MemoryMailService,
     ],
 })
 export class MailModule {
 
-    static forRoot(options: MailModuleOptions = {}): DynamicModule {
+    static forRoot<T extends BaseMailService = SmtpMailService>(
+        options: MailModuleOptions<T> = {},
+    ): DynamicModule {
         const mailServiceProvider = {
             provide: BaseMailService,
-            useClass: options.service || NodemailerService,
+            useClass: options.service || SmtpMailService,
         };
         return {
             module: MailModule,

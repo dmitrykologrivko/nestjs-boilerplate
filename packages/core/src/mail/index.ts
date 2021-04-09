@@ -1,9 +1,11 @@
 export * from './mail.module';
 export * from './mail.config';
-export * from './mail-options.interface';
+export * from './mail.interfaces';
 export * from './mail.properties';
 export * from './base-mail.service';
 export * from './send-mail-failed.exception';
-export * from './nodemailer.service';
+export * from './smtp-mail.service';
 export * from './console-mail.service';
 export * from './dummy-mail.service';
+export * from './memory-mail.service';
+export * as nodemailer from 'nodemailer';
