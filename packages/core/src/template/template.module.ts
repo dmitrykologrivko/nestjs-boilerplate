@@ -31,7 +31,7 @@ export class TemplateModule {
     ): DynamicModule {
         const templateServiceProvider = {
             provide: BaseTemplateService,
-            useClass: options.service || NunjucksService,
+            useExisting: options.service || NunjucksService,
         };
 
         const templateGlobalPathsProvider = {

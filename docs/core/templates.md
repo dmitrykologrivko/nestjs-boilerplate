@@ -212,7 +212,7 @@ support this only in Express middleware level. So for this library we need to de
 Implementation of `TemplateLoader` here is skipped, you are free to do it your way. To get list of templates folder
 you can inject an array of strings by using `TEMPLATE_PATHS_TOKEN` token.
 
-Create host module for handlebars service.
+Create host module for handlebars service and make module global scoped.
 
 ```typescript
 import * as hbs from 'hbs';

@@ -208,7 +208,7 @@ export class CustomSmtpMailService extends BaseMailService<CustomMail, SmtpConne
 }
 ```
 
-Create a module and register custom smtp service in the global scope.
+Create host module for custom smtp service and make module global scoped.
 
 ```typescript
 import { Module, Global } from '@nestjs/common';
