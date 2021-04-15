@@ -1,24 +1,31 @@
 import {
     InfrastructureService,
-    Result,
-    ok,
+    PropertyConfigService,
     BaseMailService,
     Mail,
-    SendMailFailedException,
 } from '@nestjs-boilerplate/core';
 
 @InfrastructureService()
 export class MemoryMailService extends BaseMailService {
 
-    outbox: Mail[] = [];
-
-    async sendMail(mail: Mail): Promise<Result<void, SendMailFailedException>> {
-        this.outbox.push(mail);
-        return ok(null);
+    constructor(
+        config: PropertyConfigService,
+    ) {
+        super(config);
     }
 
-    async sendMassMail(mails: Mail[]): Promise<Result<void, SendMailFailedException>> {
-        this.outbox = this.outbox.concat(mails);
-        return ok(null);
+    outbox: Mail[] = [];
+
+    protected async onOpenConnection(mass: boolean): Promise<void> {
+        return Promise.resolve();
+    }
+
+    protected async onCloseConnection(connection: any, mass: boolean): Promise<void> {
+        return Promise.resolve();
+    }
+
+    protected async onSendMail(mail: Mail, connection: any): Promise<void> {
+        this.outbox.push(mail);
+        return Promise.resolve();
     }
 }

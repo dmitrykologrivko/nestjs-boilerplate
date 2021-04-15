@@ -1,73 +1,49 @@
 import { TLSSocketOptions } from 'tls';
-import { createTransport } from 'nodemailer';
-import { PropertyConfigService } from '../config/property-config.service';
+import { createTransport, Transporter } from 'nodemailer';
 import { InfrastructureService } from '../utils/infrastructure-service.decorator';
-import { Result, ok, err } from '../utils/monads';
-import { MAIL_PROPERTY } from './mail.properties';
+import { PropertyConfigService } from '../config/property-config.service';
 import { BaseMailService } from './base-mail.service';
-import { MailOptions, Mail } from './mail.interfaces';
-import { SendMailFailedException } from './send-mail-failed.exception';
+import { Mail } from './mail.interfaces';
 
 @InfrastructureService()
-export class SmtpMailService extends BaseMailService {
-
-    private readonly options: MailOptions;
-    private tlsOptions: TLSSocketOptions;
+export class SmtpMailService extends BaseMailService<Mail, Transporter> {
 
     constructor(
-        private readonly config: PropertyConfigService,
+        config: PropertyConfigService,
     ) {
-        super();
-        this.options = this.config.get(MAIL_PROPERTY);
+        super(config);
     }
 
-    async sendMail(mail: Mail): Promise<Result<void, SendMailFailedException>> {
-        try {
-            await createTransport(this.getConnectionOptions())
-                .sendMail(this.mapToTransportMail(mail));
-            return ok(null);
-        } catch (e) {
-            return err(new SendMailFailedException(e.stackTrace));
-        }
+    private tlsOptions: TLSSocketOptions;
+
+    protected async onOpenConnection(mass: boolean): Promise<Transporter> {
+        return createTransport({
+            pool: mass,
+            host: this.options.smtp?.host,
+            port: this.options.smtp?.port,
+            secure: this.options.smtp?.useTls,
+            auth: {
+                user: this.options.smtp?.auth?.user,
+                pass: this.options.smtp?.auth?.password,
+            },
+            connectionTimeout: this.options.smtp?.timeout,
+            tls: this.tlsOptions,
+        } as any);
     }
 
-    async sendMassMail(mails: Mail[]): Promise<Result<void, SendMailFailedException>> {
-        try {
-            const transporter = createTransport({
-                pool: true,
-                ...this.getConnectionOptions(),
-            });
+    protected async onCloseConnection(connection: Transporter, mass: boolean) {
+        connection.close();
+    }
 
-            for (const mail of mails) {
-                await transporter.sendMail(this.mapToTransportMail(mail));
-            }
-
-            transporter.close();
-            return ok(null);
-        } catch (e) {
-            return err(new SendMailFailedException(e.stackTrace));
-        }
+    protected async onSendMail(mail: Mail, connection: Transporter) {
+        await connection.sendMail(this.mapToNodemailerMail(mail));
     }
 
     useTLSSocketOptions(options: TLSSocketOptions) {
         this.tlsOptions = options;
     }
 
-    private getConnectionOptions() {
-        return {
-            host: this.options.host,
-            port: this.options.port,
-            secure: this.options.useTls,
-            auth: {
-                user: this.options.auth?.user,
-                pass: this.options.auth?.password,
-            },
-            connectionTimeout: this.options.timeout,
-            tls: this.tlsOptions,
-        };
-    }
-
-    private mapToTransportMail(mail: Mail) {
+    private mapToNodemailerMail(mail: Mail) {
         return {
             subject: mail.subject,
             text: mail.text,

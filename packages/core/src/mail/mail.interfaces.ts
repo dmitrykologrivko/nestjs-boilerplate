@@ -21,21 +21,23 @@ export interface Mail {
     html?: string;
     headers?: { key: string, value: string }[];
     attachments?: Attachment[];
-    from: string | Address;
     to: (string | Address)[];
     cc?: (string | Address)[];
     bcc?: (string | Address)[];
+    from?: string | Address;
     replyTo?: string | Address;
 }
 
 export interface MailOptions {
-    host: string;
-    port: number;
-    useTls: boolean;
-    auth: {
-        user: string;
-        password: string;
-    }
-    timeout: number;
     defaultFrom: string;
+    smtp: {
+        host: string;
+        port: number;
+        useTls: boolean;
+        auth: {
+            user: string;
+            password: string;
+        }
+        timeout: number;
+    };
 }
