@@ -38,7 +38,7 @@ class WelcomeService {
 }
 ```
 
-**Mail object may contains the following:**\
+**Mail object may contains the following options:**\
 `from` the email address of the sender. If it is not provided then will be used `defaultFrom` email address from 
 the email config.\
 `to` array of recipients email addresses.\
@@ -54,8 +54,58 @@ the email config.\
 
 Email addresses can be plain ‘sender@example.com’ or formatted '“Sender Name” sender@example.com'.
 
-**Attachments:**\
-hf
+**Attachment object may contains the following options:**\
+
+content?: string | Buffer | Readable;
+path?: string | Url;
+filename?: string | false;
+contentType?: string;
+encoding?: string;
+headers?: { key: string, value: string }[];
+
+`content` string, buffer, or a stream contents for the attachment.\
+`path` path to the file instead of using content option.\
+`filename` filename for attachment file.\
+`contentType` content type for the attachment.\
+`encoding` this option allows encoding the content to a buffer using the provided encoding type only if the content is 
+a string. Example: base64, hex, binary etc.\
+`headers` an array of additional header fields for attachment. Same usage as with message headers.
+
+```typescript
+const mail = {
+    from: 'noreply@example.com',
+    to: ['test@example.com'],
+    subject: 'Example of attachments',
+    text: 'Example of attachments',
+    attachments: [
+        {
+            filename: 'example.txt',
+            content: 'example!',
+            contentType: 'text/plain',
+        },
+        {
+            filename: 'example1.txt',
+            content: new Buffer('example!', 'utf-8'),
+            contentType: 'text/plain',
+        },
+        {
+            filename: 'example2.txt',
+            path: '/var/mail/example.txt',
+            contentType: 'text/plain',
+        },
+        {
+            filename: 'example3.txt',
+            content: fs.createReadStream('/var/mail/example.txt'),
+            contentType: 'text/plain',
+        },
+        {
+            filename: 'example4.txt',
+            content: 'ZXhhbXBsZQ==',
+            encoding: 'base64',
+        },
+    ],
+}
+```
 
 ## Configuration
 

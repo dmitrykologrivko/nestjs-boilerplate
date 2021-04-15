@@ -15,12 +15,12 @@ interface Attachment {
     headers?: { key: string, value: string }[];
 }
 
-export interface Mail {
+export interface Mail<T extends Attachment = Attachment> {
     subject: string;
     text: string;
     html?: string;
     headers?: { key: string, value: string }[];
-    attachments?: Attachment[];
+    attachments?: T[];
     to: (string | Address)[];
     cc?: (string | Address)[];
     bcc?: (string | Address)[];
