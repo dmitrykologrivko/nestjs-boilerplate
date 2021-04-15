@@ -7,7 +7,7 @@ export interface BootstrapperMeta<T extends INestApplicationContext = INestAppli
     V extends NestApplicationContextOptions = NestApplicationContextOptions> {
     module: any;
     options?: V;
-    onCustomInit?: (container: T) => Promise<void>;
+    onInit?: (container: T) => Promise<void>;
     loaders?: BaseLoader<T>[];
 }
 
@@ -38,8 +38,8 @@ export abstract class BaseBootstrapper<T extends INestApplicationContext = INest
 
         await this.onInit(container);
 
-        if (this.meta.onCustomInit) {
-            await this.meta.onCustomInit(container);
+        if (this.meta.onInit) {
+            await this.meta.onInit(container);
         }
 
         if (this.meta.loaders) {

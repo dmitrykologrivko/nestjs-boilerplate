@@ -34,7 +34,7 @@ export class Bootstrap {
     }
 
     async startApplication<T extends INestApplication = INestApplication>(
-        meta?: Pick<ApplicationBootstrapperMeta<T>, 'adapter' | 'options' | 'onCustomInit' | 'loaders'>,
+        meta?: Pick<ApplicationBootstrapperMeta<T>, 'adapter' | 'options' | 'onInit' | 'loaders'>,
     ) {
         await this.start(
             new ApplicationBootstrapper<T>({ module: this.module, ...meta }),
@@ -42,7 +42,7 @@ export class Bootstrap {
     }
 
     async startMicroservice<T extends NestMicroserviceOptions = NestMicroserviceOptions>(
-        meta?: Pick<BootstrapperMeta<INestMicroservice, T>, 'options' | 'onCustomInit' | 'loaders'>,
+        meta?: Pick<BootstrapperMeta<INestMicroservice, T>, 'options' | 'onInit' | 'loaders'>,
     ) {
         await this.start(
             new MicroserviceBootstrapper<T>({ module: this.module, ...module }),

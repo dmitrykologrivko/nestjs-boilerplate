@@ -20,7 +20,7 @@ new ApplicationBootstrapper({module: AppModule})
 ```
 
 If you want to additionally configure application then you need to provide one of the following: `options` object,
-`onCustomInit` function, `loaders` array, or you can combine all of them. (see Bootstrapper Meta section)
+`onInit` function, `loaders` array, or you can combine all of them. (see Bootstrapper Meta section)
 
 ```typescript
 import { ApplicationBootstrapper, NunjucksExpressLoader } from '@nestjs-boilerplate/core';
@@ -31,7 +31,7 @@ new ApplicationBootstrapper({
         options: {
             cors: true,
         },
-        onCustomInit: async (container: INestApplication) => {
+        onInit: async (container: INestApplication) => {
             container.setGlobalPrefix('api');
         },
         loaders: [new NunjucksExpressLoader()],
@@ -105,7 +105,7 @@ new MicroserviceBootstrapper({ module: AppModule })
 ```
 
 If you want to additionally configure microservice then you need to provide one of the following: `options` object,
-`onCustomInit` function, `loaders` array, or you can combine all of them. (see Bootstrapper Meta section)
+`onInit` function, `loaders` array, or you can combine all of them. (see Bootstrapper Meta section)
 
 ```typescript
 import { Transport } from '@nestjs/microservices';
@@ -223,7 +223,7 @@ new ApplicationBootstrapper({ module: AppModule })
 Method `start` calls bootstrapper methods in the next flow:
 1. `createContainer` creates Nest application container
 2. `onInit` does initial application setup related to the bootstrapper
-3. `onCustomInit` does custom initial application setup related to the bootstrapper
+3. `meta.onInit` does custom initial application setup related to the bootstrapper
 4. `runLoaders` executes provided loaders
 5. `onStart` runs the logic of starting application
 
@@ -232,7 +232,7 @@ Method `start` calls bootstrapper methods in the next flow:
 Each bootstrapper needs to provide `BootstrapperMeta` in the constructor.\
 `module` is the main application module\
 `options` optional Nest application configuration\
-`onCustomInit` function which allows doing additional configure of application\
+`onInit` function which allows doing additional configure of application\
 `loaders` array of the bootstrapper loaders
 
 ## Base Loader
