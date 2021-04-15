@@ -17,8 +17,8 @@ You can connect your databases by using `withOptions` method which provides a wa
 of `DatabaseModuleOptions` for multiple databases.
 
 ```typescript
-import { Module } from '@nestjs/common';
-import { DatabaseModule } from '@nestjs-boilerplate/core';
+import {Module} from '@nestjs/common';
+import {DatabaseModule} from 'packages/core/dist/index';
 
 @Module({
     imports: [
@@ -30,7 +30,8 @@ import { DatabaseModule } from '@nestjs-boilerplate/core';
         }]),
     ],
 })
-export class AppModule {}
+export class AppModule {
+}
 ```
 
 Also, you can load database connection options from `ormconfig.json` file

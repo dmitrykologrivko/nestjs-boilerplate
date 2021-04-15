@@ -28,22 +28,23 @@ under the root of the project and `index.html` file.
 Also, you need to register path to the folder with templates in the application module.
 
 ```typescript
-import { join } from 'path';
-import { Module } from '@nestjs/common';
-import { CoreModule, TemplateModule } from '@nestjs-boilerplate/core';
-import { AppController } from './app.controller';
+import {join} from 'path';
+import {Module} from '@nestjs/common';
+import {CoreModule, TemplateModule} from 'packages/core/dist/index';
+import {AppController} from './app.controller';
 
 @Module({
-    imports: [
-        CoreModule.forRoot({
-            template: TemplateModule.forRoot({
-                path: join(__dirname, '..', 'templates'),
-            }),
-        }),
-    ],
-    controllers: [AppController],
+   imports: [
+      CoreModule.forRoot({
+         template: TemplateModule.forRoot({
+            path: join(__dirname, '..', 'templates'),
+         }),
+      }),
+   ],
+   controllers: [AppController],
 })
-export class AppModule {}
+export class AppModule {
+}
 ```
 
 As the final step, you need to inject `BaseTemplateService` into your application controller and use `render` method
