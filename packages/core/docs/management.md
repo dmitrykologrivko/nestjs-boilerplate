@@ -4,7 +4,7 @@ Management commands are commands that can be run under a command shell. Can be u
 or periodically. For example, management commands can be used for maintenance actions or to give more convenient 
 admin tooling.
 
-## Basic Example
+## Basic example
 
 Basically a management command is a class wrapped by `Command` decorator. The command must have a handler method 
 wrapped by `Handler` or `DefaultHandler` decorators.
@@ -136,7 +136,7 @@ export class CalculationCommand {
         shortcut: 'sub',
         description: 'Displays subtraction of two numbers',
     })
-    sum(
+    sub(
         @CliArgument({
             name: 'a',
             description: 'First argument',
