@@ -20,7 +20,7 @@ import { PrimaryGeneratedColumn, Column } from 'typeorm';
 import { Entity, BaseEntity } from '@nestjs-boilerplate/core';
 
 @Entity()
-export class Note implements BaseEntity {
+export class Note extends BaseEntity {
 
     @PrimaryGeneratedColumn()
     id: number;
