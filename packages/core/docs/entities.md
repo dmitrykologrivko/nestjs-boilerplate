@@ -3,7 +3,7 @@
 Entities are one of the building blocks of Domain Driven Design. "It is an object that is not defined by its attributes,
 but rather by a thread of continuity and its identity." (Eric Evans)
 
-In short: entities have ids and can be mapped to a table in a relational database.
+In short: entities are objects that have ids and can be mapped to a table in a relational database.
 
 ## Base Entity
 
