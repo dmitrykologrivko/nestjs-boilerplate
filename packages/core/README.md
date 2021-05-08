@@ -27,6 +27,7 @@ Core is the main module of NestJS Boilerplate. Provides a framework with main to
 ## Domain Layer
 
 * [Entities](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/entities.md)
+* [Value Objects](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/value-objects.md)
 
 TODO
 

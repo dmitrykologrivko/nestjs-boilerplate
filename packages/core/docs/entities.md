@@ -3,7 +3,8 @@
 Entities are one of the building blocks of Domain Driven Design. "It is an object that is not defined by its attributes,
 but rather by a thread of continuity and its identity." (Eric Evans)
 
-In short: entities are objects that have ids and can be mapped to a table in a relational database.
+In short: entities are objects that have ids and can be mapped to a table in a relational database. Entities of the 
+same type are equals if their ids are matched even if all the properties are different.
 
 ## Base Entity
 
@@ -20,8 +21,7 @@ export class Note extends BaseEntity {
 ```
 
 The Note class is defined as an entity. It has an **id** and **note** properties.\
-**id** field inherited from `BaseEntity` class and has `number` type by default. To match entities of the same type
-from each other, you need to compare them by id field.
+**id** field inherited from `BaseEntity` class and has `number` type by default.
 
 You can customize the type of **id** field by providing the type explicitly to `BaseEntity` class.
 
@@ -89,7 +89,7 @@ export class Note extends BaseEntity implements SoftDeletable {
 }
 ```
 
-## Mapping to database table
+## Storing Entities in database
 
 When it comes to the database, you need to map an entity to a table in a relational database. You can use an existing 
 entity class or create another class for database table representation. The second approach may seem more correct since
@@ -131,4 +131,4 @@ when you decided to mix entity class and database columns mapping.
 `BaseTypeormEntity` extends `BaseEntity` and implements `TimeStamped` interface.\
 `BaseRootTypeormEntity` extends `BaseRootEntity` and implements `TimeStamped` interface.\
 `BaseSoftDeletableTypeormEntity` extends `BaseEntity` and implements `TimeStamped` and `SoftDeletable` interfaces.\
-`BaseSoftDeletableRootTypeormEntity` extends `BaseRootEntity` and implements `TimeStamped` and `SoftDeletable` interfaces.\
+`BaseSoftDeletableRootTypeormEntity` extends `BaseRootEntity` and implements `TimeStamped` and `SoftDeletable` interfaces.
