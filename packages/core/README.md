@@ -33,6 +33,8 @@ TODO
 
 ## Application Layer
 
+* [Authorization](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/authorization.md)
+
 TODO
 
 ## Presentation Layer

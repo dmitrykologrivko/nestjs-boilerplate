@@ -10,24 +10,28 @@ import { Identifiable } from '../../domain/entities/identifiable.interface';
 import { EntityNotFoundException } from '../../domain/entities/entity-not-found.exception';
 import { BaseDto } from '../dto/base.dto';
 import { BaseEntityDto } from '../dto/base-entity.dto';
-import { ListQuery } from '../dto/list-query.interface';
-import { RetrieveQuery } from '../dto/retrieve-query.interface';
-import { DestroyQuery } from '../dto/destroy-query.interface';
 import { CrudOperations } from '../constants/crud-operations.enum';
 import { ListInput } from '../dto/list.input';
 import { RetrieveInput } from '../dto/retrieve.input';
+import { CreateInput } from '../dto/create.input';
+import { UpdateInput } from '../dto/update.input';
 import { DestroyInput } from '../dto/destroy.input';
-import { BaseDomainPermission } from '../../domain/permissions/base-domain.permission';
-import { PermissionDeniedException } from '../../domain/permissions/permission-denied.exception';
+import { BasePermission } from '../permissions/base.permission';
+import { BaseEntityPermission } from '../permissions/base-entity.permission';
+import { PermissionDeniedException } from '../permissions/permission-denied.exception';
+import { checkPermissions, checkEntityPermissions } from '../permissions/permissions.utils';
 import { BaseFilter } from '../filters/base.filter';
 import { BasePagination } from '../pagination/base.pagination';
 import { BasePaginatedContainer } from '../pagination/base-paginated-container.interface';
 
-export interface CrudServiceOptions<E, D, CI, UI> {
+export interface CrudServiceOptions<E, LO, RO, CP, CO, UP, UO> {
     entityCls: ClassType<E>;
-    dtoCls: ClassType<D>;
-    createInputCls: ClassType<CI>;
-    updateInputCls: ClassType<UI>;
+    listOutputCls: ClassType<LO>;
+    retrieveOutputCls: ClassType<RO>;
+    createPayloadCls: ClassType<CP>;
+    createOutputCls: ClassType<CO>;
+    updatePayloadCls: ClassType<UP>;
+    updateOutputCls: ClassType<UO>;
     returnShallow?: boolean;
 }
 
@@ -45,21 +49,35 @@ export interface InputWrapper<LI, RI, CI, UI, DI> {
 }
 
 export abstract class BaseCrudService<E extends object & BaseEntity, D extends BaseEntityDto,
-    PC extends BasePaginatedContainer<D> = BasePaginatedContainer<D>,
-    LI extends ListQuery = ListInput,
-    RI extends RetrieveQuery = RetrieveInput,
-    CI extends BaseDto = D,
-    UI extends BaseEntityDto = D,
-    DI extends DestroyQuery = DestroyInput,
+    // List
+    LI extends ListInput = ListInput,
+    LO extends BaseEntityDto = D,
+    PC extends BasePaginatedContainer<LO> = BasePaginatedContainer<LO>,
+    // Retrieve
+    RI extends RetrieveInput = RetrieveInput,
+    RO extends BaseEntityDto = D,
+    // Create
+    CP extends BaseDto = D,
+    CI extends CreateInput<CP> = CreateInput<CP>,
+    CO extends BaseEntityDto = D,
+    // Update
+    UP extends BaseEntityDto = D,
+    UI extends UpdateInput<UP> = UpdateInput<UP>,
+    UO extends BaseEntityDto = D,
+    // Destroy
+    DI extends DestroyInput = DestroyInput,
+    // Create entity exceptions
     CE = any,
+    // Update entity exceptions
     UE = any,
+    // Destroy entity exceptions
     DE = any> {
 
     protected readonly alias: string;
 
     protected constructor(
         protected readonly repository: Repository<E>,
-        protected readonly options: CrudServiceOptions<E, D, CI, UI>,
+        protected readonly options: CrudServiceOptions<E, LO, RO, CP, CO, UP, UO>,
     ) {
         this.alias = repository.metadata.name;
     }
@@ -68,7 +86,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         input: LI,
     ): Promise<Result<PC, PermissionDeniedException>> {
         const wrapper = { type: InputType.LIST_INPUT, input };
-        return AsyncResult.from(this.checkPermissions(input))
+        return AsyncResult.from(checkPermissions<LI>(input, this.getReadPermissions()))
             .proceed(async () => {
                 const chain = FilterChain.create<E>(this.getQuery(wrapper));
 
@@ -85,11 +103,11 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
                 if (chain.hasPagination()) {
                     output = await chain.mapPaginatedContainer(response => ({
                         ...response,
-                        results: this.mapListDto(response.results, input),
+                        results: this.mapListOutput(response.results, input),
                     })) as PC;
                 } else {
                     output = await chain.reduceEntities(data => ({
-                        results: this.mapListDto(data, input),
+                        results: this.mapListOutput(data, input),
                     })) as PC;
                 }
 
@@ -100,79 +118,74 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
 
     async retrieve(
         input: RI,
-    ): Promise<Result<D, PermissionDeniedException | EntityNotFoundException>> {
+    ): Promise<Result<RO, PermissionDeniedException | EntityNotFoundException>> {
         const wrapper = { type: InputType.RETRIEVE_INPUT, input };
-        return AsyncResult.from(this.checkPermissions(input))
+        return AsyncResult.from(checkPermissions<RI>(input, this.getReadPermissions()))
             .proceed(() => this.getObject({ id: input.id }, wrapper))
-            .proceed(entity => this.checkEntityPermissions(input, entity))
-            .map(entity => this.mapDtoOutput(entity, wrapper) as D)
+            .proceed(entity => checkEntityPermissions<RI, E>(input, entity, this.getReadEntityPermissions()))
+            .map(entity => this.mapRetrieveOutput(entity, input))
             .toPromise();
     }
 
     async create(
         input: CI,
-    ): Promise<Result<D, PermissionDeniedException | ValidationContainerException | CE>> {
+    ): Promise<Result<CO, PermissionDeniedException | ValidationContainerException | CE>> {
         const wrapper = { type: InputType.CREATE_INPUT, input };
-        return AsyncResult.from(this.checkPermissions(input))
+        return AsyncResult.from(checkPermissions<CI>(input, this.getCreatePermissions()))
             .proceed(() =>
                 ClassValidator.validate(
-                    this.options.createInputCls,
-                    input,
+                    this.options.createPayloadCls,
+                    input.payload,
                     { groups: [CrudOperations.CREATE] },
                 )
             )
-            .proceed(() =>
-                this.performCreateEntity(
-                    // Transform input to omit fields not related for create operation
-                    ClassTransformer.toClassObject(
-                        this.options.createInputCls,
-                        input,
-                        { groups: [CrudOperations.CREATE] },
-                    ),
-                ),
-            )
+            .proceed(async () => {
+                // Transform input to omit fields not related for create operation
+                input.payload = ClassTransformer.toClassObject(
+                    this.options.createPayloadCls,
+                    input.payload,
+                    { groups: [CrudOperations.CREATE] },
+                );
+                return this.performCreateEntity(input);
+            })
             .map(async entity => {
                 if (!this.options.returnShallow) {
                     entity = (await this.getObject({ id: entity.id }, wrapper)).unwrap();
                 }
-                return this.mapDtoOutput(entity, wrapper) as D
+                return this.mapCreateOutput(entity, input);
             })
             .toPromise();
     }
 
     async update(
         input: UI,
-        partial: boolean = false,
-    ): Promise<Result<D, PermissionDeniedException | EntityNotFoundException | ValidationContainerException | UE>> {
+    ): Promise<Result<UO, PermissionDeniedException | EntityNotFoundException | ValidationContainerException | UE>> {
         const wrapper = { type: InputType.UPDATE_INPUT, input };
-        const groups = partial ? [CrudOperations.PARTIAL_UPDATE] : [CrudOperations.UPDATE];
-        return AsyncResult.from(this.checkPermissions(input))
-            .proceed(() => this.getObject({ id: input.id }, wrapper))
-            .proceed(entity => this.checkEntityPermissions(input, entity))
+        const groups = input.partial ? [CrudOperations.PARTIAL_UPDATE] : [CrudOperations.UPDATE];
+        return AsyncResult.from(checkPermissions<UI>(input, this.getUpdatePermissions()))
+            .proceed(() => this.getObject({ id: input.payload.id }, wrapper))
+            .proceed(entity => checkEntityPermissions<UI, E>(input, entity, this.getUpdateEntityPermissions()))
             .proceed(async entity =>
                 (await ClassValidator.validate(
-                    this.options.updateInputCls,
-                    input,
+                    this.options.updatePayloadCls,
+                    input.payload,
                     { groups },
                 )).map(() => entity),
             )
-            .proceed(entity =>
-                this.performUpdateEntity(
-                    // Transform input to omit fields not related for update operation
-                    ClassTransformer.toClassObject(
-                        this.options.updateInputCls,
-                        input,
-                        { groups },
-                    ),
-                    // Entity to update
-                    entity,
-                ),
-            )
+            .proceed(entity => {
+                // Transform input to omit fields not related for update operation
+                input.payload = ClassTransformer.toClassObject(
+                    this.options.updatePayloadCls,
+                    input.payload,
+                    { groups },
+                );
+                return this.performUpdateEntity(input, entity);
+            })
             .map(async entity => {
                 if (!this.options.returnShallow) {
                     entity = (await this.getObject({ id: entity.id }, wrapper)).unwrap();
                 }
-                return this.mapDtoOutput(entity, wrapper) as D
+                return this.mapUpdateOutput(entity, input);
             })
             .toPromise();
     }
@@ -181,9 +194,9 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         input: DI,
     ): Promise<Result<void, PermissionDeniedException | EntityNotFoundException | DE>> {
         const wrapper = { type: InputType.DESTROY_INPUT, input };
-        return AsyncResult.from(this.checkPermissions(input))
+        return AsyncResult.from(checkPermissions<DI>(input, this.getDestroyPermissions()))
             .proceed(() => this.getObject({ id: input.id }, wrapper))
-            .proceed(entity => this.checkEntityPermissions(input, entity))
+            .proceed(entity => checkEntityPermissions<DI, E>(input, entity, this.getDestroyEntityPermissions()))
             .proceed(entity => this.performDestroyEntity(input, entity))
             .toPromise();
     }
@@ -192,7 +205,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         const entity = await this.repository.create(
             ClassTransformer.toClassObject(
                 this.options.entityCls,
-               { ...input, id: null },
+               { ...input.payload, id: null },
             ),
         );
         return ok(await this.repository.save(entity));
@@ -203,7 +216,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         const updatedEntity = await this.repository.save(
             ClassTransformer.toClassObject(
                 this.options.entityCls,
-                { ...input, id: entity.id },
+                { ...input.payload, id: entity.id },
             ),
         );
         return ok(this.repository.merge(entity, updatedEntity));
@@ -212,39 +225,6 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
     protected async performDestroyEntity(input: DI, entity: E): Promise<Result<void, DE>> {
         await this.repository.remove(entity);
         return ok(null);
-    }
-
-    protected async checkPermissions(
-        input: any,
-    ): Promise<Result<void, PermissionDeniedException>> {
-        for (const permission of this.getPermissions()) {
-            const hasPermission = await permission.hasPermission(input);
-
-            if (hasPermission !== undefined && !hasPermission) {
-                return err(
-                    new PermissionDeniedException(permission.message),
-                );
-            }
-        }
-
-        return ok(null);
-    }
-
-    protected async checkEntityPermissions(
-        input: any,
-        entity: E,
-    ): Promise<Result<E, PermissionDeniedException>> {
-        for (const permission of this.getPermissions()) {
-            const hasEntityPermission = await permission.hasEntityPermission(input, entity);
-
-            if (hasEntityPermission !== undefined && !hasEntityPermission) {
-                return err(
-                    new PermissionDeniedException(permission.message),
-                );
-            }
-        }
-
-        return ok(entity);
     }
 
     protected async getObject(
@@ -280,27 +260,81 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         return (qb) => null;
     }
 
-    protected getPermissions(): BaseDomainPermission[] {
+    protected getPermissions(): BasePermission[] {
         return [];
     }
 
-    protected mapListDto(
+    protected getEntityPermissions(): BaseEntityPermission[] {
+        return [];
+    }
+
+    protected getReadPermissions(): BasePermission[] {
+        return this.getPermissions();
+    }
+
+    protected getReadEntityPermissions(): BaseEntityPermission[] {
+        return this.getEntityPermissions();
+    }
+
+    protected getCreatePermissions(): BasePermission[] {
+        return this.getPermissions();
+    }
+
+    protected getUpdatePermissions(): BasePermission[] {
+        return this.getPermissions();
+    }
+
+    protected getUpdateEntityPermissions(): BaseEntityPermission[] {
+        return this.getEntityPermissions();
+    }
+
+    protected getDestroyPermissions(): BasePermission[] {
+        return this.getPermissions();
+    }
+
+    protected getDestroyEntityPermissions(): BaseEntityPermission[] {
+        return this.getEntityPermissions();
+    }
+
+    protected mapListOutput(
         entities: E[],
         input?: LI,
-    ): D[] {
+    ): LO[] {
         return ClassTransformer.toClassObjects(
-            this.options.dtoCls,
+            this.options.listOutputCls,
             entities,
             { groups: [CrudOperations.READ] },
         );
     }
 
-    protected mapDtoOutput(
+    protected mapRetrieveOutput(
         entity: E,
-        wrapper?: InputWrapper<never, RI, CI, UI, DI>,
-    ): D {
+        input?: RI,
+    ): RO {
         return ClassTransformer.toClassObject(
-            this.options.dtoCls,
+            this.options.retrieveOutputCls,
+            entity,
+            { groups: [CrudOperations.READ] },
+        );
+    }
+
+    protected mapCreateOutput(
+        entity: E,
+        input?: CI,
+    ): CO {
+        return ClassTransformer.toClassObject(
+            this.options.createOutputCls,
+            entity,
+            { groups: [CrudOperations.READ] },
+        );
+    }
+
+    protected mapUpdateOutput(
+        entity: E,
+        input?: UI,
+    ): UO {
+        return ClassTransformer.toClassObject(
+            this.options.updateOutputCls,
             entity,
             { groups: [CrudOperations.READ] },
         );

@@ -67,9 +67,12 @@ export class NoteService extends BaseCrudService<Note, NoteDto> {
             noteRepository,
             {
                 entityCls: Note,
-                dtoCls: NoteDto,
-                createInputCls: NoteDto,
-                updateInputCls: NoteDto,
+                listOutputCls: NoteDto,
+                retrieveOutputCls: NoteDto,
+                createPayloadCls: NoteDto,
+                createOutputCls: NoteDto,
+                updatePayloadCls: NoteDto,
+                updateOutputCls: NoteDto,
             },
         );
     }

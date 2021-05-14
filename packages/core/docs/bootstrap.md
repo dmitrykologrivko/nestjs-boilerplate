@@ -12,8 +12,8 @@ NestJS Boilerplate contains build-in `ApplicationBootstrapper` for running Nest 
 This bootstrapper by default runs web server on 8000 port. The main application module is required to be provided.
 
 ```typescript
-import {ApplicationBootstrapper} from 'packages/core/dist/index';
-import {AppModule} from './app.module';
+import { ApplicationBootstrapper } from '@nestjs-boilerplate/core';
+import { AppModule } from './app.module';
 
 new ApplicationBootstrapper({module: AppModule})
     .start();

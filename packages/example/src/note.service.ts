@@ -1,6 +1,6 @@
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { Injectable } from '@nestjs/common';
 import {
+    ApplicationService,
     BaseCrudService,
     InjectRepository,
     PagePagination,
@@ -9,7 +9,7 @@ import {
 import { Note } from './note.entity';
 import { NoteDto } from './note.dto';
 
-@Injectable()
+@ApplicationService()
 export class NoteService extends BaseCrudService<Note, NoteDto> {
     constructor(
         @InjectRepository(Note)
@@ -19,9 +19,12 @@ export class NoteService extends BaseCrudService<Note, NoteDto> {
             noteRepository,
             {
                 entityCls: Note,
-                dtoCls: NoteDto,
-                createInputCls: NoteDto,
-                updateInputCls: NoteDto,
+                listOutputCls: NoteDto,
+                retrieveOutputCls: NoteDto,
+                createPayloadCls: NoteDto,
+                createOutputCls: NoteDto,
+                updatePayloadCls: NoteDto,
+                updateOutputCls: NoteDto,
             },
         );
     }
