@@ -39,7 +39,9 @@ export class MoneyTransferService {
         fromAccount.debit(amount);
         toAccount.credit(amount);
         
-        return new Transaction(fromAccount, toAccount, amount);
+        return ok(
+            new Transaction(fromAccount, toAccount, amount),
+        );
     }
 }
 ```
