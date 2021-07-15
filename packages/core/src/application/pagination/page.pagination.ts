@@ -42,7 +42,7 @@ export class PagePagination<E> extends BasePagination<E, PaginatedContainer<E>> 
     }
 
     async toPaginatedContainer(): Promise<PaginatedContainer<E>> {
-        const [results, count] = await this.queryBuilder.getManyAndCount();
+        const [results, count] = await this.paginate().getManyAndCount();
 
         let next = replaceUrlQueryParam(this.query.path, LIMIT_QUERY_KEY, this.limit);
 

@@ -1,6 +1,6 @@
 # Domain Services
 
-Domain Services can be used to perform domain operations and business rules. Basically, it contains domain logic which
+Domain services are used to perform domain operations and business rules. Basically, it contains domain logic which
 in turn is everything that is related to business decisions. Domain services are stateless classes and can work on top 
 of domain entities and value objects. Eric Evans describes three characteristics of a good service:
 

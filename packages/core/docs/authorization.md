@@ -32,32 +32,36 @@ In your application service use `checkPermissions` function from `@nestjs-boiler
 of instances global permissions. If one of the provided permissions will return false then result with
 `PermissionDeniedException` exception will be returned.
 
-**Note:** Instance of authenticated user must be provided in extra params of the input object.
+**Note:** Instance of authenticated user must be provided in extra params of the input object. Input object must be 
+inherited from `BaseInput` class.
 
 ```typescript
+import { Repository } from 'typeorm';
 import {
     ApplicationService,
+    InjectRepository,
     BasePermission,
     checkPermissions,
-    BaseInput,
     PermissionDeniedException,
     Result,
     proceed,
 } from '@nestjs-boilerplate/core';
-import { NoteDto } from './note.dto';
-import { NoteRepositiry } from './note.repository';
+import { Note } from './note.entity';
+import { GetNotesInput } from './get-notes.input';
+import { GetNotesOutput } from './get-notes.output';
 import { IsAdminUserPermission } from './is-admin-user.permission';
 
 @ApplicationService()
 export class NoteService {
     constructor(
-        private readonly noteRepository: NoteRepositiry,
+        @InjectRepository(Note)
+        private readonly noteRepository: Repository<Note>,
     ) {}
     
-    async getNotes(input: BaseInput): Result<NoteDto, PermissionDeniedException> {
-        return await checkPermissions<BaseInput>(input, [new IsAdminUserPermission()])
+    async getNotes(input: GetNotesInput): Result<GetNotesOutput, PermissionDeniedException> {
+        return await checkPermissions<GetNotesInput>(input, [new IsAdminUserPermission()])
             .then(proceed(this.noteRepository.getNotes()))
-            .then(proceed(notes => NoteDto.fromEntities(notes)));
+            .then(proceed(notes => GetNotesOutput.fromEntities(notes)));
     }
 }
 ```
@@ -94,33 +98,34 @@ In your application service use `checkEntityPermissions` function from `@nestjs-
 provide a list of instances entity permissions. If one of the provided permissions will return false then result with
 `PermissionDeniedException` exception will be returned.
 
-**Note:** Instance of authenticated user must be provided in extra params of the input object.
+**Note:** Instance of authenticated user must be provided in extra params of the input object. Input object must be
+inherited from `BaseInput` class.
 
 ```typescript
+import { Repository } from 'typeorm';
 import {
     ApplicationService,
     BasePermission,
     checkEntityPermissions,
-    RetrieveInput,
     PermissionDeniedException,
     Result,
     proceed,
 } from '@nestjs-boilerplate/core';
 import { Note } from './note.entity';
-import { NoteDto } from './note.dto';
-import { NoteRepositiry } from './note.repository';
+import { GetNoteInput } from './get-note.input';
+import { GetNoteOutput } from './get-note.output';
 import { IsOwnerEntityPermission } from './is-owner-entity.permission';
 
 @ApplicationService()
 export class NoteService {
     constructor(
-        private readonly noteRepository: NoteRepositiry,
+        private readonly noteRepository: Repository<Note>,
     ) {}
     
-    async getNote(input: RetrieveInput): Result<NoteDto, PermissionDeniedException> {
-        return await checkEntityPermissions<RetrieveInput, Note>(input, [new IsOwnerEntityPermission<Note>()])
+    async getNote(input: GetNoteInput): Result<GetNoteOutput, PermissionDeniedException> {
+        return await checkEntityPermissions<GetNoteInput, Note>(input, [new IsOwnerEntityPermission<Note>()])
             .then(proceed(this.noteRepository.getNote(input.id)))
-            .then(proceed(note => NoteDto.fromEntity(note)));
+            .then(proceed(note => GetNoteOutput.fromEntity(note)));
     }
 }
 ```
