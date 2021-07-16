@@ -1,8 +1,7 @@
-import { Repository, SelectQueryBuilder, FindManyOptions, QueryRunner,  } from 'typeorm';
+import { Repository, SelectQueryBuilder, QueryRunner,  } from 'typeorm';
 import { ClassType } from 'class-transformer/ClassTransformer';
 import { BaseRepository } from '../../domain/repository/base.repository';
 import { BaseEntity } from '../../domain/entities/base.entity';
-import { BaseFilter } from '../filters/base.filter';
 import { BaseFindManyQuery } from '../queries/base-find-many.query';
 import { BaseWhereQuery, WHERE_LOGICAL_OPERATORS } from '../queries/base-where.query';
 
@@ -107,4 +106,3 @@ export abstract class BaseWritableRepository<E extends BaseEntity, W> extends Ba
         return unitOfWork.manager.getRepository(this.writableCls);
     }
 }
-
