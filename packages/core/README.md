@@ -34,9 +34,10 @@ TODO
 * [Entities](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/entities.md)
 * [Value Objects](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/value-objects.md)
 * [Repositories](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/repositories.md)
+* [Queries](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/queries.md)
 * [Domain Services](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/domain-services.md)
 
-TODO: Repository, Query, Unit of Work, Domain events
+TODO: Unit of Work, Domain events
 
 ## Application Layer
 

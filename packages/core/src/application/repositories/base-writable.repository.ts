@@ -1,12 +1,12 @@
-import { Repository, SelectQueryBuilder, QueryRunner,  } from 'typeorm';
+import { Repository, QueryRunner } from 'typeorm';
 import { ClassType } from 'class-transformer/ClassTransformer';
 import { BaseRepository } from '../../domain/repository/base.repository';
 import { BaseEntity } from '../../domain/entities/base.entity';
-import { BaseFindManyQuery } from '../queries/base-find-many.query';
-import { BaseWhereQuery, WHERE_LOGICAL_OPERATORS } from '../queries/base-where.query';
+import { BaseFindQuery } from '../queries/base-find.query';
+import { BaseBuildableQuery } from '../queries/base-buildable.query';
 
 export abstract class BaseWritableRepository<E extends BaseEntity, W> extends BaseRepository<E,
-    BaseFindManyQuery<W> | [BaseWhereQuery<W>, WHERE_LOGICAL_OPERATORS?][], QueryRunner> {
+    BaseFindQuery<W> | BaseBuildableQuery<W>, QueryRunner> {
 
     protected readonly alias: string;
 
@@ -19,33 +19,36 @@ export abstract class BaseWritableRepository<E extends BaseEntity, W> extends Ba
     }
 
     async find(
-        query?: BaseFindManyQuery<W> | [BaseWhereQuery<W>, WHERE_LOGICAL_OPERATORS?][],
+        query?: BaseFindQuery<W> | BaseBuildableQuery<W>,
         unitOfWork?: QueryRunner,
     ): Promise<E | E[]> {
-        if (Array.isArray(query)) {
-            const queryBuilder = this.applyWhereQueries(
-                this.createQueryBuilder(unitOfWork),
-                query,
-            );
+        if (Object.keys(query).includes('toQueryBuilder')) {
+            const queryBuilder = query
+                ? (query as BaseBuildableQuery<W>).toQueryBuilder(this.alias, this.createQueryBuilder(unitOfWork))
+                : this.createQueryBuilder(unitOfWork);
+
             return (await queryBuilder.getMany()).map(this.toEntity);
         }
 
-        return (await this.getRepository(unitOfWork).find(query?.toFindManyOptions())).map(this.toEntity);
+        return (await this.getRepository(unitOfWork).find((query as BaseFindQuery<W>)?.toFindOptions()))
+            .map(this.toEntity);
     }
 
     async findOne(
-        query?: BaseFindManyQuery<W> | [BaseWhereQuery<W>, WHERE_LOGICAL_OPERATORS?][],
+        query?: BaseFindQuery<W> | BaseBuildableQuery<W>,
         unitOfWork?: QueryRunner,
     ): Promise<E> {
-        if (Array.isArray(query)) {
-            const queryBuilder = this.applyWhereQueries(
-                this.createQueryBuilder(unitOfWork),
-                query,
-            );
-            return this.toEntity(await queryBuilder.getOne());
+        if (Object.keys(query).includes('toQueryBuilder')) {
+            const queryBuilder = query
+                ? (query as BaseBuildableQuery<W>).toQueryBuilder(this.alias, this.createQueryBuilder(unitOfWork))
+                : this.createQueryBuilder(unitOfWork);
+
+            return this.toEntity((await queryBuilder.getOne()));
         }
 
-        return this.toEntity((await this.getRepository(unitOfWork).findOne(query?.toFindManyOptions())));
+        return this.toEntity(
+            (await this.getRepository(unitOfWork).findOne((query as BaseFindQuery<W>)?.toFindOptions())),
+        );
     }
 
     async save(entity: E | E[], unitOfWork?: QueryRunner): Promise<E | E[]> {
@@ -68,36 +71,13 @@ export abstract class BaseWritableRepository<E extends BaseEntity, W> extends Ba
         return result.length === 1 ? result[0] : result;
     }
 
-    createQueryBuilder(queryRunner?: QueryRunner) {
+    protected createQueryBuilder(queryRunner?: QueryRunner) {
         return this.repository.createQueryBuilder(this.alias, queryRunner);
     }
 
     protected abstract toEntity(writable: W): E;
 
     protected abstract toWritable(entity: E): W;
-
-    private applyWhereQueries(
-        queryBuilder: SelectQueryBuilder<W>,
-        query: [BaseWhereQuery<W>, WHERE_LOGICAL_OPERATORS?][],
-    ) {
-        query.forEach(item => {
-            const _query = item[0];
-            const logicalOperator = item[1];
-
-            const expression = _query.toWhereExpression();
-            const where = expression[0];
-            const parameters = expression[1];
-
-            if (logicalOperator === WHERE_LOGICAL_OPERATORS.OR) {
-                queryBuilder.orWhere(where, parameters);
-                return;
-            }
-
-            queryBuilder.andWhere(where, parameters);
-        });
-
-        return queryBuilder;
-    }
 
     private getRepository(unitOfWork?: QueryRunner) {
         if (!unitOfWork) {

@@ -29,7 +29,7 @@ export class NoteService extends BaseCrudService<Note, NoteDto> {
         );
     }
 
-    protected getPagination(input: ListInput): (qb: SelectQueryBuilder<Note>) => PagePagination<Note> {
-        return qb => new PagePagination(qb, input);
+    protected getPagination(input: ListInput, qb: SelectQueryBuilder<Note>): PagePagination<Note> {
+        return new PagePagination(qb, input);
     }
 }

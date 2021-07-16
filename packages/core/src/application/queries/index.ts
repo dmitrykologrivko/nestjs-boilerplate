@@ -1,2 +1,2 @@
-export * from './base-find-many.query';
-export * from './base-where.query';
+export * from './base-find.query';
+export * from './base-buildable.query';
