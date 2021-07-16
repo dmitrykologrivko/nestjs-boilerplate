@@ -98,10 +98,10 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
                 const queryBuilder = this.getQuery(queryRunner, wrapper);
 
                 // Apply filters
-                this.getFilters(input).forEach(fn => fn(queryBuilder).filter());
+                this.getFilters(input, queryBuilder).forEach(filter => filter.filter());
 
                 // Apply pagination
-                const pagination = this.getPagination(input)(queryBuilder);
+                const pagination = this.getPagination(input, queryBuilder);
 
                 if (pagination) {
                     const container = await pagination.toPaginatedContainer();
@@ -272,14 +272,16 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
 
     protected getFilters(
         input: LI,
-    ): ((qb: SelectQueryBuilder<E>) => BaseFilter<E>)[] {
+        qb: SelectQueryBuilder<E>,
+    ): BaseFilter<E>[] {
         return [];
     }
 
     protected getPagination(
         input: LI,
-    ): (qb: SelectQueryBuilder<E>) => BasePagination<E, BasePaginatedContainer<E>> {
-        return (qb) => null;
+        qb: SelectQueryBuilder<E>,
+    ): BasePagination<E, BasePaginatedContainer<E>> {
+        return null;
     }
 
     protected getPermissions(): BasePermission[] {
