@@ -36,8 +36,9 @@ TODO
 * [Repositories](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/repositories.md)
 * [Queries](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/queries.md)
 * [Domain Services](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/domain-services.md)
+* [Unit of Work](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/unit-of-work.md)
 
-TODO: Unit of Work, Domain events
+TODO: Domain events
 
 ## Application Layer
 
