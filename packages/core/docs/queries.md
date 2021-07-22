@@ -59,7 +59,6 @@ export class UsersService {
             new ActiveUsersRegisteredInYearQuery(year).toFindOptions(),
         );
     }
-    
 }
 ```
 

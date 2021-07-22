@@ -44,8 +44,9 @@ TODO: Domain events
 
 * [Application Services](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/application-services.md)
 * [Authorization](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/authorization.md)
+* [Filters](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/filters.md)
 
-TODO: DTOs, Filters, Pagination
+TODO: DTOs, Pagination
 
 ## Presentation Layer
 

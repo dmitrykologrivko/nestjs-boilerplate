@@ -23,8 +23,8 @@ export abstract class BaseFilter<E> {
 
     /**
      * Tries to adapt field name for using in query builder to avoid mistakes in field paths
-     * For example "id" field name will be adapt to "entityAlias.id"
-     * or "entityAlias.nestedAlias.id" will be adapt to "nestedAlias.id"
+     * For example "id" field name will be adapted to "entityAlias.id"
+     * or "entityAlias.nestedAlias.id" will be adapted to "nestedAlias.id"
      * @param fieldName
      * @protected
      */
