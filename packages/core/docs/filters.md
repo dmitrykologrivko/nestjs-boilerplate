@@ -53,10 +53,10 @@ export class SearchFilter<E> extends BaseFilter<E> {
 }
 ```
 
-We have a search query that can be passed from the presentation layer. Also, we define a list of fields that
-we will use for searching for the desired results.
+We have a search query that can be passed from the presentation layer. Also, we define a list of fields that we will
+ use for searching for the desired results.
 
-Method filter contains the filtering logic where we use `SelectQueryBuilder`.\
+Method `filter` contains the filtering logic where we use `SelectQueryBuilder`.\
 Method `adaptFieldName` of base class tries to adapt field name for using in query builder to avoid mistakes in field
 paths. For example "id" field name will be adapted to "entityAlias.id" or "entityAlias.nestedAlias.id" will be adapted
 to "nestedAlias.id".\
