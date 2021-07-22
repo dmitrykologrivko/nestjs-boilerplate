@@ -15,8 +15,6 @@ Core is the main module of NestJS Boilerplate. Provides a framework with main to
 * [Getting Started](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/getting-started.md)
 * [Articles](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/articles.md)
 
-TODO: Result monad
-
 ## Infrastructure
 
 * [Bootstrap](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/bootstrap.md)
@@ -27,7 +25,7 @@ TODO: Result monad
 * [Templates](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/templates.md)
 * [Management](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/management.md)
 
-TODO
+TODO: Utils (validation, class transformer, preconditions, monads)
 
 ## Domain Layer
 
@@ -43,11 +41,10 @@ TODO: Domain events
 ## Application Layer
 
 * [Application Services](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/application-services.md)
+* [Data Transfer Objects](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/dto.md)
 * [Authorization](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/authorization.md)
 * [Filters](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/filters.md)
 * [Pagination](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/pagination.md)
-
-TODO: DTOs
 
 ## Presentation Layer
 
