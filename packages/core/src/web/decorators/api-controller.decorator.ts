@@ -28,15 +28,15 @@ export function ApiController(prefixOrOptions?: string | ApiControllerOptions) {
         ? ''
         : `${prefixOrOptions.rootPrefix || 'api'}/`;
 
-    const versionPrefix = !prefixOrOptions.version && !prefixOrOptions.versionPrefix
+    const versionPrefix = !prefixOrOptions.version
         ? ''
-        : `${prefixOrOptions.version ? `v${prefixOrOptions.version}` : prefixOrOptions.versionPrefix}/`;
+        : `${prefixOrOptions.versionPrefix ? `${prefixOrOptions.versionPrefix}${prefixOrOptions.version}` : `v${prefixOrOptions.version}`}/`;
 
     const additionalPrefixes = isEmpty(prefixOrOptions.additionalPrefixes)
         ? ''
         : `${prefixOrOptions.additionalPrefixes.join('/')}/`;
 
-    const prefix = prefixOrOptions.path
+    const prefix = !prefixOrOptions.path
         ? ''
         : prefixOrOptions.path;
 

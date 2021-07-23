@@ -8,7 +8,6 @@ import {
     HttpCode,
     HttpStatus,
 } from '@nestjs/common';
-import { Request } from 'express';
 import { BaseCrudService } from '../../application/service/base-crud.service';
 import { BaseDto } from '../../application/dto/base.dto';
 import { BaseEntityDto } from '../../application/dto/base-entity.dto';
@@ -21,6 +20,8 @@ import { BasePaginatedContainer } from '../../application/pagination/base-pagina
 import { BaseCrudController } from './base-crud.controller';
 
 export abstract class CrudController<D extends BaseEntityDto,
+    // Generic HTTP Request (Express, Fastify, etc.)
+    R = any,
     // List
     LI extends ListInput = ListInput,
     LO extends BaseEntityDto = D,
@@ -37,40 +38,40 @@ export abstract class CrudController<D extends BaseEntityDto,
     UI extends UpdateInput<UP> = UpdateInput<UP>,
     UO extends BaseEntityDto = D,
     // Destroy
-    DI extends DestroyInput = DestroyInput> extends BaseCrudController<D, LI, LO, PC, RI, RO, CP, CI, CO, UP, UI, UO, DI> {
+    DI extends DestroyInput = DestroyInput> extends BaseCrudController<D, R, LI, LO, PC, RI, RO, CP, CI, CO, UP, UI, UO, DI> {
 
     protected constructor(service: BaseCrudService<any, D, LI, LO, PC, RI, RO, CP, CI, CO, UP, UI, UO, DI>) {
         super(service);
     }
 
     @Get()
-    async list(@Req() req: Request) {
+    async list(@Req() req: R) {
         return super.list(req);
     }
 
     @Post()
-    async create(@Req() req: Request) {
+    async create(@Req() req: R) {
         return super.create(req);
     }
 
     @Get(':id')
-    async retrieve(@Req() req: Request) {
+    async retrieve(@Req() req: R) {
         return super.retrieve(req);
     }
 
     @Put(':id')
-    async replace(@Req() req: Request) {
+    async replace(@Req() req: R) {
         return super.replace(req);
     }
 
     @Patch(':id')
-    async partialUpdate(@Req() req: Request) {
+    async partialUpdate(@Req() req: R) {
         return super.partialUpdate(req);
     }
 
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
-    async destroy(@Req() req: Request) {
+    async destroy(@Req() req: R) {
         return super.destroy(req);
     }
 }

@@ -105,3 +105,6 @@ dist
 
 # JetBrains
 .idea
+
+# Project specific
+database

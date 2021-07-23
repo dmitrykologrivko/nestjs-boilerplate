@@ -1,10 +1,9 @@
 import { UseFilters } from '@nestjs/common';
-import { Request } from 'express';
 import { ValidationExceptionsFilter } from '../filters/validation-exceptions.filter';
 import { PermissionDeniedExceptionFilter } from '../filters/permission-denied-exception.filter';
 import { EntityNotFoundExceptionFilter } from '../filters/entity-not-found-exception.filter';
-import { BasePaginatedContainer } from '../../application/pagination/base-paginated-container.interface';
 import { BaseCrudService } from '../../application/service/base-crud.service';
+import { BasePaginatedContainer } from '../../application/pagination/base-paginated-container.interface';
 import { ListInput } from '../../application/dto/list.input';
 import { RetrieveInput } from '../../application/dto/retrieve.input';
 import { CreateInput } from '../../application/dto/create.input';
@@ -12,6 +11,8 @@ import { UpdateInput } from '../../application/dto/update.input';
 import { DestroyInput } from '../../application/dto/destroy.input';
 import { BaseDto } from '../../application/dto/base.dto';
 import { BaseEntityDto } from '../../application/dto/base-entity.dto';
+import { Request } from '../request/request';
+import { fromExpressRequest } from '../request/request.utils';
 import {
     extractListQuery,
     extractRetrieveQuery,
@@ -24,6 +25,8 @@ import {
     PermissionDeniedExceptionFilter,
 )
 export abstract class BaseCrudController<D extends BaseEntityDto,
+    // Generic HTTP Request (Express, Fastify, etc.)
+    R = any,
     // List
     LI extends ListInput = ListInput,
     LO extends BaseEntityDto = D,
@@ -46,8 +49,9 @@ export abstract class BaseCrudController<D extends BaseEntityDto,
         protected readonly service: BaseCrudService<any, D, LI, LO, PC, RI, RO, CP, CI, CO, UP, UI, UO, DI>,
     ) {}
 
-    async list(req: Request): Promise<PC> {
-        const result = await this.service.list(this.mapListInput(req));
+    async list(req: R): Promise<PC> {
+        const request = this.mapRequest(req);
+        const result = await this.service.list(this.mapListInput(request));
 
         if (result.isErr()) {
             throw result.unwrapErr();
@@ -56,8 +60,9 @@ export abstract class BaseCrudController<D extends BaseEntityDto,
         return result.unwrap();
     }
 
-    async retrieve(req: Request): Promise<RO> {
-        const result = await this.service.retrieve(this.mapRetrieveInput(req));
+    async retrieve(req: R): Promise<RO> {
+        const request = this.mapRequest(req);
+        const result = await this.service.retrieve(this.mapRetrieveInput(request));
 
         if (result.isErr()) {
             throw result.unwrapErr();
@@ -66,8 +71,9 @@ export abstract class BaseCrudController<D extends BaseEntityDto,
         return result.unwrap();
     }
 
-    async create(req: Request): Promise<CO> {
-        const result = await this.service.create(this.mapCreateInput(req));
+    async create(req: R): Promise<CO> {
+        const request = this.mapRequest(req);
+        const result = await this.service.create(this.mapCreateInput(request));
 
         if (result.isErr()) {
             throw result.unwrapErr();
@@ -76,8 +82,9 @@ export abstract class BaseCrudController<D extends BaseEntityDto,
         return result.unwrap();
     }
 
-    async replace(req: Request): Promise<UO> {
-        const result = await this.service.update(this.mapUpdateInput(req, false));
+    async replace(req: R): Promise<UO> {
+        const request = this.mapRequest(req);
+        const result = await this.service.update(this.mapUpdateInput(request, false));
 
         if (result.isErr()) {
             throw result.unwrapErr();
@@ -86,8 +93,9 @@ export abstract class BaseCrudController<D extends BaseEntityDto,
         return result.unwrap();
     }
 
-    async partialUpdate(req: Request): Promise<UO> {
-        const result = await this.service.update(this.mapUpdateInput(req, true));
+    async partialUpdate(req: R): Promise<UO> {
+        const request = this.mapRequest(req);
+        const result = await this.service.update(this.mapUpdateInput(request, true));
 
         if (result.isErr()) {
             throw result.unwrapErr();
@@ -96,8 +104,9 @@ export abstract class BaseCrudController<D extends BaseEntityDto,
         return result.unwrap();
     }
 
-    async destroy(req: Request): Promise<void> {
-        const result = await this.service.destroy(this.mapDestroyInput(req));
+    async destroy(req: R): Promise<void> {
+        const request = this.mapRequest(req);
+        const result = await this.service.destroy(this.mapDestroyInput(request));
 
         if (result.isErr()) {
             throw result.unwrapErr();
@@ -106,7 +115,11 @@ export abstract class BaseCrudController<D extends BaseEntityDto,
         return result.unwrap();
     }
 
-    protected mapListInput(req): LI {
+    protected mapRequest(req: R): Request {
+        return fromExpressRequest(req);
+    }
+
+    protected mapListInput(req: Request): LI {
         return {
             ...extractListQuery(req),
             extra: {
@@ -115,7 +128,7 @@ export abstract class BaseCrudController<D extends BaseEntityDto,
         } as unknown as LI;
     }
 
-    protected mapRetrieveInput(req): RI {
+    protected mapRetrieveInput(req: Request): RI {
         return {
             ...extractRetrieveQuery(req),
             extra: {
@@ -124,7 +137,7 @@ export abstract class BaseCrudController<D extends BaseEntityDto,
         } as unknown as RI;
     }
 
-    protected mapCreateInput(req): CI {
+    protected mapCreateInput(req: Request): CI {
         return {
             payload: {
                 ...req.body,
@@ -135,7 +148,7 @@ export abstract class BaseCrudController<D extends BaseEntityDto,
         } as unknown as CI;
     }
 
-    protected mapUpdateInput(req, partial: boolean): UI {
+    protected mapUpdateInput(req: Request, partial: boolean): UI {
         return {
             payload: {
                 ...req.body,
@@ -148,7 +161,7 @@ export abstract class BaseCrudController<D extends BaseEntityDto,
         } as unknown as UI;
     }
 
-    protected mapDestroyInput(req): DI {
+    protected mapDestroyInput(req: Request): DI {
         return extractDestroyQuery(req) as DI;
     }
 }

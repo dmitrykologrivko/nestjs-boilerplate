@@ -6,8 +6,9 @@ import { LimitOffsetPaginationQuery } from '../../application/pagination/limit-o
 import { ListQuery } from '../../application/dto/list-query.interface';
 import { RetrieveQuery } from '../../application/dto/retrieve-query.interface';
 import { DestroyQuery } from '../../application/dto/destroy-query.interface';
+import { Request } from '../request/request';
 
-export function extractSearchQuery(request): SearchQuery {
+export function extractSearchQuery(request: Request): SearchQuery {
     const { query } = request;
 
     const search: string = query.search || '';
@@ -17,7 +18,7 @@ export function extractSearchQuery(request): SearchQuery {
     }
 }
 
-export function extractOrderingQuery(request, fieldSeparator = '__'): OrderingQuery {
+export function extractOrderingQuery(request: Request, fieldSeparator = '__'): OrderingQuery {
     const { query } = request;
 
     let sortBy: string[] = [];
@@ -39,7 +40,7 @@ export function extractOrderingQuery(request, fieldSeparator = '__'): OrderingQu
     };
 }
 
-export function extractWhereQuery(request, fieldSeparator = '__'): WhereQuery {
+export function extractWhereQuery(request: Request, fieldSeparator = '__'): WhereQuery {
     const { query } = request;
 
     let where : [string, string][] = [];
@@ -75,11 +76,11 @@ export function extractWhereQuery(request, fieldSeparator = '__'): WhereQuery {
     };
 }
 
-function buildUrlFromRequest(request) {
-    return `${request.protocol}://${request.headers.host}${request.url}`;
+function buildUrlFromRequest(request: Request) {
+    return `${request.protocol}://${request.hostname}${request.url}`;
 }
 
-export function extractPagePaginationQuery(request): PagePaginationQuery {
+export function extractPagePaginationQuery(request: Request): PagePaginationQuery {
     const { query } = request;
 
     return {
@@ -89,7 +90,7 @@ export function extractPagePaginationQuery(request): PagePaginationQuery {
     }
 }
 
-export function extractLimitOffsetPaginationQuery(request): LimitOffsetPaginationQuery {
+export function extractLimitOffsetPaginationQuery(request: Request): LimitOffsetPaginationQuery {
     const { query } = request;
 
     return {
@@ -99,7 +100,7 @@ export function extractLimitOffsetPaginationQuery(request): LimitOffsetPaginatio
     }
 }
 
-export function extractListQuery(request, fieldSeparator = '__'): ListQuery {
+export function extractListQuery(request: Request, fieldSeparator = '__'): ListQuery {
     return {
         ...extractOrderingQuery(request, fieldSeparator),
         ...extractSearchQuery(request),
@@ -109,12 +110,12 @@ export function extractListQuery(request, fieldSeparator = '__'): ListQuery {
     }
 }
 
-export function extractRetrieveQuery(request): RetrieveQuery {
+export function extractRetrieveQuery(request: Request): RetrieveQuery {
     const { params } = request;
     return { id: params.id };
 }
 
-export function extractDestroyQuery(request): DestroyQuery {
+export function extractDestroyQuery(request: Request): DestroyQuery {
     const { params } = request;
     return { id: params.id };
 }

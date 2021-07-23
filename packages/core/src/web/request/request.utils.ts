@@ -1,6 +1,6 @@
 import { Request } from './request';
 
-export function convertExpressRequest(req: any): Request {
+export function fromExpressRequest(req: any): Request {
     return new Request(
         req.query,
         req.body,
