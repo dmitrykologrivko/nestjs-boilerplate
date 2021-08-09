@@ -214,7 +214,7 @@ import { Result, err } from '@nestjs-boilerplate/core';
 const value: Result<unknown, Error> = err(new Err());
 ```
 
-### isOk
+#### isOk
 
 Returns `true` if `Result` with type `ResultType.OK`.
 
@@ -224,7 +224,7 @@ import { Result, ok } from '@nestjs-boilerplate/core';
 const value: boolean = ok(2 + 2).isOk();
 ```
 
-### isErr
+#### isErr
 
 Returns `true` if `Result` with type `ResultType.ERR`.
 
