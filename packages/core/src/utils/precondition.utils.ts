@@ -1,3 +1,6 @@
+/**
+ * Checks if all items of array are defined
+ */
 export function all(args: any[]) {
     for (const arg of args) {
         if (!arg) {
@@ -8,6 +11,9 @@ export function all(args: any[]) {
     return true;
 }
 
+/**
+ * Checks if any item of array is defined
+ */
 export function any(args: any[]) {
     for (const arg of args) {
         if (arg) {
@@ -18,6 +24,9 @@ export function any(args: any[]) {
     return false;
 }
 
+/**
+ * Checks if provided string, array, map or set is undefined or empty
+ */
 export function isEmpty(arg: string | any[] | Map<any, any> | Set<any>) {
     if (!arg) {
         return true;
@@ -38,6 +47,9 @@ export function isEmpty(arg: string | any[] | Map<any, any> | Set<any>) {
     return false;
 }
 
+/**
+ * Checks if provided string, array, map or set is defined and not empty
+ */
 export function isNotEmpty(arg: string | any[] | Map<any, any> | Set<any>) {
     return !isEmpty(arg);
 }

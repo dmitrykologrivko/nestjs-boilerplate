@@ -1,5 +1,6 @@
 {
   "name": "@nestjs-boilerplate/auth",
+  "private": "true",
   "version": "0.0.0",
   "description": "",
   "author": "Dmitry Kologrivko",

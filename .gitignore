@@ -106,5 +106,8 @@ dist
 # JetBrains
 .idea
 
+# VS Code
+.vscode
+
 # Project specific
 database
