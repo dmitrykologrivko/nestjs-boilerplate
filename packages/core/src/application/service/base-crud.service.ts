@@ -1,6 +1,7 @@
 import { Repository, SelectQueryBuilder, QueryRunner } from 'typeorm';
 import { ClassType } from 'class-transformer/ClassTransformer';
 import { transaction } from '../../database/database.utils';
+import { TransactionRollbackException } from '../../database/transaction-rollback.exception';
 import { ClassTransformer } from '../../utils/class-transformer.util';
 import { ClassValidator } from '../../utils/validation/class-validator.util';
 import { ValidationContainerException } from '../../utils/validation/validation-container.exception';
@@ -14,6 +15,8 @@ import {
 import { BaseEntity } from '../../domain/entities/base.entity';
 import { Identifiable } from '../../domain/entities/identifiable.interface';
 import { EntityNotFoundException } from '../../domain/entities/entity-not-found.exception';
+import { EntityEventsManager } from '../../domain/events/entity-events.manager';
+import { EventsFailedException } from '../../domain/events/events-failed.exception';
 import { BaseDto } from '../dto/base.dto';
 import { BaseEntityDto } from '../dto/base-entity.dto';
 import { CrudOperations } from '../constants/crud-operations.enum';
@@ -54,6 +57,20 @@ export interface InputWrapper<LI, RI, CI, UI, DI> {
     input: LI | RI | CI | UI | DI;
 }
 
+type ListResult<PC> = Promise<Result<PC, PermissionDeniedException | TransactionRollbackException>>;
+
+type RetrieveResult<RO> = Promise<Result<RO, PermissionDeniedException | EntityNotFoundException
+    | TransactionRollbackException>>;
+
+type CreateResult<CO, CE> = Promise<Result<CO, PermissionDeniedException | ValidationContainerException
+    | EventsFailedException | TransactionRollbackException | CE>>;
+
+type UpdateResult<UO, UE> = Promise<Result<UO, PermissionDeniedException | EntityNotFoundException
+    | ValidationContainerException | EventsFailedException | TransactionRollbackException | UE>>;
+
+type DestroyResult<DE> = Promise<Result<void, PermissionDeniedException | EntityNotFoundException
+    | EventsFailedException | TransactionRollbackException | DE>>;
+
 export abstract class BaseCrudService<E extends object & BaseEntity, D extends BaseEntityDto,
     // List
     LI extends ListInput = ListInput,
@@ -84,13 +101,12 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
     protected constructor(
         protected readonly repository: Repository<E>,
         protected readonly options: CrudServiceOptions<E, LO, RO, CP, CO, UP, UO>,
+        protected readonly entityEventsManager?: EntityEventsManager<E, QueryRunner>,
     ) {
         this.alias = repository.metadata.name;
     }
 
-    async list(
-        input: LI,
-    ): Promise<Result<PC, PermissionDeniedException>> {
+    async list(input: LI): ListResult<PC> {
         const wrapper = { type: InputType.LIST_INPUT, input };
 
         const handler = (queryRunner: QueryRunner) => checkPermissions<LI>(input, this.getReadPermissions())
@@ -117,9 +133,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         return transaction(this.repository.manager.connection, handler);
     }
 
-    async retrieve(
-        input: RI,
-    ): Promise<Result<RO, PermissionDeniedException | EntityNotFoundException>> {
+    async retrieve(input: RI): RetrieveResult<RO> {
         const wrapper = { type: InputType.RETRIEVE_INPUT, input };
 
         const handler = (queryRunner: QueryRunner) => checkPermissions<RI>(input, this.getReadPermissions())
@@ -130,10 +144,15 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         return transaction(this.repository.manager.connection, handler);
     }
 
-    async create(
-        input: CI,
-    ): Promise<Result<CO, PermissionDeniedException | ValidationContainerException | CE>> {
+    async create(input: CI): CreateResult<CO, CE> {
         const wrapper = { type: InputType.CREATE_INPUT, input };
+
+        const preSaveHook: (...args: any[]) => Promise<Result<void, EventsFailedException>> = this.entityEventsManager
+            ? this.entityEventsManager.onCreatingEntity.bind(this.entityEventsManager)
+            : (...args: any[]) => Promise.resolve(ok(null));
+        const postSaveHook: (...args: any[]) => Promise<Result<void, EventsFailedException>> = this.entityEventsManager
+            ? this.entityEventsManager.onCreatedEntity.bind(this.entityEventsManager)
+            : (...args: any[]) => Promise.resolve(ok(null));
 
         const handler = (queryRunner: QueryRunner) => checkPermissions<CI>(input, this.getCreatePermissions())
             .then(proceed(() =>
@@ -150,23 +169,34 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
                     input.payload,
                     { groups: [CrudOperations.CREATE] },
                 );
-                return this.performCreateEntity(input, queryRunner);
-            }))
-            .then(map(async entity => {
-                if (!this.options.returnShallow) {
-                    entity = (await this.getObject({ id: entity.id }, queryRunner, wrapper)).unwrap();
-                }
-                return this.mapCreateOutput(entity, input);
+
+                return preSaveHook(this.repository.create(input.payload), this.options.entityCls, queryRunner)
+                    .then(proceed(() => this.performCreateEntity(input, queryRunner)))
+                    .then(map(async entity => {
+                        if (!this.options.returnShallow) {
+                            entity = (await this.getObject({ id: entity.id }, queryRunner, wrapper)).unwrap();
+                        }
+                        return entity;
+                    }));
             }));
 
-        return transaction(this.repository.manager.connection, handler);
+        return transaction(this.repository.manager.connection, handler)
+            .then(proceed(async entity => {
+                return (await postSaveHook(entity, this.options.entityCls))
+                    .map(() => this.mapCreateOutput(entity, input));
+            }));
     }
 
-    async update(
-        input: UI,
-    ): Promise<Result<UO, PermissionDeniedException | EntityNotFoundException | ValidationContainerException | UE>> {
+    async update(input: UI): UpdateResult<UO, UE> {
         const wrapper = { type: InputType.UPDATE_INPUT, input };
         const groups = input.partial ? [CrudOperations.PARTIAL_UPDATE] : [CrudOperations.UPDATE];
+
+        const preSaveHook: (...args: any[]) => Promise<Result<void, EventsFailedException>> = this.entityEventsManager
+            ? this.entityEventsManager.onUpdatingEntity.bind(this.entityEventsManager)
+            : (...args: any[]) => Promise.resolve(ok(null));
+        const postSaveHook: (...args: any[]) => Promise<Result<void, EventsFailedException>> = this.entityEventsManager
+            ? this.entityEventsManager.onUpdatedEntity.bind(this.entityEventsManager)
+            : (...args: any[]) => Promise.resolve(ok(null));
 
         const handler = (queryRunner: QueryRunner) => checkPermissions<UI>(input, this.getUpdatePermissions())
             .then(proceed(() => this.getObject({ id: input.payload.id }, queryRunner, wrapper)))
@@ -178,36 +208,51 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
                     { groups },
                 )).map(() => entity),
             ))
-            .then(proceed(entity => {
+            .then(proceed(async entity => {
                 // Transform input to omit fields not related for update operation
                 input.payload = ClassTransformer.toClassObject(
                     this.options.updatePayloadCls,
                     input.payload,
                     { groups },
                 );
-                return this.performUpdateEntity(input, entity, queryRunner);
-            }))
-            .then(map(async entity => {
-                if (!this.options.returnShallow) {
-                    entity = (await this.getObject({ id: entity.id }, queryRunner, wrapper)).unwrap();
-                }
-                return this.mapUpdateOutput(entity, input);
+
+                return preSaveHook(entity, this.options.entityCls, queryRunner)
+                    .then(proceed(() => this.performUpdateEntity(input, entity, queryRunner)))
+                    .then(map(async () => {
+                        if (!this.options.returnShallow) {
+                            entity = (await this.getObject({ id: entity.id }, queryRunner, wrapper)).unwrap();
+                        }
+                        return entity;
+                    }))
             }));
 
-        return transaction(this.repository.manager.connection, handler);
+        return transaction(this.repository.manager.connection, handler)
+            .then(proceed(async entity => {
+                return (await postSaveHook(entity, this.options.entityCls))
+                    .map(() => this.mapUpdateOutput(entity, input));
+            }));
     }
 
-    async destroy(
-        input: DI,
-    ): Promise<Result<void, PermissionDeniedException | EntityNotFoundException | DE>> {
+    async destroy(input: DI): DestroyResult<DE> {
         const wrapper = { type: InputType.DESTROY_INPUT, input };
+
+        const preDestroyHook: (...args: any[]) => Promise<Result<void, EventsFailedException>> = this.entityEventsManager
+            ? this.entityEventsManager.onUpdatingEntity.bind(this.entityEventsManager)
+            : (...args: any[]) => Promise.resolve(ok(null));
+        const postDestroyHook: (...args: any[]) => Promise<Result<void, EventsFailedException>> = this.entityEventsManager
+            ? this.entityEventsManager.onUpdatedEntity.bind(this.entityEventsManager)
+            : (...args: any[]) => Promise.resolve(ok(null));
 
         const handler = (queryRunner: QueryRunner) => checkPermissions<DI>(input, this.getDestroyPermissions())
             .then(proceed(() => this.getObject({ id: input.id }, queryRunner, wrapper)))
             .then(proceed(entity => checkEntityPermissions<DI, E>(input, entity, this.getDestroyEntityPermissions())))
-            .then(proceed(entity => this.performDestroyEntity(input, entity, queryRunner)));
+            .then(proceed(entity => {
+                return preDestroyHook(entity, this.options.entityCls, queryRunner)
+                    .then(proceed(() => this.performDestroyEntity(input, entity, queryRunner)));
+            }));
 
-        return transaction(this.repository.manager.connection, handler);
+        return transaction(this.repository.manager.connection, handler)
+            .then(proceed(entity => postDestroyHook(entity, this.options.entityCls)));
     }
 
     protected async performCreateEntity(
@@ -242,9 +287,8 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         input: DI,
         entity: E,
         queryRunner: QueryRunner,
-    ): Promise<Result<void, DE>> {
-        await queryRunner.manager.remove(entity);
-        return ok(null);
+    ): Promise<Result<E, DE>> {
+        return ok(await queryRunner.manager.remove(entity));
     }
 
     protected async getObject(

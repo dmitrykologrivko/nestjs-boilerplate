@@ -2,6 +2,7 @@ import { Module, DynamicModule } from '@nestjs/common';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
 import { ConfigModule } from './config/config.module';
 import { DatabaseModule } from './database/database.module';
+import { DomainModule } from './domain/domin.module';
 import { MailModule } from './mail/mail.module';
 import { ServerModule } from './server';
 import { ManagementModule } from './management/management.module';
@@ -17,6 +18,7 @@ export interface CoreModuleOptions extends Pick<ModuleMetadata, 'imports'> {
 
 @Module({
     imports: [
+        DomainModule,
         ServerModule,
         ManagementModule,
         UtilsModule,
