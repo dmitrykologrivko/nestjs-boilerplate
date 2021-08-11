@@ -1,5 +1,6 @@
 import * as bcrypt from 'bcrypt';
 import { Column, JoinTable, ManyToMany } from 'typeorm';
+import { isEmail } from 'class-validator';
 import {
     Entity,
     BaseTypeormEntity,
@@ -415,7 +416,7 @@ export class User extends BaseTypeormEntity {
 
     private static validateEmail(email: string) {
         return Validate.withProperty('email', email)
-            .isEmail()
+            .custom('isEmail', 'is not email', isEmail)
             .maxLength(EMAIL_MAX_LENGTH)
             .isValid();
     }

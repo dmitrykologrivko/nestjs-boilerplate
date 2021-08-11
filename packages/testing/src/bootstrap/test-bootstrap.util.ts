@@ -16,14 +16,14 @@ export class TestBootstrap {
     ) {}
 
     async startApplication<T extends INestApplication = INestApplication>(
-        meta?: Pick<TestApplicationBootstrapperMeta<T>, 'httpAdapter' | 'options' | 'onCustomInit' | 'loaders'>,
+        meta?: Pick<TestApplicationBootstrapperMeta<T>, 'httpAdapter' | 'options' | 'onInit' | 'loaders'>,
     ): Promise<T> {
         return await new TestApplicationBootstrapper<T>({ module: this.module, ...meta })
             .start();
     }
 
     async startMicroservice<T extends NestMicroserviceOptions = NestMicroserviceOptions>(
-        meta?: Pick<TestBootstrapperMeta<INestMicroservice, T>, 'options' | 'onCustomInit' | 'loaders'>,
+        meta?: Pick<TestBootstrapperMeta<INestMicroservice, T>, 'options' | 'onInit' | 'loaders'>,
     ): Promise<INestMicroservice> {
         return await new TestMicroserviceBootstrapper<T>({ module: this.module, ...meta })
             .start();
