@@ -36,8 +36,7 @@ Core is the main module of NestJS Boilerplate. Provides a framework with main to
 * [Queries](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/queries.md)
 * [Domain Services](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/domain-services.md)
 * [Unit of Work](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/unit-of-work.md)
-
-TODO: Domain events
+* [Domain Events](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/domain-events.md)
 
 ## Application Layer
 

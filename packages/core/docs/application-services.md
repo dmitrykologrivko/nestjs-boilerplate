@@ -163,6 +163,21 @@ To paginate a list of objects you can provide a paginator class that implements 
 
 Check the [pagination](./pagination.md) section to get more information about pagination.
 
+### CRUD Events
+
+CRUD service can automatically publish domain events about CRUD operations on the entity, such as:
+* EntityCreatingEvent
+* EntityCreatedEvent
+* EntityUpdatingEvent
+* EntityUpdatedEvent
+* EntityDestroyingEvent
+* EntityDestroyedEvent
+
+If you want to handle such events then you need to create the corresponding event handlers, register them, and also 
+inject `EntityEventsManager` class into the CRUD service. This is service optional by default.
+
+Check the [domain events](./domain-events.md) section to get more information about domain events.
+
 ### Customize CRUD Service
 
 #### Generic arguments
