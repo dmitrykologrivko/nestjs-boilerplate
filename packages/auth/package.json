@@ -16,8 +16,8 @@
     "uuid": "^8.2.0"
   },
   "devDependencies": {
-    "@nestjs-boilerplate/core": "^0.0.0",
-    "@nestjs-boilerplate/testing": "^0.0.0"
+    "@nestjs-boilerplate/core": "0.0.0",
+    "@nestjs-boilerplate/testing": "0.0.0"
   },
   "peerDependencies": {
     "@nestjs-boilerplate/core": "^0.0.0",
