@@ -14,11 +14,11 @@ export abstract class BaseMailService<T extends Mail = Mail, V = any> {
         this.options = this.config.get(MAIL_PROPERTY);
     }
 
-    protected abstract async onOpenConnection(mass: boolean): Promise<V>;
+    protected abstract onOpenConnection(mass: boolean): Promise<V>;
 
-    protected abstract async onCloseConnection(connection: V, mass: boolean);
+    protected abstract onCloseConnection(connection: V, mass: boolean);
 
-    protected abstract async onSendMail(mail: T, connection: V): Promise<void>;
+    protected abstract onSendMail(mail: T, connection: V): Promise<void>;
 
     async sendMail(mail: T | T[]): Promise<Result<void, SendMailFailedException>> {
         try {

@@ -18,9 +18,9 @@ export abstract class BaseBootstrapper<T extends INestApplicationContext = INest
         protected meta: BootstrapperMeta<T, V>,
     ) {}
 
-    protected abstract async createContainer(): Promise<T>;
+    protected abstract createContainer(): Promise<T>;
 
-    protected abstract async onStart(container: T): Promise<T | void>;
+    protected abstract onStart(container: T): Promise<T | void>;
 
     protected async onInit(container: T) {
         // Set dependency injection container for class validator

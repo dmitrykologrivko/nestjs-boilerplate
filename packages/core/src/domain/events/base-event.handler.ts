@@ -6,6 +6,6 @@ export abstract class BaseEventHandler<T extends BaseEvent, U> {
 
     abstract supports(): string[];
 
-    abstract async handle(event: T, unitOfWork?: U): Promise<Result<void, EventFailedException>>;
+    abstract handle(event: T, unitOfWork?: U): Promise<Result<void, EventFailedException>>;
 
 }
