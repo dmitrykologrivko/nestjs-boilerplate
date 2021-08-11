@@ -25,7 +25,7 @@
     "@nestjs-boilerplate/auth": "0.0.0",
     "@nestjs-boilerplate/core": "0.0.0",
     "@nestjs-boilerplate/testing": "0.0.0",
-    "create-ts-index": "^1.13.6"
+    "create-ts-index": "1.13.6"
   },
   "repository": {
     "type": "git",

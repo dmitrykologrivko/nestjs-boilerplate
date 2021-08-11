@@ -10,11 +10,11 @@
     "build": "rm -rf dist && ../../node_modules/.bin/tsc -p tsconfig.json"
   },
   "dependencies": {
-    "create-ts-index": "^1.13.6",
-    "dotenv": "^8.2.0",
-    "minimist": "^1.2.5",
-    "nodemailer": "^6.5.0",
-    "nunjucks": "^3.2.3",
+    "create-ts-index": "1.13.6",
+    "dotenv": "8.6.0",
+    "minimist": "1.2.5",
+    "nodemailer": "6.6.3",
+    "nunjucks": "3.2.3",
     "sqlite3": "5.0.0"
   },
   "peerDependencies": {
@@ -26,7 +26,7 @@
     "class-validator": "0.13.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.6.3",
-    "typeorm": "^0.2.26"
+    "typeorm": "^0.2.36"
   },
   "peerDependenciesMeta": {
     "@nestjs/platform-express": {
@@ -34,8 +34,8 @@
     }
   },
   "devDependencies": {
-    "@types/nodemailer": "^6.4.0",
-    "@types/nunjucks": "^3.1.4"
+    "@types/nodemailer": "6.4.4",
+    "@types/nunjucks": "3.1.5"
   },
   "repository": {
     "type": "git",

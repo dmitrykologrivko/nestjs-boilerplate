@@ -11,9 +11,9 @@
     "build": "rm -rf dist && ../../node_modules/.bin/tsc -p tsconfig.json"
   },
   "dependencies": {
-    "bcrypt": "^5.0.0",
-    "prompt-sync": "^4.2.0",
-    "uuid": "^8.2.0"
+    "bcrypt": "5.0.1",
+    "prompt-sync": "4.2.0",
+    "uuid": "8.3.2"
   },
   "devDependencies": {
     "@nestjs-boilerplate/core": "0.0.0",
@@ -29,7 +29,7 @@
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "typeorm": "^0.2.26"
+    "typeorm": "^0.2.36"
   },
   "repository": {
     "type": "git",

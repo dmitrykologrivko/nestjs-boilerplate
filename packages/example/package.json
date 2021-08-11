@@ -28,7 +28,7 @@
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "typeorm": "^0.2.26"
+    "typeorm": "^0.2.36"
   },
   "repository": {
     "type": "git",
