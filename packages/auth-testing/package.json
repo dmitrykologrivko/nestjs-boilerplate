@@ -19,7 +19,7 @@
     "@nestjs/testing": "^7.6.18",
     "class-validator": "0.13.1",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^6.6.3"
+    "rxjs": "^7.3.0"
   },
   "devDependencies": {
     "@nestjs-boilerplate/auth": "0.0.0",
