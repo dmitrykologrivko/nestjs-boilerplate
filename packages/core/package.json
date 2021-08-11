@@ -7,7 +7,7 @@
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
   "scripts": {
-    "build": "rm -rf dist && tsc -p tsconfig.json"
+    "build": "rm -rf dist && ../../node_modules/.bin/tsc -p tsconfig.json"
   },
   "dependencies": {
     "create-ts-index": "^1.13.6",
@@ -18,10 +18,10 @@
     "sqlite3": "5.0.0"
   },
   "peerDependencies": {
-    "@nestjs/common": "^7.4.4",
-    "@nestjs/config": "^0.5.0",
-    "@nestjs/core": "^7.4.4",
-    "@nestjs/typeorm": "^7.1.4",
+    "@nestjs/common": "^7.6.18",
+    "@nestjs/config": "^1.0.1",
+    "@nestjs/core": "^7.6.18",
+    "@nestjs/typeorm": "^7.1.5",
     "class-transformer": "^0.3.1",
     "class-validator": "0.13.1",
     "reflect-metadata": "^0.1.13",

@@ -8,7 +8,7 @@
   "main": "./dist/main.js",
   "typings": "./dist/main.d.ts",
   "scripts": {
-    "build": "rm -rf dist && tsc -p tsconfig.json",
+    "build": "rm -rf dist && ../../node_modules/.bin/tsc -p tsconfig.json",
     "start": "node dist/main"
   },
   "devDependencies": {
@@ -20,9 +20,9 @@
   "peerDependencies": {
     "@nestjs-boilerplate/auth": "^0.0.0",
     "@nestjs-boilerplate/core": "^0.0.0",
-    "@nestjs/common": "^7.4.4",
-    "@nestjs/jwt": "^7.1.0",
-    "@nestjs/passport": "^7.1.0",
+    "@nestjs/common": "^7.6.18",
+    "@nestjs/jwt": "^8.0.0",
+    "@nestjs/passport": "^8.0.1",
     "class-transformer": "^0.3.1",
     "class-validator": "0.13.1",
     "passport": "^0.4.1",
@@ -37,5 +37,6 @@
   "bugs": {
     "url": "https://github.com/dmitrykologrivko/nestjs-boilerplate/issues"
   },
-  "homepage": "https://github.com/dmitrykologrivko/nestjs-boilerplate#readme"
+  "homepage": "https://github.com/dmitrykologrivko/nestjs-boilerplate#readme",
+  "dependencies": {}
 }
