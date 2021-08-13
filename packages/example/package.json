@@ -20,7 +20,7 @@
     "@nestjs-boilerplate/core": "^0.0.0",
     "@nestjs/common": "^7.6.18",
     "class-transformer": "^0.3.1",
-    "class-validator": "0.13.1",
+    "class-validator": "^0.13.1",
     "typeorm": "^0.2.36"
   },
   "repository": {
