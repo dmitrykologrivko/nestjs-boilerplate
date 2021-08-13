@@ -15,7 +15,7 @@
     "minimist": "1.2.5",
     "nodemailer": "6.6.3",
     "nunjucks": "3.2.3",
-    "sqlite3": "5.0.0"
+    "sqlite3": "5.0.2"
   },
   "peerDependencies": {
     "@nestjs/common": "^7.6.18",
