@@ -13,21 +13,14 @@
   },
   "devDependencies": {
     "@nestjs-boilerplate/auth": "0.0.0",
-    "@nestjs-boilerplate/auth-testing": "0.0.0",
-    "@nestjs-boilerplate/core": "0.0.0",
-    "@nestjs-boilerplate/testing": "0.0.0"
+    "@nestjs-boilerplate/core": "0.0.0"
   },
   "peerDependencies": {
     "@nestjs-boilerplate/auth": "^0.0.0",
     "@nestjs-boilerplate/core": "^0.0.0",
     "@nestjs/common": "^7.6.18",
-    "@nestjs/jwt": "^8.0.0",
-    "@nestjs/passport": "^8.0.1",
     "class-transformer": "^0.3.1",
     "class-validator": "0.13.1",
-    "passport": "^0.4.1",
-    "passport-jwt": "^4.0.0",
-    "passport-local": "^1.0.0",
     "typeorm": "^0.2.36"
   },
   "repository": {
