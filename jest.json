@@ -9,6 +9,11 @@
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   },
+  "transformIgnorePatterns": [
+    "/node_modules/",
+    "\\.pnp\\.[^\\\/]+$",
+    "/dist/"
+  ],
   "coverageDirectory": "./coverage",
   "testEnvironment": "node"
 }
