@@ -84,9 +84,10 @@ export async function generateMigration(
  * @param connection database connection instance
  */
 export async function runMigrations(connection: Connection) {
-    await connection.runMigrations();
+    Logger.log('Running pending migrations');
+    const migrations = await connection.runMigrations();
+    Logger.log(`Applied: ${migrations.map(migration => migration.name).join(', ')}`);
     await connection.close();
-    Logger.log(`Database migration has been completed on ${new Date()}`);
 }
 
 /**

@@ -391,7 +391,7 @@ Example:\
 
 **Optional params:**\
 `connection` name of the database connection. Using `default` as default name if actual value is not provided.\
-`destination` destination folder for the migration file.\
+`destination` destination folder for the migration file. Default value `src/migrations`.\
 `useTypescript` if this flag is provided then ts-node will be used to run original typeorm cli command.
 (use this only in development mode) This is can be helpful if you use Webpack bundling.
 
@@ -409,9 +409,14 @@ None
 **Optional params:**\
 `name` name of a new migration. Default value is `auto`.\
 `connection` name of the database connection. Using `default` as default name if actual value is not provided.\
-`destination` destination folder for the migration file.\
+`destination` destination folder for the migration file. Default value `src/migrations`.\
 `useTypescript` if this flag is provided then ts-node will be used to run original typeorm cli command.
-(use this only in development mode) This is can be helpful if you use Webpack bundling. 
+(use this only in development mode) This is can be helpful if you use Webpack bundling.
+
+**Note:** If you use in the project Webpack bundling you need to provide a path to entities in the source files folder 
+(src) instead of the distribution folder (dist). As typeorm cli works only with JS files, it will be looking for 
+entities using ts-node for dynamic transpile TS files. (if `useTypescript` flag was used) Paths to entities from 
+node_modules dependencies may stay the same if you develop or use an external package that contains entities.
 
 ### Run migrations
 
