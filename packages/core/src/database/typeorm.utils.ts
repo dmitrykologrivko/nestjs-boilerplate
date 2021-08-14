@@ -86,7 +86,13 @@ export async function generateMigration(
 export async function runMigrations(connection: Connection) {
     Logger.log('Running pending migrations');
     const migrations = await connection.runMigrations();
-    Logger.log(`Applied: ${migrations.map(migration => migration.name).join(', ')}`);
+
+    if (migrations.length === 0) {
+        Logger.log('No migrations to apply');
+    } else {
+        Logger.log(`Applied: ${migrations.map(migration => migration.name).join(', ')}`);
+    }
+
     await connection.close();
 }
 
