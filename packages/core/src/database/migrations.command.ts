@@ -37,7 +37,7 @@ export class MigrationsCommand {
             name: 'destination',
             optional: true,
         })
-        destination?: string,
+        destination: string = 'src/migrations',
 
         @CliArgument({
             name: 'useTypescript',
@@ -80,7 +80,7 @@ export class MigrationsCommand {
             name: 'destination',
             optional: true,
         })
-        destination?: string,
+        destination: string = 'src/migrations',
 
         @CliArgument({
             name: 'useTypescript',

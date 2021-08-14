@@ -107,12 +107,14 @@ export async function execTypeormCommand(
     commandOptions?: TypeormCommandOptions,
 ) {
     const options = commandOptions?.connectionOptions || connection.options;
+    const entities = (options.entities || []).filter(item => typeof item === 'string');
+    const migrations = (options.migrations || []).filter(item => typeof item === 'string');
 
     const configName = 'export_ormconfig.json';
     const configPath = `${process.cwd()}/${configName}`;
 
     // Create temp database config file for typeorm cli
-    await writeFile(configPath, JSON.stringify(options));
+    await writeFile(configPath, JSON.stringify({ ...options, entities, migrations }));
 
     // Safety close current database connection
     await connection.close();
