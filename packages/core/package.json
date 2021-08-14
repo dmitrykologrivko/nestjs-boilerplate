@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "create-ts-index": "1.13.6",
-    "dotenv": "8.6.0",
     "minimist": "1.2.5",
     "nodemailer": "6.6.3",
     "nunjucks": "3.2.3",
@@ -22,7 +21,7 @@
     "@nestjs/config": "^1.0.1",
     "@nestjs/core": "^7.6.18",
     "@nestjs/typeorm": "^7.1.5",
-    "class-transformer": "^0.3.1",
+    "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.2.36"

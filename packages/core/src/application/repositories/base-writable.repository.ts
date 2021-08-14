@@ -1,5 +1,5 @@
 import { Repository, QueryRunner } from 'typeorm';
-import { ClassType } from 'class-transformer/ClassTransformer';
+import { Constructor } from '../../utils/type.utils';
 import { BaseRepository } from '../../domain/repository/base.repository';
 import { BaseEntity } from '../../domain/entities/base.entity';
 import { BaseFindQuery } from '../queries/base-find.query';
@@ -12,7 +12,7 @@ export abstract class BaseWritableRepository<E extends BaseEntity, W> extends Ba
 
     constructor(
         protected readonly repository: Repository<W>,
-        protected readonly writableCls: ClassType<W>,
+        protected readonly writableCls: Constructor<W>,
     ) {
         super();
         this.alias = repository.metadata.name;

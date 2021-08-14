@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { classToPlain, classToClass, plainToClass } from 'class-transformer';
-import { ClassType } from 'class-transformer/ClassTransformer';
-import { ClassTransformOptions } from 'class-transformer/ClassTransformOptions';
+import {
+    classToPlain,
+    classToClass,
+    plainToClass,
+    ClassTransformOptions,
+} from 'class-transformer';
+import { Constructor } from './type.utils';
 
 /**
  * Class transformer util
@@ -17,7 +21,7 @@ export class ClassTransformer {
      * @param options "class-transformer" library options
      * @returns {T} class (constructor) object
      */
-    static toClassObject<T, V>(cls: ClassType<T>, plain: V, options?: ClassTransformOptions): T {
+    static toClassObject<T, V>(cls: Constructor<T>, plain: V, options?: ClassTransformOptions): T {
         return plainToClass(cls, plain, options);
     }
 
@@ -28,7 +32,7 @@ export class ClassTransformer {
      * @param options "class-transformer" library options
      * @return array of class (constructor) objects
      */
-    static toClassObjects<T, V>(cls: ClassType<T>, plain: V[], options?: ClassTransformOptions): T[] {
+    static toClassObjects<T, V>(cls: Constructor<T>, plain: V[], options?: ClassTransformOptions): T[] {
         return plainToClass(cls, plain, options);
     }
 
@@ -82,7 +86,7 @@ export class ClassTransformer {
      * @param options "class-transformer" library options
      * @returns {T} class (constructor) object
      */
-    toClassObject<T, V>(cls: ClassType<T>, plain: V, options?: ClassTransformOptions): T {
+    toClassObject<T, V>(cls: Constructor<T>, plain: V, options?: ClassTransformOptions): T {
         return ClassTransformer.toClassObject(cls, plain, options);
     }
 
@@ -93,7 +97,7 @@ export class ClassTransformer {
      * @param options "class-transformer" library options
      * @return array of class (constructor) objects
      */
-    toClassObjects<T, V>(cls: ClassType<T>, plain: V[], options?: ClassTransformOptions): T[] {
+    toClassObjects<T, V>(cls: Constructor<T>, plain: V[], options?: ClassTransformOptions): T[] {
         return ClassTransformer.toClassObjects(cls, plain, options);
     }
 

@@ -86,6 +86,7 @@ export async function generateMigration(
 export async function runMigrations(connection: Connection) {
     await connection.runMigrations();
     await connection.close();
+    Logger.log(`Database migration has been completed on ${new Date()}`);
 }
 
 /**
@@ -117,7 +118,9 @@ export async function execTypeormCommand(
     await connection.close();
 
     // Execute cli command
-    const executor = commandOptions?.useTypescript ? 'ts-node ./node_modules/typeorm/cli.js' : 'typeorm';
+    const executor = commandOptions?.useTypescript
+        ? './node_modules/ts-node/dist/bin.js ./node_modules/typeorm/cli.js'
+        : './node_modules/typeorm/cli.js';
     const { stdout, stderr } = await exec(`${executor} ${command} ${args} -f ${configName}`);
 
     // Log result

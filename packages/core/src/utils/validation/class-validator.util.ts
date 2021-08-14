@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { validate, ValidationOptions, ValidationError } from 'class-validator';
 import { plainToClass } from 'class-transformer';
-import { ClassType } from 'class-transformer/ClassTransformer';
+import { Constructor } from '../../utils/type.utils';
 import { Result, ok, err } from '../monads/result';
 import { ValidationException } from './validation.exception';
 import { ValidationContainerException } from './validation-container.exception';
@@ -21,7 +21,7 @@ export class ClassValidator {
      * @return validation result
      */
     static async validate<T extends object>(
-        cls: ClassType<T>,
+        cls: Constructor<T>,
         object: T,
         validationOptions?: ValidationOptions,
     ): Promise<Result<void, ValidationContainerException>> {
@@ -50,7 +50,7 @@ export class ClassValidator {
      * @return validation result
      */
     async validate<T extends object>(
-        cls: ClassType<T>,
+        cls: Constructor<T>,
         object: T,
         validationOptions?: ValidationOptions,
     ): Promise<Result<void, ValidationContainerException>> {

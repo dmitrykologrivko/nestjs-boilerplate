@@ -1,7 +1,7 @@
 import { Repository, SelectQueryBuilder, QueryRunner } from 'typeorm';
-import { ClassType } from 'class-transformer/ClassTransformer';
 import { transaction } from '../../database/database.utils';
 import { TransactionRollbackException } from '../../database/transaction-rollback.exception';
+import { Constructor } from '../../utils/type.utils';
 import { ClassTransformer } from '../../utils/class-transformer.util';
 import { ClassValidator } from '../../utils/validation/class-validator.util';
 import { ValidationContainerException } from '../../utils/validation/validation-container.exception';
@@ -34,13 +34,13 @@ import { BasePagination } from '../pagination/base.pagination';
 import { BasePaginatedContainer } from '../pagination/base-paginated-container.interface';
 
 export interface CrudServiceOptions<E, LO, RO, CP, CO, UP, UO> {
-    entityCls: ClassType<E>;
-    listOutputCls: ClassType<LO>;
-    retrieveOutputCls: ClassType<RO>;
-    createPayloadCls: ClassType<CP>;
-    createOutputCls: ClassType<CO>;
-    updatePayloadCls: ClassType<UP>;
-    updateOutputCls: ClassType<UO>;
+    entityCls: Constructor<E>;
+    listOutputCls: Constructor<LO>;
+    retrieveOutputCls: Constructor<RO>;
+    createPayloadCls: Constructor<CP>;
+    createOutputCls: Constructor<CO>;
+    updatePayloadCls: Constructor<UP>;
+    updateOutputCls: Constructor<UO>;
     returnShallow?: boolean;
 }
 
