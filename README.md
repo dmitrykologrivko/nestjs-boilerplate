@@ -1,5 +1,7 @@
 # NestJS Boilerplate
 
+[![Codeship Status for dmitrykologrivko/nestjs-boilerplate](https://app.codeship.com/projects/40abacbd-b74b-4db2-994c-d272a33533eb/status?branch=master)](https://app.codeship.com/projects/450405)
+
 NestJS Boilerplate is an open-source high-level framework for [NestJS](https://github.com/nestjs/nest) applications.
 It takes it up a notch by making it possible to solve repeatable tasks with less coding. It provides an architectural 
 model based on Domain Driven Design and contains a variety of extra tools for a quick start developing NestJS
@@ -22,8 +24,12 @@ Check out the core package [README](/packages/core/README.md) to getting started
 
 ## Example
 
-Check out a simple working [example](/packages/example).
+Check out a simple [example](/packages/example).
 
-## Developed By
+## Keep in touch
 
 Dmitry Kologrivko - dmitrykologrivko@gmail.com
+
+## License
+
+[MIT LICENSE](./LICENSE)

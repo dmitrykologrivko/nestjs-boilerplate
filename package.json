@@ -3,7 +3,7 @@
   "private": true,
   "description": "",
   "author": "Dmitry Kologrivko",
-  "license": "ISC",
+  "license": "MIT",
   "scripts": {
     "postinstall": "npm run bootstrap && npm run build",
     "build": "lerna run build",

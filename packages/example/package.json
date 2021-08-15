@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "description": "",
   "author": "Dmitry Kologrivko",
-  "license": "ISC",
+  "license": "MIT",
   "main": "./dist/main.js",
   "typings": "./dist/main.d.ts",
   "scripts": {
