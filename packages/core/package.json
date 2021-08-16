@@ -42,5 +42,8 @@
   "bugs": {
     "url": "https://github.com/dmitrykologrivko/nestjs-boilerplate/issues"
   },
-  "homepage": "https://github.com/dmitrykologrivko/nestjs-boilerplate#readme"
+  "homepage": "https://github.com/dmitrykologrivko/nestjs-boilerplate#readme",
+  "publishConfig": {
+    "access": "public"
+  }
 }
