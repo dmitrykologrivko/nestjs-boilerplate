@@ -1,7 +1,7 @@
 {
   "name": "@nestjs-boilerplate/auth",
   "private": "true",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "",
   "author": "Dmitry Kologrivko",
   "license": "MIT",
@@ -16,8 +16,8 @@
     "uuid": "8.3.2"
   },
   "devDependencies": {
-    "@nestjs-boilerplate/core": "0.0.0",
-    "@nestjs-boilerplate/testing": "0.0.0"
+    "@nestjs-boilerplate/core": "^0.1.0",
+    "@nestjs-boilerplate/testing": "^0.1.0"
   },
   "peerDependencies": {
     "@nestjs-boilerplate/core": "^0.0.0",
