@@ -32,8 +32,6 @@ describe('UserPasswordService', () => {
         jwtService = new JwtService({ secret: SECRET_KEY });
         config = mock<PropertyConfigService>();
 
-        // TODO: https://github.com/marchaos/jest-mock-extended/issues/36
-        // @ts-ignore
         service = new UserPasswordService(userRepository, jwtService, config);
 
         user = await UserFactory.makeUser();

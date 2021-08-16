@@ -65,35 +65,38 @@ In some unit/e2e tests, we need to check that an email message is sent but at th
 we do not send any emails outside.
 
 Testing package provides the following classes to mock sending email:
-* `ConsoleMailService`
-* `MemoryMailService`
-* `NullMailService`
+* `ConsoleMailService` class allows redirecting emails to be print into the console.
+* `MemoryMailService` class allows keeping emails in special `outbox` parameter to have access to a list of sent emails.
+* `NullMailService` class that does nothing.
 
-```typescript
-
-```
+Let's override standard email service in tests.
 
 ```typescript
 import * as request from 'supertest';
-import { TestingModuleBuilder } from '@nestjs/testing';
+import { TestingModule, TestingModuleBuilder } from '@nestjs/testing';
 import { BaseMailService } from '@nestjs-boilerplate/core';
 import { TestBootstrap, TestMailModule, MemoryMailService } from '@nestjs-boilerplate/testing';
 import { AppModule } from './app.module';
 
 describe('PostController (e2e)', () => {
-    let mailService;
+    let mailService: MemoryMailService;
     let app;
 
     beforeAll(async () => {
         app = await new TestBootstrap(AppModule)
             .startApplication({
-                imports: [TestMailModule],
+                testingMetadata: {
+                    imports: [TestMailModule],
+                },
                 onCreateTestingModule: (builder: TestingModuleBuilder) => {
-                    return builder.overrideProvider(BaseMailService).
-                }
+                    return builder
+                        .overrideProvider(BaseMailService)
+                        .useClass(MemoryMailService);
+                },
+                onTestingModuleCreated: (testingModule: TestingModule) => {
+                    mailService = app.get<BaseMailService, MemoryMailService>(BaseMailService);
+                },
             });
-
-        
     });
 
     afterAll(async () => {
@@ -102,11 +105,51 @@ describe('PostController (e2e)', () => {
 
     describe('/api/posts/id/publish (POST)', () => {
         it('should publish post and send email', async () => {
+            expect(mailService.outbox.length).toEqual(0);
+
             request(app.getHttpServer())
                 .post('/api/notes/1/publish')
                 .expect(200);
 
-            
+            expect(mailService.outbox.length).toEqual(1);
+        });
+    });
+});
+```
+
+## class-validator constraints
+
+If you want to use custom constraints for class validation but you need to write a unit test, then there may be a problem.
+class-validator library uses a dependency container by default to store/get the constraints. When you run the Nest 
+application/microservice then NestJS Boilerplate automatically binds Nest container for class-validator.
+It might work for e2e tests but not for unit tests when you do not run Nest application/microservice.
+
+Testing package contains `createClassValidatorContainer` function which allows to create and bind container for 
+class-validator. Thus for unit tests, you can use this function to achieve the possibility to register constraints.
+
+```typescript
+import { ClassValidator } from '@nestjs-boilerplate/core';
+import { SimpleIocContainer, createClassValidatorContainer } from '@nestjs-boilerplate/testing';
+import { UserVerificationService } from 'user-verification.service';
+import { UsernameUniqueConstraint } from 'username-unique.constraint';
+import { UserDto } from './user.dto';
+
+describe('UserDto', () => {
+    let container: SimpleIocContainer;
+
+    beforeEach(async () => {
+        const userVerificationService = new UserVerificationService();
+        const usernameUniqueConstraint = new UsernameUniqueConstraint(userVerificationService);
+
+        container = createClassValidatorContainer();
+        container.register(UsernameUniqueConstraint, usernameUniqueConstraint);
+    });
+
+    describe('validate user dto', () => {
+        it('should return success validation result', async () => {
+            const dto = new UserDto('johnsmith', 'John', 'Smith');
+            const result = await ClassValidator.valide(UserDto, dto);
+            expect(result.isOk()).toBeTruthy();
         });
     });
 });

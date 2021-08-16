@@ -31,8 +31,6 @@ describe('UserJwtService', () => {
         revokedTokenRepository = mock<Repository<RevokedToken>>();
         jwtService = new JwtService({ secret: SECRET_KEY });
 
-        // TODO: https://github.com/marchaos/jest-mock-extended/issues/36
-        // @ts-ignore
         service = new UserJwtService(userRepository, revokedTokenRepository, jwtService);
 
         user = await UserFactory.makeUser();

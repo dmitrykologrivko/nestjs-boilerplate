@@ -169,7 +169,7 @@ To start receiving events, the event handler must be registered in the Event Bus
 application initialization time. As `EventBus` is an injectable class then we can register handlers in module class.
 
 ```typescript
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { DatabaseModule, EventBus } from '@nestjs-boilerplate/core';
 import { Order } from './order.entity';
 import { OrderConfirmedEvent } from './order-confirmed.event';
@@ -180,11 +180,13 @@ import { OrderConfirmedEvent } from './order-confirmed.event';
     ],
     providers: [OrderConfirmedEventHandler],
 })
-export class OrderModule {
+export class OrderModule implements OnModuleInit {
     constructor(
         private eventBus: EventBus,
         private orderConfirmedEventHandler: OrderConfirmedEventHandler,
-    ) {
+    ) {}
+
+    onModuleInit(): any {
         this.eventBus.registerHandler(this.orderConfirmedEventHandler);
     }
 }

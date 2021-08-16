@@ -48,8 +48,6 @@ describe('JwtAuthService', () => {
         revokedTokenRepository = mock<Repository<RevokedToken>>();
         userJwtService = mock<UserJwtService>();
 
-        // TODO: https://github.com/marchaos/jest-mock-extended/issues/36
-        // @ts-ignore
         service = new JwtAuthService(userRepository, revokedTokenRepository, userJwtService);
 
         user = await UserFactory.makeUser();

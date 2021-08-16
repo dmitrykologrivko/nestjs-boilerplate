@@ -5,8 +5,7 @@ import { Constructor } from '@nestjs-boilerplate/core';
  */
 export class SimpleIocContainer {
 
-    // @ts-ignore
-    protected instances: [{ type: Constructor, object: any }] = [];
+    protected instances: Array<{ type: Constructor, object: any }> = [];
 
     /**
      * Get class instance from IOC container by constructor function

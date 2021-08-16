@@ -10,6 +10,8 @@ export interface TestBootstrapperMeta<T extends INestApplicationContext = INestA
     testingMetadata?: ModuleMetadata;
 
     onCreateTestingModule?: (builder: TestingModuleBuilder) => TestingModuleBuilder;
+
+    onTestingModuleCreated?: (testingModule: TestingModule) => void;
 }
 
 export abstract class BaseTestBootstrapper<T extends INestApplicationContext = INestApplicationContext,
@@ -29,6 +31,12 @@ export abstract class BaseTestBootstrapper<T extends INestApplicationContext = I
             builder = this.meta?.onCreateTestingModule(builder);
         }
 
-        return await builder.compile();
+        const testingModule = await builder.compile();
+
+        if (this.meta.onTestingModuleCreated) {
+            this.meta.onTestingModuleCreated(testingModule);
+        }
+
+        return testingModule;
     }
 }

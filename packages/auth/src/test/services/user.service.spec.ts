@@ -73,8 +73,6 @@ describe('UserService', () => {
         passwordMatchConstraint = new PasswordMatchConstraint(userPasswordService);
         resetPasswordTokenValidConstraint = new ResetPasswordTokenValidConstraint(userPasswordService);
 
-        // TODO: https://github.com/marchaos/jest-mock-extended/issues/36
-        // @ts-ignore
         service = new UserService(userRepository, userPasswordService, config);
 
         container.register(UserVerificationService, userVerificationService, true);

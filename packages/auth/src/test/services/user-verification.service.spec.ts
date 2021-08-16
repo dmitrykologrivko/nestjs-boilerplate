@@ -21,8 +21,6 @@ describe('UserVerificationService', () => {
     beforeEach(async () => {
         userRepository = mock<Repository<User>>();
 
-        // TODO: https://github.com/marchaos/jest-mock-extended/issues/36
-        // @ts-ignore
         service = new UserVerificationService(userRepository);
 
         user = await UserFactory.makeUser();
