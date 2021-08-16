@@ -1,4 +1,4 @@
-type ConstructorFunction = new (...args: any[]) => any;
+import { Constructor } from '@nestjs-boilerplate/core';
 
 /**
  * Simple implementation of IOC container for testing purposes
@@ -6,14 +6,14 @@ type ConstructorFunction = new (...args: any[]) => any;
 export class SimpleIocContainer {
 
     // @ts-ignore
-    protected instances: [{ type: ConstructorFunction, object: any }] = [];
+    protected instances: [{ type: Constructor, object: any }] = [];
 
     /**
      * Get class instance from IOC container by constructor function
      * @param type construction function
      * @return construction function instance
      */
-    get<T>(type: ConstructorFunction): T {
+    get<T>(type: Constructor): T {
         const instance = this.instances.find(currentInstance => currentInstance.type === type);
 
         if (!instance) {
@@ -30,7 +30,7 @@ export class SimpleIocContainer {
      * @param isMockObject if true then type checking is ignored
      * @throws will throw an error if the object is not instance of type and isMockObject flag is false
      */
-    register(type: ConstructorFunction, object: any, isMockObject: boolean = false) {
+    register(type: Constructor, object: any, isMockObject: boolean = false) {
         if (!(object instanceof type) && !isMockObject) {
             throw new Error(`Provided object is not instance of ${type.name}`);
         }

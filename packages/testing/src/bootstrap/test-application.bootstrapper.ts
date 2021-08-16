@@ -13,7 +13,6 @@ export interface TestApplicationBootstrapperMeta<T extends INestApplication = IN
     extends TestBootstrapperMeta<T, NestApplicationOptions> {
 
     httpAdapter?: HttpServer | AbstractHttpAdapter;
-    options?: NestApplicationOptions;
 }
 
 export class TestApplicationBootstrapper<T extends INestApplication = INestApplication>

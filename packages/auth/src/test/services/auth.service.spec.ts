@@ -28,8 +28,6 @@ describe('AuthService', () => {
         userRepository = mock<Repository<User>>();
         userPasswordService = mock<UserPasswordService>();
 
-        // TODO: https://github.com/marchaos/jest-mock-extended/issues/36
-        // @ts-ignore
         service = new AuthService(userRepository, userPasswordService);
 
         user = await UserFactory.makeUser();

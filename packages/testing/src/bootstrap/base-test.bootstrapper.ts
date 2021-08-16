@@ -21,8 +21,8 @@ export abstract class BaseTestBootstrapper<T extends INestApplicationContext = I
 
     protected async createTestingModule(): Promise<TestingModule> {
         let builder = Test.createTestingModule({
-            imports: [this.meta.module, ...this.meta.testingMetadata?.imports || []],
             ...this.meta.testingMetadata,
+            imports: [this.meta.module, ...this.meta.testingMetadata?.imports || []],
         });
 
         if (this.meta.onCreateTestingModule) {
