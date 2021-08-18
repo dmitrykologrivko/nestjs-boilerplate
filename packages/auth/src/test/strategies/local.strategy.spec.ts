@@ -3,8 +3,8 @@ import { MockProxy, mock } from 'jest-mock-extended';
 import {
     ClassTransformer,
     NonFieldValidationException,
-    Ok,
-    Err,
+    ok,
+    err,
 } from '@nestjs-boilerplate/core';
 import { CREDENTIALS_VALID_CONSTRAINT } from '../../constants/auth.constraints';
 import { LocalStrategy } from '../../strategies/local.strategy';
@@ -31,7 +31,7 @@ describe('LocalStrategy', () => {
 
     describe('#validate()', () => {
         it('when user is not exist should throw unauthorized exception', async () => {
-            authService.validateCredentials.mockReturnValue(Promise.resolve(Err(
+            authService.validateCredentials.mockReturnValue(Promise.resolve(err(
                 new NonFieldValidationException(
                     { [CREDENTIALS_VALID_CONSTRAINT.key]: CREDENTIALS_VALID_CONSTRAINT.message },
                 ),
@@ -43,7 +43,7 @@ describe('LocalStrategy', () => {
         });
 
         it('when password is wrong should throw unauthorized exception', async () => {
-            authService.validateCredentials.mockReturnValue(Promise.resolve(Err(
+            authService.validateCredentials.mockReturnValue(Promise.resolve(err(
                 new NonFieldValidationException(
                     { [CREDENTIALS_VALID_CONSTRAINT.key]: CREDENTIALS_VALID_CONSTRAINT.message },
                 ),
@@ -55,7 +55,7 @@ describe('LocalStrategy', () => {
         });
 
         it('when username and password are correct should return user', async () => {
-            authService.validateCredentials.mockReturnValue(Promise.resolve(Ok(validateCredentialsOutput)));
+            authService.validateCredentials.mockReturnValue(Promise.resolve(ok(validateCredentialsOutput)));
 
             const result = await strategy.validate(UserFactory.DEFAULT_USERNAME, UserFactory.DEFAULT_PASSWORD);
 

@@ -31,11 +31,11 @@ export class AuthService extends BaseAuthService {
             .map(user => {
                 return ClassTransformer.toClassObject(ValidateCredentialsOutput, user);
             })
-            .map_err(() => (
+            .mapErr(() => (
                 new NonFieldValidationException(
                     { [CREDENTIALS_VALID_CONSTRAINT.key]: CREDENTIALS_VALID_CONSTRAINT.message },
                 )
             ))
-            .toResult();
+            .toPromise();
     }
 }

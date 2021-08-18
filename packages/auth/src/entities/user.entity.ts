@@ -9,8 +9,8 @@ import {
     ValidationContainerResult,
     ValidationContainerException,
     Result,
-    Ok,
-    Err,
+    ok,
+    err,
 } from '@nestjs-boilerplate/core';
 import { Permission } from './permission.entity';
 import { Group } from './group.entity';
@@ -135,8 +135,8 @@ export class User extends BaseTypeormEntity {
             User.validateLastName(lastName),
         ]);
 
-        if (validateResult.is_err()) {
-            return Err(validateResult.unwrap_err());
+        if (validateResult.isErr()) {
+            return err(validateResult.unwrapErr());
         }
 
         const user = new User(
@@ -151,7 +151,7 @@ export class User extends BaseTypeormEntity {
 
         await user.setPassword(password, saltRounds);
 
-        return Ok(user);
+        return ok(user);
     }
 
     get username(): string {
@@ -305,7 +305,7 @@ export class User extends BaseTypeormEntity {
     async setPassword(password: string, saltRounds: number): Promise<ValidationResult> {
         const validateResult = User.validatePassword(password);
 
-        if (validateResult.is_err()) {
+        if (validateResult.isErr()) {
             return validateResult;
         }
 

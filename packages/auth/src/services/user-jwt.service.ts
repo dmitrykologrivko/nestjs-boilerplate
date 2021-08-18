@@ -6,8 +6,8 @@ import {
     DomainService,
     Result,
     AsyncResult,
-    Ok,
-    Err,
+    ok,
+    err,
 } from '@nestjs-boilerplate/core';
 import { User } from '../entities/user.entity';
 import { RevokedToken } from '../entities/revoked-token.entity';
@@ -32,22 +32,22 @@ export class UserJwtService {
 
     async generateAccessToken(username: string): Promise<Result<string, UserNotFoundException>> {
         return AsyncResult.from(this.findUser(username))
-            .and_then(async user => {
+            .proceed(async user => {
                 const token = await this.jwtService.signAsync({
                     username: user.username,
                     sub: user.id,
                     jti: uuidv4(),
                 });
 
-                return Ok(token);
+                return ok(token);
             })
-            .toResult();
+            .toPromise();
     }
 
     async validateAccessToken(token: string): Promise<Result<User, AccessTokenInvalidException>> {
         return AsyncResult.from(this.verifyJwt(token))
-            .and_then(payload => this.validatePayload(payload))
-            .toResult();
+            .proceed(payload => this.validatePayload(payload))
+            .toPromise();
     }
 
     async validatePayload(payload: Payload): Promise<Result<User, AccessTokenInvalidException>> {
@@ -57,36 +57,36 @@ export class UserJwtService {
                 });
 
                 if (revokedToken) {
-                    return Err(new AccessTokenInvalidException());
+                    return err(new AccessTokenInvalidException());
                 }
 
-                return Ok(null);
+                return ok(null);
             })
-            .and_then(() => {
+            .proceed(() => {
                 return AsyncResult.from(this.findUser(payload.username))
-                    .map_err(() => new AccessTokenInvalidException())
-                    .toResult();
+                    .mapErr(() => new AccessTokenInvalidException())
+                    .toPromise();
             })
-            .toResult();
+            .toPromise();
     }
 
     async revokeAccessToken(token: string): Promise<Result<RevokedToken, AccessTokenInvalidException>> {
         return await AsyncResult.from(this.verifyJwt(token))
-            .and_then(payload => {
+            .proceed(payload => {
                 return AsyncResult.from(this.validatePayload(payload))
                     .map(user => ({ user, payload }))
-                    .toResult();
+                    .toPromise();
             })
-            .and_then(val => Promise.resolve(RevokedToken.create(val.payload.jti, val.user)))
-            .toResult();
+            .proceed(val => Promise.resolve(RevokedToken.create(val.payload.jti, val.user)))
+            .toPromise();
     }
 
     private async verifyJwt(token: string): Promise<Result<Payload, AccessTokenInvalidException>> {
         try {
             const payload = await this.jwtService.verifyAsync(token);
-            return Ok(payload);
+            return ok(payload);
         } catch (e) {
-            return Err(new AccessTokenInvalidException());
+            return err(new AccessTokenInvalidException());
         }
     }
 
@@ -96,9 +96,9 @@ export class UserJwtService {
         });
 
         if (!user) {
-            return Err(new UserNotFoundException());
+            return err(new UserNotFoundException());
         }
 
-        return Ok(user);
+        return ok(user);
     }
 }

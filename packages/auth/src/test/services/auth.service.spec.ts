@@ -2,8 +2,8 @@ import { Repository } from 'typeorm';
 import { MockProxy, mock } from 'jest-mock-extended';
 import {
     ClassTransformer,
-    Ok,
-    Err,
+    ok,
+    err,
     NonFieldValidationException,
 } from '@nestjs-boilerplate/core';
 import { AuthService } from '../../services/auth.service';
@@ -41,12 +41,12 @@ describe('AuthService', () => {
 
     describe('#validateCredentials()', () => {
         it('when user is not exist should return validation error', async () => {
-            userPasswordService.validateCredentials.mockReturnValue(Promise.resolve(Err(new CredentialsInvalidException())));
+            userPasswordService.validateCredentials.mockReturnValue(Promise.resolve(err(new CredentialsInvalidException())));
 
             const result = await service.validateCredentials(validateCredentialsInput);
 
-            expect(result.is_err()).toBe(true);
-            expect(result.unwrap_err()).toBeInstanceOf(NonFieldValidationException);
+            expect(result.isErr()).toBe(true);
+            expect(result.unwrapErr()).toBeInstanceOf(NonFieldValidationException);
             expect(userPasswordService.validateCredentials.mock.calls[0][0]).toBe(validateCredentialsInput.username);
             expect(userPasswordService.validateCredentials.mock.calls[0][1]).toBe(validateCredentialsInput.password);
         });
@@ -54,25 +54,25 @@ describe('AuthService', () => {
         it('when password is wrong should return validation error', async () => {
             const wrongPassword = 'wrong-password';
 
-            userPasswordService.validateCredentials.mockReturnValue(Promise.resolve(Err(new CredentialsInvalidException())));
+            userPasswordService.validateCredentials.mockReturnValue(Promise.resolve(err(new CredentialsInvalidException())));
 
             const result = await service.validateCredentials({
                 ...validateCredentialsInput,
                 password: wrongPassword,
             });
 
-            expect(result.is_err()).toBe(true);
-            expect(result.unwrap_err()).toBeInstanceOf(NonFieldValidationException);
+            expect(result.isErr()).toBe(true);
+            expect(result.unwrapErr()).toBeInstanceOf(NonFieldValidationException);
             expect(userPasswordService.validateCredentials.mock.calls[0][0]).toBe(validateCredentialsInput.username);
             expect(userPasswordService.validateCredentials.mock.calls[0][1]).toBe(wrongPassword);
         });
 
         it('when username and password are correct should successful output', async () => {
-            userPasswordService.validateCredentials.mockReturnValue(Promise.resolve(Ok(user)));
+            userPasswordService.validateCredentials.mockReturnValue(Promise.resolve(ok(user)));
 
             const result = await service.validateCredentials(validateCredentialsInput);
 
-            expect(result.is_ok()).toBe(true);
+            expect(result.isOk()).toBe(true);
             expect(result.unwrap()).toStrictEqual(validateCredentialsOutput);
             expect(userPasswordService.validateCredentials.mock.calls[0][0]).toBe(validateCredentialsInput.username);
             expect(userPasswordService.validateCredentials.mock.calls[0][1]).toBe(validateCredentialsInput.password);

@@ -322,43 +322,6 @@ export class Result<T, E, R extends ResultType = ResultType> implements Monad<T>
         }
         return Promise.resolve(this);
     }
-
-    /**
-     * @deprecated
-     * @param fn
-     */
-    and_then<U, V>(fn: (value: T) => Result<U, E | V>): Result<U, E | V>  {
-        return this.proceed(fn);
-    }
-
-    /**
-     * @deprecated
-     */
-    unwrap_err(): E {
-        return this.unwrapErr();
-    }
-
-    /**
-     * @deprecated
-     */
-    is_ok() {
-        return this.type === ResultType.OK;
-    }
-
-    /**
-     * @deprecated
-     */
-    is_err() {
-        return this.type === ResultType.ERR;
-    }
-
-    /**
-     * @deprecated
-     * @param fn
-     */
-    map_err<U>(fn: (err: E) => U): Result<T, U> {
-        return this.mapErr(fn);
-    }
 }
 
 export const {
@@ -371,21 +334,3 @@ export const {
     proceed,
     fallback,
 } = Result;
-
-/**
- * @deprecated
- * @param value
- * @constructor
- */
-export function Ok<T, E>(value: T): Result<T, E> {
-    return Result.ok<T, E>(value);
-}
-
-/**
- * @deprecated
- * @param value
- * @constructor
- */
-export function Err<T, E>(value: E): Result<T, E> {
-    return Result.err<T, E>(value);
-}

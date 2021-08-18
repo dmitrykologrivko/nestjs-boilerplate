@@ -52,8 +52,8 @@ describe('UserJwtService', () => {
 
             const result = await service.generateAccessToken(user.username);
 
-            expect(result.is_err()).toBeTruthy();
-            expect(result.unwrap_err()).toBeInstanceOf(UserNotFoundException);
+            expect(result.isErr()).toBeTruthy();
+            expect(result.unwrapErr()).toBeInstanceOf(UserNotFoundException);
             expect(userRepository.findOne.mock.calls[0][0]).toEqual(USERNAME_QUERY);
         });
 
@@ -62,7 +62,7 @@ describe('UserJwtService', () => {
 
             const result = await service.generateAccessToken(user.username);
 
-            expect(result.is_ok()).toBeTruthy();
+            expect(result.isOk()).toBeTruthy();
 
             const token = result.unwrap();
 
@@ -81,8 +81,8 @@ describe('UserJwtService', () => {
         it('when jwt is not valid should return error', async () => {
             const result = await service.validateAccessToken('wrong-token');
 
-            expect(result.is_err()).toBeTruthy();
-            expect(result.unwrap_err()).toBeInstanceOf(AccessTokenInvalidException);
+            expect(result.isErr()).toBeTruthy();
+            expect(result.unwrapErr()).toBeInstanceOf(AccessTokenInvalidException);
         });
 
         it('when token revoked should return error', async () => {
@@ -90,8 +90,8 @@ describe('UserJwtService', () => {
 
             const result = await service.validateAccessToken(accessToken);
 
-            expect(result.is_err()).toBeTruthy();
-            expect(result.unwrap_err()).toBeInstanceOf(AccessTokenInvalidException);
+            expect(result.isErr()).toBeTruthy();
+            expect(result.unwrapErr()).toBeInstanceOf(AccessTokenInvalidException);
 
             expect(revokedTokenRepository.findOne.mock.calls[0][0]).toEqual(REVOKED_TOKEN_QUERY);
         });
@@ -102,8 +102,8 @@ describe('UserJwtService', () => {
 
             const result = await service.validateAccessToken(accessToken);
 
-            expect(result.is_err()).toBeTruthy();
-            expect(result.unwrap_err()).toBeInstanceOf(AccessTokenInvalidException);
+            expect(result.isErr()).toBeTruthy();
+            expect(result.unwrapErr()).toBeInstanceOf(AccessTokenInvalidException);
 
             expect(revokedTokenRepository.findOne.mock.calls[0][0]).toEqual(REVOKED_TOKEN_QUERY);
             expect(userRepository.findOne.mock.calls[0][0]).toEqual(USERNAME_QUERY);
@@ -115,7 +115,7 @@ describe('UserJwtService', () => {
 
             const result = await service.validateAccessToken(accessToken);
 
-            expect(result.is_ok()).toBeTruthy();
+            expect(result.isOk()).toBeTruthy();
             expect(result.unwrap()).toBe(user);
 
             expect(revokedTokenRepository.findOne.mock.calls[0][0]).toEqual(REVOKED_TOKEN_QUERY);
@@ -129,8 +129,8 @@ describe('UserJwtService', () => {
 
             const result = await service.validatePayload(payload);
 
-            expect(result.is_err()).toBeTruthy();
-            expect(result.unwrap_err()).toBeInstanceOf(AccessTokenInvalidException);
+            expect(result.isErr()).toBeTruthy();
+            expect(result.unwrapErr()).toBeInstanceOf(AccessTokenInvalidException);
 
             expect(revokedTokenRepository.findOne.mock.calls[0][0]).toEqual(REVOKED_TOKEN_QUERY);
         });
@@ -141,8 +141,8 @@ describe('UserJwtService', () => {
 
             const result = await service.validatePayload(payload);
 
-            expect(result.is_err()).toBeTruthy();
-            expect(result.unwrap_err()).toBeInstanceOf(AccessTokenInvalidException);
+            expect(result.isErr()).toBeTruthy();
+            expect(result.unwrapErr()).toBeInstanceOf(AccessTokenInvalidException);
 
             expect(revokedTokenRepository.findOne.mock.calls[0][0]).toEqual(REVOKED_TOKEN_QUERY);
             expect(userRepository.findOne.mock.calls[0][0]).toEqual(USERNAME_QUERY);
@@ -154,7 +154,7 @@ describe('UserJwtService', () => {
 
             const result = await service.validatePayload(payload);
 
-            expect(result.is_ok()).toBeTruthy();
+            expect(result.isOk()).toBeTruthy();
             expect(result.unwrap()).toBe(user);
 
             expect(revokedTokenRepository.findOne.mock.calls[0][0]).toEqual(REVOKED_TOKEN_QUERY);
@@ -168,8 +168,8 @@ describe('UserJwtService', () => {
 
             const result = await service.revokeAccessToken(accessToken);
 
-            expect(result.is_err()).toBeTruthy();
-            expect(result.unwrap_err()).toBeInstanceOf(AccessTokenInvalidException);
+            expect(result.isErr()).toBeTruthy();
+            expect(result.unwrapErr()).toBeInstanceOf(AccessTokenInvalidException);
 
             expect(revokedTokenRepository.findOne.mock.calls[0][0]).toEqual(REVOKED_TOKEN_QUERY);
         });
@@ -180,8 +180,8 @@ describe('UserJwtService', () => {
 
             const result = await service.revokeAccessToken(accessToken);
 
-            expect(result.is_err()).toBeTruthy();
-            expect(result.unwrap_err()).toBeInstanceOf(AccessTokenInvalidException);
+            expect(result.isErr()).toBeTruthy();
+            expect(result.unwrapErr()).toBeInstanceOf(AccessTokenInvalidException);
 
             expect(revokedTokenRepository.findOne.mock.calls[0][0]).toEqual(REVOKED_TOKEN_QUERY);
             expect(userRepository.findOne.mock.calls[0][0]).toEqual(USERNAME_QUERY);
@@ -193,7 +193,7 @@ describe('UserJwtService', () => {
 
             const result = await service.revokeAccessToken(accessToken);
 
-            expect(result.is_ok()).toBeTruthy();
+            expect(result.isOk()).toBeTruthy();
             expect(result.unwrap()).toStrictEqual(revokedToken);
 
             expect(revokedTokenRepository.findOne.mock.calls[0][0]).toEqual(REVOKED_TOKEN_QUERY);

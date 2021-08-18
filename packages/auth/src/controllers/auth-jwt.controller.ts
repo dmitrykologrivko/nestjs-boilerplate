@@ -28,8 +28,8 @@ export class AuthJwtController {
     async login(@AuthorizedUser() user) {
         const result = await this.authService.login({ username: user.username });
 
-        if (result.is_err()) {
-            throw result.unwrap_err();
+        if (result.isErr()) {
+            throw result.unwrapErr();
         }
 
         return result.unwrap();
@@ -40,8 +40,8 @@ export class AuthJwtController {
     async logout(@BearerToken() token) {
         const result = await this.authService.logout({ token });
 
-        if (result.is_err()) {
-            throw result.unwrap_err();
+        if (result.isErr()) {
+            throw result.unwrapErr();
         }
 
         return result.unwrap();

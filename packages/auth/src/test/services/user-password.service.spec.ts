@@ -47,8 +47,8 @@ describe('UserPasswordService', () => {
 
             const result = await service.validateCredentials(USERNAME, PASSWORD);
 
-            expect(result.is_err()).toBeTruthy();
-            expect(result.unwrap_err()).toBeInstanceOf(CredentialsInvalidException);
+            expect(result.isErr()).toBeTruthy();
+            expect(result.unwrapErr()).toBeInstanceOf(CredentialsInvalidException);
             expect(userRepository.findOne.mock.calls[0][0]).toStrictEqual(USERNAME_QUERY);
         });
 
@@ -59,8 +59,8 @@ describe('UserPasswordService', () => {
 
             const result = await service.validateCredentials(USERNAME, wrongPassword);
 
-            expect(result.is_err()).toBeTruthy();
-            expect(result.unwrap_err()).toBeInstanceOf(CredentialsInvalidException);
+            expect(result.isErr()).toBeTruthy();
+            expect(result.unwrapErr()).toBeInstanceOf(CredentialsInvalidException);
             expect(userRepository.findOne.mock.calls[0][0]).toStrictEqual(USERNAME_QUERY);
         });
 
@@ -69,7 +69,7 @@ describe('UserPasswordService', () => {
 
             const result = await service.validateCredentials(USERNAME, PASSWORD);
 
-            expect(result.is_ok()).toBeTruthy();
+            expect(result.isOk()).toBeTruthy();
             expect(result.unwrap()).toStrictEqual(user);
             expect(userRepository.findOne.mock.calls[0][0]).toStrictEqual(USERNAME_QUERY);
         });
@@ -132,8 +132,8 @@ describe('UserPasswordService', () => {
         it('when token is not valid should return error', async () => {
             const result = await service.validateResetPasswordToken('wrong-token');
 
-            expect(result.is_err()).toBeTruthy();
-            expect(result.unwrap_err()).toBeInstanceOf(ResetPasswordTokenInvalidException);
+            expect(result.isErr()).toBeTruthy();
+            expect(result.unwrapErr()).toBeInstanceOf(ResetPasswordTokenInvalidException);
         });
 
         it('when token verified but user not exist should return error', async () => {
@@ -143,8 +143,8 @@ describe('UserPasswordService', () => {
 
             const result = await service.validateResetPasswordToken(token);
 
-            expect(result.is_err()).toBeTruthy();
-            expect(result.unwrap_err()).toBeInstanceOf(ResetPasswordTokenInvalidException);
+            expect(result.isErr()).toBeTruthy();
+            expect(result.unwrapErr()).toBeInstanceOf(ResetPasswordTokenInvalidException);
 
             expect(userRepository.findOne.mock.calls[0][0]).toStrictEqual(USER_ID_QUERY);
         });
@@ -156,8 +156,8 @@ describe('UserPasswordService', () => {
 
             const result = await service.validateResetPasswordToken(token);
 
-            expect(result.is_err()).toBeTruthy();
-            expect(result.unwrap_err()).toBeInstanceOf(ResetPasswordTokenInvalidException);
+            expect(result.isErr()).toBeTruthy();
+            expect(result.unwrapErr()).toBeInstanceOf(ResetPasswordTokenInvalidException);
 
             expect(userRepository.findOne.mock.calls[0][0]).toStrictEqual(USER_ID_QUERY);
         });
@@ -169,7 +169,7 @@ describe('UserPasswordService', () => {
 
             const result = await service.validateResetPasswordToken(token);
 
-            expect(result.is_ok()).toBeTruthy();
+            expect(result.isOk()).toBeTruthy();
             expect(result.unwrap()).toBe(user);
 
             expect(userRepository.findOne.mock.calls[0][0]).toStrictEqual(USER_ID_QUERY);

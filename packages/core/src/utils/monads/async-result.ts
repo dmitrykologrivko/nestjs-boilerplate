@@ -175,29 +175,4 @@ export class AsyncResult<T, E> {
     toPromise(): Promise<Result<T, E>> {
         return this._promise;
     }
-
-    /**
-     * @deprecated
-     * @param fn
-     */
-    and_then<U, V>(
-        fn: (value: T) => Result<U, E | V> | Promise<Result<U, E | V>>,
-    ): AsyncResult<U, E | V>  {
-        return this.proceed(fn);
-    }
-
-    /**
-     * @deprecated
-     * @param fn
-     */
-    map_err<U>(fn: (val: E) => U | Promise<U>): AsyncResult<T, U> {
-        return this.mapErr(fn);
-    }
-
-    /**
-     * @deprecated
-     */
-    toResult(): Promise<Result<T, E>> {
-        return this._promise;
-    }
 }

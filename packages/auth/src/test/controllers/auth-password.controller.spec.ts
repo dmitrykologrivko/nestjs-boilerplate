@@ -1,5 +1,5 @@
 import { MockProxy, mock } from 'jest-mock-extended';
-import { ValidationContainerException, Ok, Err } from '@nestjs-boilerplate/core';
+import { ValidationContainerException, ok, err } from '@nestjs-boilerplate/core';
 import { AuthPasswordController } from '../../controllers/auth-password.controller';
 import { UserService } from '../../services/user.service';
 import { User } from '../../entities/user.entity';
@@ -47,7 +47,7 @@ describe('AuthPasswordController', () => {
 
     describe('#changePassword()', () => {
         it('when change password unsuccessful should throw error', async () => {
-            userService.changePassword.mockReturnValue(Promise.resolve(Err(new ValidationContainerException([]))));
+            userService.changePassword.mockReturnValue(Promise.resolve(err(new ValidationContainerException([]))));
 
             await expect(
                 controller.changePassword(REQUEST, changePasswordRequest),
@@ -55,7 +55,7 @@ describe('AuthPasswordController', () => {
         });
 
         it('when change password successful should return successful response', async () => {
-            userService.changePassword.mockReturnValue(Promise.resolve(Ok(null)));
+            userService.changePassword.mockReturnValue(Promise.resolve(ok(null)));
 
             const result = await controller.changePassword(REQUEST, changePasswordRequest);
 
@@ -65,7 +65,7 @@ describe('AuthPasswordController', () => {
 
     describe('#forgotPassword()', () => {
         it('when forgot password unsuccessful should throw error', async () => {
-            userService.forgotPassword.mockReturnValue(Promise.resolve(Err(new ValidationContainerException([]))));
+            userService.forgotPassword.mockReturnValue(Promise.resolve(err(new ValidationContainerException([]))));
 
             await expect(
                 controller.forgotPassword(REQUEST, changePasswordRequest),
@@ -73,7 +73,7 @@ describe('AuthPasswordController', () => {
         });
 
         it('when forgot password successful should return successful response', async () => {
-            userService.forgotPassword.mockReturnValue(Promise.resolve(Ok(null)));
+            userService.forgotPassword.mockReturnValue(Promise.resolve(ok(null)));
 
             const result = await controller.forgotPassword(REQUEST, changePasswordRequest);
 
@@ -83,7 +83,7 @@ describe('AuthPasswordController', () => {
 
     describe('#resetPassword()', () => {
         it('when reset password unsuccessful should throw error', async () => {
-            userService.resetPassword.mockReturnValue(Promise.resolve(Err(new ValidationContainerException([]))));
+            userService.resetPassword.mockReturnValue(Promise.resolve(err(new ValidationContainerException([]))));
 
             await expect(
                 controller.resetPassword(REQUEST, changePasswordRequest),
@@ -91,7 +91,7 @@ describe('AuthPasswordController', () => {
         });
 
         it('when reset password successful should return successful response', async () => {
-            userService.resetPassword.mockReturnValue(Promise.resolve(Ok(null)));
+            userService.resetPassword.mockReturnValue(Promise.resolve(ok(null)));
 
             const result = await controller.resetPassword(REQUEST, changePasswordRequest);
 

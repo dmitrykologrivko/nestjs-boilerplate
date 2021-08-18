@@ -3,7 +3,7 @@ import {
     InjectRepository,
     ApplicationService,
     Result,
-    Ok,
+    ok,
     AsyncResult,
     ClassTransformer,
     ValidationException,
@@ -45,42 +45,42 @@ export class JwtAuthService extends BaseAuthService {
             .map(user => {
                 return ClassTransformer.toClassObject(ValidatePayloadOutput, user);
             })
-            .map_err(() => (
+            .mapErr(() => (
                 new ValidationException(
                     'payload',
                     input.payload,
                     { [PAYLOAD_VALID_CONSTRAINT.key]: PAYLOAD_VALID_CONSTRAINT.message },
                 )
             ))
-            .toResult();
+            .toPromise();
     }
 
     async login(input: JwtLoginInput): LoginResult {
         return AsyncResult.from(this.userJwtService.generateAccessToken(input.username))
             .map(token => ({ accessToken: token }))
-            .map_err(() => (
+            .mapErr(() => (
                 new ValidationException(
                     'username',
                     input.username,
                     { [USERNAME_ACTIVE_CONSTRAINT.key]: USERNAME_ACTIVE_CONSTRAINT.message },
                 )
             ))
-            .toResult();
+            .toPromise();
     }
 
     async logout(input: JwtLogoutInput): LogoutResult {
         return AsyncResult.from(this.userJwtService.revokeAccessToken(input.token))
-            .and_then(async revokedToken => {
+            .proceed(async revokedToken => {
                 await this.revokedTokenRepository.save(revokedToken);
-                return Ok({});
+                return ok({});
             })
-            .map_err(() => (
+            .mapErr(() => (
                  new ValidationException(
                     'token',
                     input.token,
                     { [JWT_TOKEN_VALID_CONSTRAINT.key]: JWT_TOKEN_VALID_CONSTRAINT.message },
                 )
             ))
-            .toResult();
+            .toPromise();
     }
 }

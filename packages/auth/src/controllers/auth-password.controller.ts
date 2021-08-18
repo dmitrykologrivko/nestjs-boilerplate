@@ -37,8 +37,8 @@ export class AuthPasswordController {
 
         const result = await this.userService.changePassword(input);
 
-        if (result.is_err()) {
-            throw result.unwrap_err();
+        if (result.isErr()) {
+            throw result.unwrapErr();
         }
 
         return result.unwrap();
@@ -50,8 +50,8 @@ export class AuthPasswordController {
 
         const result = await this.userService.forgotPassword(input);
 
-        if (result.is_err()) {
-            throw result.unwrap_err();
+        if (result.isErr()) {
+            throw result.unwrapErr();
         }
 
         return result.unwrap();
@@ -63,8 +63,8 @@ export class AuthPasswordController {
 
         const result = await this.userService.resetPassword(input);
 
-        if (result.is_err()) {
-            throw result.unwrap_err();
+        if (result.isErr()) {
+            throw result.unwrapErr();
         }
 
         return result.unwrap();

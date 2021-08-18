@@ -7,8 +7,8 @@ import {
     DomainService,
     AsyncResult,
     Result,
-    Ok,
-    Err,
+    ok,
+    err,
 } from '@nestjs-boilerplate/core';
 import { AUTH_PASSWORD_RESET_TIMEOUT_PROPERTY } from '../constants/auth.properties';
 import { User } from '../entities/user.entity';
@@ -30,23 +30,23 @@ export class UserPasswordService {
         password: string,
     ): Promise<Result<User, CredentialsInvalidException>> {
         return await AsyncResult.from(this.findUser(username))
-            .map_err(() => new CredentialsInvalidException())
-            .and_then(async (user): Promise<Result<User, CredentialsInvalidException>> => {
+            .mapErr(() => new CredentialsInvalidException())
+            .proceed(async (user): Promise<Result<User, CredentialsInvalidException>> => {
                 const isPasswordMatch = await user.comparePassword(password);
 
                 if (!isPasswordMatch) {
-                    return Err(new CredentialsInvalidException());
+                    return err(new CredentialsInvalidException());
                 }
 
-                return Ok(user);
+                return ok(user);
             })
-            .toResult();
+            .toPromise();
     }
 
     async comparePassword(idOrUsername: number | string, password: string): Promise<boolean> {
         const result = await this.findUser(idOrUsername);
 
-        if (result.is_err()) {
+        if (result.isErr()) {
             return false;
         }
 
@@ -68,7 +68,7 @@ export class UserPasswordService {
         try {
             payload = await this.jwtService.verifyAsync(token);
         } catch (e) {
-            return Err(new ResetPasswordTokenInvalidException());
+            return err(new ResetPasswordTokenInvalidException());
         }
 
         const user = await this.userRepository.findOne({
@@ -76,15 +76,15 @@ export class UserPasswordService {
         });
 
         if (!user || this.getResetPasswordTokenId(user) !== payload.jti) {
-            return Err(new ResetPasswordTokenInvalidException());
+            return err(new ResetPasswordTokenInvalidException());
         }
 
-        return Ok(user);
+        return ok(user);
     }
 
     async isResetPasswordTokenValid(token: string): Promise<boolean> {
         const result = await this.validateResetPasswordToken(token);
-        return result.is_ok();
+        return result.isOk();
     }
 
     private getResetPasswordTokenId(user: User) {
@@ -112,9 +112,9 @@ export class UserPasswordService {
         const user = await this.userRepository.findOne({ where });
 
         if (!user) {
-            return Err(new UserNotFoundException());
+            return err(new UserNotFoundException());
         }
 
-        return Ok(user);
+        return ok(user);
     }
 }

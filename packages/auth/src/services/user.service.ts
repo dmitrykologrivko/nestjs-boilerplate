@@ -8,8 +8,8 @@ import {
     ClassValidator,
     ValidationContainerException,
     Result,
-    Ok,
-    Err,
+    ok,
+    err,
 } from '@nestjs-boilerplate/core';
 import { AUTH_PASSWORD_SALT_ROUNDS_PROPERTY } from '../constants/auth.properties';
 import { UserNotFoundException } from '../exceptions/user-not-found-exception';
@@ -48,8 +48,8 @@ export class UserService {
     async createUser(input: CreateUserInput): CreateUserResult {
         const validateResult = await ClassValidator.validate(CreateUserInput, input);
 
-        if (validateResult.is_err()) {
-            return Err(validateResult.unwrap_err());
+        if (validateResult.isErr()) {
+            return err(validateResult.unwrapErr());
         }
 
         const createUserResult = await User.create(
@@ -68,7 +68,7 @@ export class UserService {
 
         const output = ClassTransformer.toClassObject(CreateUserOutput, user);
 
-        return Ok(output);
+        return ok(output);
     }
 
     /**
@@ -78,7 +78,7 @@ export class UserService {
     async changePassword(input: ChangePasswordInput): ChangePasswordResult {
         const validateResult = await ClassValidator.validate(ChangePasswordInput, input);
 
-        if (validateResult.is_err()) {
+        if (validateResult.isErr()) {
             return validateResult;
         }
 
@@ -88,7 +88,7 @@ export class UserService {
 
         Logger.log(`Password has been changed for ${user.username}`);
 
-        return Ok(null);
+        return ok(null);
     }
 
     /**
@@ -98,7 +98,7 @@ export class UserService {
     async forceChangePassword(input: ForceChangePasswordInput): ForceChangePasswordResult {
         const validateResult = await ClassValidator.validate(ForceChangePasswordInput, input);
 
-        if (validateResult.is_err()) {
+        if (validateResult.isErr()) {
             return validateResult;
         }
 
@@ -108,7 +108,7 @@ export class UserService {
 
         Logger.log(`Password has been changed for ${user.username}`);
 
-        return Ok(null);
+        return ok(null);
     }
 
     /**
@@ -118,8 +118,8 @@ export class UserService {
     async forgotPassword(input: ForgotPasswordInput): ForgotPasswordResult {
         const validateResult = await ClassValidator.validate(ForgotPasswordInput, input);
 
-        if (validateResult.is_err()) {
-            return Err(validateResult.unwrap_err());
+        if (validateResult.isErr()) {
+            return err(validateResult.unwrapErr());
         }
 
         const user = await this.userRepository.findOne({ where: { _email: input.email } });
@@ -130,7 +130,7 @@ export class UserService {
         Logger.debug(`(DEBUG) Reset token: ${token}`);
         Logger.log(`Recover password email has been sent for ${user.username}`);
 
-        return Ok(null);
+        return ok(null);
     }
 
     /**
@@ -140,8 +140,8 @@ export class UserService {
     async resetPassword(input: ResetPasswordInput): ResetPasswordResult {
         const validateResult = await ClassValidator.validate(ResetPasswordInput, input);
 
-        if (validateResult.is_err()) {
-            return Err(validateResult.unwrap_err());
+        if (validateResult.isErr()) {
+            return err(validateResult.unwrapErr());
         }
 
         const verifyTokenResult = await this.passwordService.validateResetPasswordToken(input.resetPasswordToken);
@@ -152,7 +152,7 @@ export class UserService {
 
         Logger.log(`Password has been recovered for ${user.username}`);
 
-        return Ok(null);
+        return ok(null);
     }
 
     /**
@@ -166,11 +166,11 @@ export class UserService {
         });
 
         if (!user) {
-            return Err(new UserNotFoundException());
+            return err(new UserNotFoundException());
         }
 
         const output = ClassTransformer.toClassObject(FindUserOutput, user);
 
-        return Ok(output);
+        return ok(output);
     }
 }

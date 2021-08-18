@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { Result, Ok, Err } from '@nestjs-boilerplate/core';
+import { Result, ok, err } from '@nestjs-boilerplate/core';
 import { User } from '../entities/user.entity';
 import { BaseLoginInput } from '../dto/base-login.input';
 import { BaseLoginOutput } from '../dto/base-login.output';
@@ -27,9 +27,9 @@ export abstract class BaseAuthService {
         });
 
         if (!user) {
-            return Err(new UserNotFoundException());
+            return err(new UserNotFoundException());
         }
 
-        return Ok(user);
+        return ok(user);
     }
 }

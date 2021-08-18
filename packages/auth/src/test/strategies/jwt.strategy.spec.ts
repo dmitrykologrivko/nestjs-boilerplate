@@ -4,8 +4,8 @@ import {
     PropertyConfigService,
     ClassTransformer,
     ValidationException,
-    Ok,
-    Err,
+    ok,
+    err,
 } from '@nestjs-boilerplate/core';
 import { PAYLOAD_VALID_CONSTRAINT } from '../../constants/auth.constraints';
 import { JwtStrategy } from '../../strategies/jwt.strategy';
@@ -48,7 +48,7 @@ describe('JwtStrategy', () => {
 
     describe('#validate()', () => {
         it('when user is not exist should throw unauthorized exception', async () => {
-            authService.validatePayload.mockReturnValue(Promise.resolve(Err(
+            authService.validatePayload.mockReturnValue(Promise.resolve(err(
                 new ValidationException(
                     'payload',
                     payload,
@@ -62,7 +62,7 @@ describe('JwtStrategy', () => {
         });
 
         it('when payload valid should return user', async () => {
-            authService.validatePayload.mockReturnValue(Promise.resolve(Ok(validatePayloadOutput)));
+            authService.validatePayload.mockReturnValue(Promise.resolve(ok(validatePayloadOutput)));
 
             const result = await strategy.validate(payload);
 

@@ -1,5 +1,5 @@
 import { MockProxy, mock } from 'jest-mock-extended';
-import { ValidationException, Ok, Err } from '@nestjs-boilerplate/core';
+import { ValidationException, ok, err } from '@nestjs-boilerplate/core';
 import {
     JWT_TOKEN_VALID_CONSTRAINT,
     USERNAME_ACTIVE_CONSTRAINT,
@@ -28,7 +28,7 @@ describe('AuthJwtController', () => {
 
     describe('#login()', () => {
         it('when login unsuccessful should throw error', async () => {
-            jwtAuthService.login.mockReturnValue(Promise.resolve(Err(
+            jwtAuthService.login.mockReturnValue(Promise.resolve(err(
                 new ValidationException(
                     'username',
                     user.username,
@@ -44,7 +44,7 @@ describe('AuthJwtController', () => {
         });
 
         it('when login successful should return access token', async () => {
-            jwtAuthService.login.mockReturnValue(Promise.resolve(Ok(loginResponse)));
+            jwtAuthService.login.mockReturnValue(Promise.resolve(ok(loginResponse)));
 
             const result = await controller.login(user);
 
@@ -55,7 +55,7 @@ describe('AuthJwtController', () => {
 
     describe('#logout()', () => {
         it('when logout unsuccessful should throw error', async () => {
-            jwtAuthService.logout.mockReturnValue(Promise.resolve(Err(
+            jwtAuthService.logout.mockReturnValue(Promise.resolve(err(
                 new ValidationException(
                     'token',
                     accessToken,
@@ -71,7 +71,7 @@ describe('AuthJwtController', () => {
         });
 
         it('when logout successful should return empty response', async () => {
-            jwtAuthService.logout.mockReturnValue(Promise.resolve(Ok(logoutResponse)));
+            jwtAuthService.logout.mockReturnValue(Promise.resolve(ok(logoutResponse)));
 
             const result = await controller.logout(accessToken);
 

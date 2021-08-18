@@ -72,10 +72,10 @@ export class UsersCommand {
             isSuperuser: true,
         });
 
-        if (result.is_ok()) {
+        if (result.isOk()) {
             Logger.log(`Superuser "${username}" has been created`);
         } else {
-            const message = result.unwrap_err()
+            const message = result.unwrapErr()
                 .validationExceptions
                 .map(exception => exception.toString())
                 .join('');
@@ -110,8 +110,8 @@ export class UsersCommand {
             newPassword: password,
         });
 
-        if (result.is_err()) {
-            const message = result.unwrap_err()
+        if (result.isErr()) {
+            const message = result.unwrapErr()
                 .validationExceptions
                 .map(exception => exception.toString())
                 .join('');
