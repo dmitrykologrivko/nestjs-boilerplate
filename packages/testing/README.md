@@ -12,7 +12,7 @@ Testing is a package that provides additional tools for testing NestJS Boilerpla
 
 ## Install
 
-`$ npm install @nestjs-boilerplate@testing --save-dev`
+`$ npm install @nestjs-boilerplate/testing --save-dev`
 
 ## Test bootstrappers
 
