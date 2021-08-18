@@ -1,5 +1,11 @@
 import * as request from 'supertest';
-import { TestBootstrap } from '@nestjs-boilerplate/testing';
+import { mock } from 'jest-mock-extended';
+import {
+    TestBootstrap,
+    TestMailModule,
+    MemoryMailService,
+} from '@nestjs-boilerplate/testing';
+import { BaseMailService, BaseTemplateService } from '@nestjs-boilerplate/core';
 import { User } from '../src/entities';
 import { UserFactory } from '../src/test/user.factory';
 import { AuthTestUtils } from '../src/test/auth-test.utils';
@@ -16,6 +22,7 @@ import validateResetPasswordInvalidTokenResponse from './responses/validate-rese
 
 describe('AuthPasswordController (e2e)', () => {
     let app;
+    let mailService: MemoryMailService;
     let authTestUtils: AuthTestUtils;
 
     let user: User;
@@ -23,7 +30,22 @@ describe('AuthPasswordController (e2e)', () => {
 
     beforeAll(async () => {
         app = await new TestBootstrap(AppModule)
-            .startApplication();
+            .startApplication({
+                testingMetadata: {
+                    imports: [TestMailModule],
+                },
+                onCreateTestingModule: builder => {
+                    const templateService = mock<BaseTemplateService>();
+                    templateService.render.mockResolvedValue('<html><body>Test</body></html>');
+
+                    return builder
+                        .overrideProvider(BaseMailService)
+                        .useClass(MemoryMailService)
+                        .overrideProvider(BaseTemplateService)
+                        .useValue(templateService);
+                },
+                onTestingModuleCreated: testingMetadata => (mailService = testingMetadata.get(BaseMailService)),
+            });
         authTestUtils = new AuthTestUtils(app);
     });
 
@@ -121,11 +143,16 @@ describe('AuthPasswordController (e2e)', () => {
                 newPassword: 'new-password',
             };
 
-            return request(app.getHttpServer())
+            expect(mailService.outbox.length).toBe(0);
+
+            await request(app.getHttpServer())
                 .post('/api/auth/password/forgot')
                 .send(req)
                 .set('Accept', 'application/json')
                 .expect(201);
+
+            expect(mailService.outbox.length).toBe(1);
+            expect(mailService.outbox[0].subject).toBe('Reset Password');
         });
     });
 

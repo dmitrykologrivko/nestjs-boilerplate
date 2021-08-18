@@ -107,7 +107,7 @@ describe('PostController (e2e)', () => {
         it('should publish post and send email', async () => {
             expect(mailService.outbox.length).toEqual(0);
 
-            request(app.getHttpServer())
+            await request(app.getHttpServer())
                 .post('/api/notes/1/publish')
                 .expect(200);
 

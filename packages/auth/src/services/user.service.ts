@@ -7,13 +7,23 @@ import {
     ClassTransformer,
     ClassValidator,
     ValidationContainerException,
+    EntityNotFoundException,
+    BaseMailService,
+    MAIL_PROPERTY,
+    SendMailFailedException,
+    BaseTemplateService,
     Result,
     ok,
     err,
+    proceed,
 } from '@nestjs-boilerplate/core';
-import { AUTH_PASSWORD_SALT_ROUNDS_PROPERTY } from '../constants/auth.properties';
+import {
+    AUTH_PROPERTY,
+    AUTH_PASSWORD_SALT_ROUNDS_PROPERTY,
+} from '../constants/auth.properties';
 import { UserNotFoundException } from '../exceptions/user-not-found-exception';
 import { User } from '../entities/user.entity';
+import { ActiveUsersQuery } from '../queries/active-users.query';
 import { UserPasswordService } from './user-password.service';
 import { CreateUserInput } from '../dto/create-user.input';
 import { CreateUserOutput } from '../dto/create-user.output';
@@ -27,7 +37,7 @@ import { FindUserOutput } from '../dto/find-user.output';
 type CreateUserResult = Promise<Result<CreateUserOutput, ValidationContainerException>>;
 type ChangePasswordResult = Promise<Result<void, ValidationContainerException>>;
 type ForceChangePasswordResult = Promise<Result<void, ValidationContainerException>>;
-type ForgotPasswordResult = Promise<Result<void, ValidationContainerException>>;
+type ForgotPasswordResult = Promise<Result<void, ValidationContainerException | SendMailFailedException>>;
 type ResetPasswordResult = Promise<Result<void, ValidationContainerException>>;
 type FindUserResult = Promise<Result<FindUserOutput, UserNotFoundException>>;
 
@@ -37,6 +47,8 @@ export class UserService {
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
         private readonly passwordService: UserPasswordService,
+        private readonly mailService: BaseMailService,
+        private readonly templateService: BaseTemplateService,
         private readonly config: PropertyConfigService,
     ) {}
 
@@ -116,21 +128,37 @@ export class UserService {
      * @param input forgot password dto
      */
     async forgotPassword(input: ForgotPasswordInput): ForgotPasswordResult {
-        const validateResult = await ClassValidator.validate(ForgotPasswordInput, input);
+        return ClassValidator.validate(ForgotPasswordInput, input)
+            .then(proceed(async () => {
+                const user = await this.userRepository.findOne(
+                    new ActiveUsersQuery({ email: input.email }).toFindOptions(),
+                );
+                const token = await this.passwordService.generateResetPasswordToken(user);
 
-        if (validateResult.isErr()) {
-            return err(validateResult.unwrapErr());
-        }
+                const mailOptions = this.config.get(MAIL_PROPERTY);
+                const authOptions = this.config.get(AUTH_PROPERTY);
 
-        const user = await this.userRepository.findOne({ where: { _email: input.email } });
+                const html = await this.templateService.render(
+                    authOptions.password.resetMailTemplate,
+                    {
+                        username: user.username,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        token,
+                    },
+                );
 
-        const token = await this.passwordService.generateResetPasswordToken(user);
-
-        // TODO: Send email
-        Logger.debug(`(DEBUG) Reset token: ${token}`);
-        Logger.log(`Recover password email has been sent for ${user.username}`);
-
-        return ok(null);
+                return (await this.mailService.sendMail({
+                    subject: authOptions.password.resetMailSubject,
+                    to: [user.email],
+                    from: mailOptions.defaultFrom,
+                    text: '',
+                    html,
+                })).proceed(() => {
+                    Logger.log(`Recover password email has been sent for ${user.username}`);
+                    return ok(null);
+                });
+            }));
     }
 
     /**

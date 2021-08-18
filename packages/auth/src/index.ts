@@ -7,6 +7,8 @@ export * from './entities';
 export * from './exceptions';
 export * from './guards';
 export * from './interceptors';
+export * from './interfaces';
+export * from './queries';
 export * from './services';
 export * from './strategies';
 export * from './validation';

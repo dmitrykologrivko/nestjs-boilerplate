@@ -5,6 +5,8 @@ import {
     ValidationException,
     ValidationContainerException,
     PropertyConfigService,
+    BaseMailService,
+    BaseTemplateService,
     ok,
 } from '@nestjs-boilerplate/core';
 import { SimpleIocContainer, createClassValidatorContainer } from '@nestjs-boilerplate/testing';
@@ -40,6 +42,8 @@ describe('UserService', () => {
     let userVerificationService: MockProxy<UserVerificationService> & UserVerificationService;
     let userPasswordService: MockProxy<UserPasswordService> & UserPasswordService;
     let userRepository: MockProxy<Repository<User>>;
+    let mailService: MockProxy<BaseMailService>;
+    let templateService: MockProxy<BaseTemplateService>;
     let config: MockProxy<PropertyConfigService> & PropertyConfigService;
     let usernameUniqueConstraint: UsernameUniqueConstraint;
     let usernameExistsConstraint: UsernameExistsConstraint;
@@ -65,6 +69,8 @@ describe('UserService', () => {
         userVerificationService = mock<UserVerificationService>();
         userPasswordService = mock<UserPasswordService>();
         userRepository = mock<Repository<User>>();
+        mailService = mock<BaseMailService>();
+        templateService = mock<BaseTemplateService>();
         config = mock<PropertyConfigService>();
         usernameUniqueConstraint = new UsernameUniqueConstraint(userVerificationService);
         usernameExistsConstraint = new UsernameExistsConstraint(userVerificationService);
@@ -73,7 +79,13 @@ describe('UserService', () => {
         passwordMatchConstraint = new PasswordMatchConstraint(userPasswordService);
         resetPasswordTokenValidConstraint = new ResetPasswordTokenValidConstraint(userPasswordService);
 
-        service = new UserService(userRepository, userPasswordService, config);
+        service = new UserService(
+            userRepository,
+            userPasswordService,
+            mailService,
+            templateService,
+            config,
+        );
 
         container.register(UserVerificationService, userVerificationService, true);
         container.register(UsernameUniqueConstraint, usernameUniqueConstraint);
@@ -167,8 +179,8 @@ describe('UserService', () => {
                 ),
             ]);
 
-            userVerificationService.isEmailUnique.mockReturnValue(Promise.resolve(true));
-            userVerificationService.isUsernameUnique.mockReturnValue(Promise.resolve(true));
+            userVerificationService.isEmailUnique.mockResolvedValue(true);
+            userVerificationService.isUsernameUnique.mockResolvedValue(true);
 
             const createUserResult = await service.createUser({
                 email: null,
@@ -196,8 +208,8 @@ describe('UserService', () => {
                 ),
             ]);
 
-            userVerificationService.isEmailUnique.mockReturnValue(Promise.resolve(false));
-            userVerificationService.isUsernameUnique.mockReturnValue(Promise.resolve(true));
+            userVerificationService.isEmailUnique.mockResolvedValue(false);
+            userVerificationService.isUsernameUnique.mockResolvedValue(true);
 
             const createUserResult = await service.createUser(createUserInput);
 
@@ -219,8 +231,8 @@ describe('UserService', () => {
                 ),
             ]);
 
-            userVerificationService.isEmailUnique.mockReturnValue(Promise.resolve(true));
-            userVerificationService.isUsernameUnique.mockReturnValue(Promise.resolve(false));
+            userVerificationService.isEmailUnique.mockResolvedValue(true);
+            userVerificationService.isUsernameUnique.mockResolvedValue(false);
 
             const createUserResult = await service.createUser(createUserInput);
 
@@ -232,9 +244,9 @@ describe('UserService', () => {
         });
 
         it('when input is valid should return successful output', async () => {
-            userVerificationService.isEmailUnique.mockReturnValue(Promise.resolve(true));
-            userVerificationService.isUsernameUnique.mockReturnValue(Promise.resolve(true));
-            userRepository.save.mockReturnValue(Promise.resolve(user));
+            userVerificationService.isEmailUnique.mockResolvedValue(true);
+            userVerificationService.isUsernameUnique.mockResolvedValue(true);
+            userRepository.save.mockResolvedValue(user);
 
             const createUserResult = await service.createUser(createUserInput);
 
@@ -287,7 +299,7 @@ describe('UserService', () => {
                 ),
             ]);
 
-            userPasswordService.comparePassword.mockReturnValue(Promise.resolve(false));
+            userPasswordService.comparePassword.mockResolvedValue(false);
 
             const result = await service.changePassword({
                 userId: null,
@@ -313,7 +325,7 @@ describe('UserService', () => {
                 ),
             ]);
 
-            userPasswordService.comparePassword.mockReturnValue(Promise.resolve(false));
+            userPasswordService.comparePassword.mockResolvedValue(false);
 
             const result = await service.changePassword({
                 ...changePasswordInput,
@@ -329,9 +341,9 @@ describe('UserService', () => {
 
         it('when input is valid should change password', async () => {
             config.get.mockReturnValue(10);
-            userPasswordService.comparePassword.mockReturnValue(Promise.resolve(true));
-            userRepository.findOne.mockReturnValue(Promise.resolve(user));
-            userRepository.save.mockReturnValue(Promise.resolve(user));
+            userPasswordService.comparePassword.mockResolvedValue(true);
+            userRepository.findOne.mockResolvedValue(user);
+            userRepository.save.mockResolvedValue(user);
 
             expect(await user.comparePassword(changePasswordInput.currentPassword)).toBeTruthy();
 
@@ -377,7 +389,7 @@ describe('UserService', () => {
                 ),
             ]);
 
-            userVerificationService.isUsernameExists.mockReturnValue(Promise.resolve(false));
+            userVerificationService.isUsernameExists.mockResolvedValue(false);
 
             const result = await service.forceChangePassword({
                 username: null,
@@ -400,7 +412,7 @@ describe('UserService', () => {
                 ),
             ]);
 
-            userVerificationService.isUsernameExists.mockReturnValue(Promise.resolve(false));
+            userVerificationService.isUsernameExists.mockResolvedValue(false);
 
             const result = await service.forceChangePassword({
                 username: wrongUsername,
@@ -415,9 +427,9 @@ describe('UserService', () => {
 
         it('when input is valid should change password', async () => {
             config.get.mockReturnValue(10);
-            userVerificationService.isUsernameExists.mockReturnValue(Promise.resolve(true));
-            userRepository.findOne.mockReturnValue(Promise.resolve(user));
-            userRepository.save.mockReturnValue(Promise.resolve(user));
+            userVerificationService.isUsernameExists.mockResolvedValue(true);
+            userRepository.findOne.mockResolvedValue(user);
+            userRepository.save.mockResolvedValue(user);
 
             expect(await user.comparePassword(UserFactory.DEFAULT_PASSWORD)).toBeTruthy();
 
@@ -452,7 +464,7 @@ describe('UserService', () => {
                 ),
             ]);
 
-            userVerificationService.isEmailActive.mockReturnValue(Promise.resolve(false));
+            userVerificationService.isEmailActive.mockResolvedValue(false);
 
             const result = await service.forgotPassword({ email: null });
 
@@ -472,7 +484,7 @@ describe('UserService', () => {
                 ),
             ]);
 
-            userVerificationService.isEmailActive.mockReturnValue(Promise.resolve(false));
+            userVerificationService.isEmailActive.mockResolvedValue(false);
 
             const result = await service.forgotPassword({ email: wrongEmail });
 
@@ -482,11 +494,30 @@ describe('UserService', () => {
             expect(userVerificationService.isEmailActive.mock.calls[0][0]).toBe(wrongEmail);
         });
 
-        // TODO: Check sending emails
-        it.skip('when input is valid should send reset password email', async () => {
-            userVerificationService.isEmailActive.mockReturnValue(Promise.resolve(true));
-            userRepository.findOne.mockReturnValue(Promise.resolve(user));
-            userPasswordService.generateResetPasswordToken.mockReturnValue(Promise.resolve(RESET_PASSWORD_TOKEN));
+        it('when input is valid should send reset password email', async () => {
+            const MAIL_CONFIG = {
+                defaultFrom: 'noreplay@test.com',
+            };
+            const AUTH_CONFIG = {
+                password: {
+                    resetMailSubject: 'Reset Password',
+                    resetMailTemplate: 'reset_password.html',
+                },
+            };
+            const HTML_CONTENT = `
+                <html>
+                    <body>
+                        https://test.com/reset-password?token=${RESET_PASSWORD_TOKEN}
+                    </body>
+                </html>
+            `;
+
+            userVerificationService.isEmailActive.mockResolvedValue(true);
+            userRepository.findOne.mockResolvedValue(user);
+            userPasswordService.generateResetPasswordToken.mockResolvedValue(RESET_PASSWORD_TOKEN);
+            mailService.sendMail.mockResolvedValue(ok(null));
+            templateService.render.mockResolvedValue(HTML_CONTENT);
+            config.get.mockReturnValueOnce(MAIL_CONFIG).mockReturnValueOnce(AUTH_CONFIG);
 
             const result = await service.forgotPassword(forgotPasswordInput);
 
@@ -495,9 +526,23 @@ describe('UserService', () => {
 
             expect(userVerificationService.isEmailActive.mock.calls[0][0]).toBe(forgotPasswordInput.email);
             expect(userRepository.findOne.mock.calls[0][0]).toStrictEqual({
-                where: { _email: forgotPasswordInput.email },
+                where: { _email: forgotPasswordInput.email, _isActive: true },
             });
             expect(userPasswordService.generateResetPasswordToken.mock.calls[0][0]).toBe(user);
+            expect(templateService.render.mock.calls[0][0]).toBe(AUTH_CONFIG.password.resetMailTemplate);
+            expect(templateService.render.mock.calls[0][1]).toStrictEqual({
+                username: user.username,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                token: RESET_PASSWORD_TOKEN,
+            });
+            expect(mailService.sendMail.mock.calls[0][0]).toStrictEqual({
+                subject: AUTH_CONFIG.password.resetMailSubject,
+                to: [user.email],
+                from: MAIL_CONFIG.defaultFrom,
+                text: '',
+                html: HTML_CONTENT,
+            });
         });
     });
 
@@ -523,7 +568,7 @@ describe('UserService', () => {
                 ),
             ]);
 
-            userPasswordService.isResetPasswordTokenValid.mockReturnValue(Promise.resolve(false));
+            userPasswordService.isResetPasswordTokenValid.mockResolvedValue(false);
 
             const result = await service.resetPassword({
                 resetPasswordToken: null,
@@ -545,7 +590,7 @@ describe('UserService', () => {
                 ),
             ]);
 
-            userPasswordService.isResetPasswordTokenValid.mockReturnValue(Promise.resolve(false));
+            userPasswordService.isResetPasswordTokenValid.mockResolvedValue(false);
 
             const result = await service.resetPassword(resetPasswordInput);
 
@@ -555,9 +600,9 @@ describe('UserService', () => {
 
         it('when input is valid should reset password', async () => {
             config.get.mockReturnValue(10);
-            userPasswordService.isResetPasswordTokenValid.mockReturnValue(Promise.resolve(true));
-            userPasswordService.validateResetPasswordToken.mockReturnValue(Promise.resolve(ok(user)));
-            userRepository.save.mockReturnValue(Promise.resolve(user));
+            userPasswordService.isResetPasswordTokenValid.mockResolvedValue(true);
+            userPasswordService.validateResetPasswordToken.mockResolvedValue(ok(user));
+            userRepository.save.mockResolvedValue(user);
 
             expect(await user.comparePassword(UserFactory.DEFAULT_PASSWORD)).toBeTruthy();
 
@@ -581,7 +626,7 @@ describe('UserService', () => {
 
     describe('#findUser()', () => {
         it('when user is not exist should return not found error', async () => {
-            userRepository.findOne.mockReturnValue(Promise.resolve(null));
+            userRepository.findOne.mockResolvedValue(null);
 
             const findUserResult = await service.findUser(findUserInput);
 
@@ -592,7 +637,7 @@ describe('UserService', () => {
         });
 
         it('when user exists should return successful output', async () => {
-            userRepository.findOne.mockReturnValue(Promise.resolve(user));
+            userRepository.findOne.mockResolvedValue(user);
 
             const findUserResult = await service.findUser(findUserInput);
 
