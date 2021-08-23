@@ -144,6 +144,8 @@ export class UserService {
                         username: user.username,
                         firstName: user.firstName,
                         lastName: user.lastName,
+                        host: input.host,
+                        protocol: input.protocol,
                         token,
                     },
                 );

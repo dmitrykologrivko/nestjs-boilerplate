@@ -6,7 +6,13 @@ import { User } from '../../entities/user.entity';
 import { UserFactory } from '../user.factory';
 
 describe('AuthPasswordController', () => {
-    const REQUEST = { ip: '0.0.0.0' };
+    const REQUEST = {
+        ip: '0.0.0.0',
+        headers: {
+            host: 'localhost',
+        },
+        protocol: 'http',
+    };
     const RESET_PASSWORD_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9';
 
     let controller: AuthPasswordController;

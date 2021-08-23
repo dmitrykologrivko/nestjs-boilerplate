@@ -5,7 +5,6 @@ export default () => {
             {
                 children: [],
                 constraints: {
-                    emailActive: 'Email is not found',
                     isEmail: 'email must be an email',
                 },
                 property: 'email',

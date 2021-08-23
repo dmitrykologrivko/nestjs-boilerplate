@@ -122,6 +122,8 @@ describe('UserService', () => {
 
         forgotPasswordInput = {
             email: user.email,
+            host: 'localhost',
+            protocol: 'http',
         };
 
         resetPasswordInput = {
@@ -462,11 +464,29 @@ describe('UserService', () => {
                         isEmail: 'email must be an email',
                     },
                 ),
+                new ValidationException(
+                    'host',
+                    null,
+                    {
+                        isNotEmpty: 'host should not be empty',
+                    },
+                ),
+                new ValidationException(
+                    'protocol',
+                    null,
+                    {
+                        isNotEmpty: 'protocol should not be empty',
+                    },
+                ),
             ]);
 
             userVerificationService.isEmailActive.mockResolvedValue(false);
 
-            const result = await service.forgotPassword({ email: null });
+            const result = await service.forgotPassword({
+                email: null,
+                host: null,
+                protocol: null,
+            });
 
             expect(result.isErr()).toBe(true);
             expect(result.unwrapErr()).toStrictEqual(errors);
@@ -486,7 +506,11 @@ describe('UserService', () => {
 
             userVerificationService.isEmailActive.mockResolvedValue(false);
 
-            const result = await service.forgotPassword({ email: wrongEmail });
+            const result = await service.forgotPassword({
+                email: wrongEmail,
+                host: 'localhost',
+                protocol: 'http',
+            });
 
             expect(result.isErr()).toBe(true);
             expect(result.unwrapErr()).toStrictEqual(errors);
@@ -501,7 +525,7 @@ describe('UserService', () => {
             const AUTH_CONFIG = {
                 password: {
                     resetMailSubject: 'Reset Password',
-                    resetMailTemplate: 'reset_password.html',
+                    resetMailTemplate: 'auth__reset_password.html',
                 },
             };
             const HTML_CONTENT = `
@@ -534,6 +558,8 @@ describe('UserService', () => {
                 username: user.username,
                 firstName: user.firstName,
                 lastName: user.lastName,
+                host: forgotPasswordInput.host,
+                protocol: forgotPasswordInput.protocol,
                 token: RESET_PASSWORD_TOKEN,
             });
             expect(mailService.sendMail.mock.calls[0][0]).toStrictEqual({

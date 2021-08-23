@@ -30,7 +30,7 @@ Also, you need to register path to the folder with templates in the application 
 ```typescript
 import { join } from 'path';
 import { Module } from '@nestjs/common';
-import { CoreModule, TemplateModule } from 'packages/core/dist/index';
+import { CoreModule, TemplateModule } from '@nestjs-boilerplate/core';
 import { AppController } from './app.controller';
 
 @Module({

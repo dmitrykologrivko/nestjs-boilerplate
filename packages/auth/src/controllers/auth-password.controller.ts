@@ -16,7 +16,7 @@ import {
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { UserService } from '../services/user.service';
 import { ChangePasswordInput } from '../dto/change-password.input';
-import { ForgotPasswordInput } from '../dto/forgot-password.input';
+import { ForgotPasswordRequest } from '../dto/forgot-password.request';
 import { ResetPasswordInput } from '../dto/reset-password.input';
 import { ValidateResetPasswordTokenRequest } from '../dto/validate-reset-password-token.request';
 import { BindSelfInterceptor } from '../interceptors/bind-self.interceptor';
@@ -45,10 +45,14 @@ export class AuthPasswordController {
     }
 
     @Post('forgot')
-    async forgotPassword(@Request() req, @Body() input: ForgotPasswordInput) {
+    async forgotPassword(@Request() req, @Body() input: ForgotPasswordRequest) {
         Logger.log(`Attempt to send recover password email (IP ${req.ip})`);
 
-        const result = await this.userService.forgotPassword(input);
+        const result = await this.userService.forgotPassword({
+            email: input.email,
+            host: req.headers.host,
+            protocol: req.protocol,
+        });
 
         if (result.isErr()) {
             throw result.unwrapErr();
