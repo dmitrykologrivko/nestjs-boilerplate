@@ -303,13 +303,11 @@ export class User extends BaseTypeormEntity {
      * @return changing password result
      */
     async setPassword(password: string, saltRounds: number): Promise<ValidationResult> {
-        const validateResult = User.validatePassword(password);
-
-        if (validateResult.isErr()) {
-            return validateResult;
-        }
-
-        this._password = await bcrypt.hash(password, saltRounds);
+        return User.validatePassword(password)
+            .proceedAsync(async () => {
+                this._password = await bcrypt.hash(password, saltRounds);
+                return ok(null);
+            });
     }
 
     /**

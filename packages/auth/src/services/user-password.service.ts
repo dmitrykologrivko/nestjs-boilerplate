@@ -83,8 +83,7 @@ export class UserPasswordService {
     }
 
     async isResetPasswordTokenValid(token: string): Promise<boolean> {
-        const result = await this.validateResetPasswordToken(token);
-        return result.isOk();
+        return (await this.validateResetPasswordToken(token)).isOk();
     }
 
     private getResetPasswordTokenId(user: User) {

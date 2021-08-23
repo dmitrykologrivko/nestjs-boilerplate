@@ -7,6 +7,7 @@ import {
     ClassTransformer,
     ClassValidator,
     ValidationContainerException,
+    ValidationException,
     EntityNotFoundException,
     BaseMailService,
     MAIL_PROPERTY,
@@ -22,6 +23,7 @@ import {
     AUTH_PASSWORD_SALT_ROUNDS_PROPERTY,
 } from '../constants/auth.properties';
 import { UserNotFoundException } from '../exceptions/user-not-found-exception';
+import { ResetPasswordTokenInvalidException } from '../exceptions/reset-password-token-invalid.exception';
 import { User } from '../entities/user.entity';
 import { ActiveUsersQuery } from '../queries/active-users.query';
 import { UserPasswordService } from './user-password.service';
@@ -35,10 +37,16 @@ import { FindUserInput } from '../dto/find-user.input';
 import { FindUserOutput } from '../dto/find-user.output';
 
 type CreateUserResult = Promise<Result<CreateUserOutput, ValidationContainerException>>;
+
 type ChangePasswordResult = Promise<Result<void, ValidationContainerException>>;
+
 type ForceChangePasswordResult = Promise<Result<void, ValidationContainerException>>;
+
 type ForgotPasswordResult = Promise<Result<void, ValidationContainerException | SendMailFailedException>>;
-type ResetPasswordResult = Promise<Result<void, ValidationContainerException>>;
+
+type ResetPasswordResult = Promise<Result<void, ValidationContainerException | ValidationException
+    | ResetPasswordTokenInvalidException>>;
+
 type FindUserResult = Promise<Result<FindUserOutput, UserNotFoundException>>;
 
 @ApplicationService()
@@ -168,21 +176,19 @@ export class UserService {
      * @param input reset password dto
      */
     async resetPassword(input: ResetPasswordInput): ResetPasswordResult {
-        const validateResult = await ClassValidator.validate(ResetPasswordInput, input);
-
-        if (validateResult.isErr()) {
-            return err(validateResult.unwrapErr());
-        }
-
-        const verifyTokenResult = await this.passwordService.validateResetPasswordToken(input.resetPasswordToken);
-
-        const user = verifyTokenResult.unwrap();
-        await user.setPassword(input.newPassword, this.config.get(AUTH_PASSWORD_SALT_ROUNDS_PROPERTY));
-        await this.userRepository.save(user);
-
-        Logger.log(`Password has been recovered for ${user.username}`);
-
-        return ok(null);
+        return ClassValidator.validate(ResetPasswordInput, input)
+            .then(proceed(() => this.passwordService.validateResetPasswordToken(input.resetPasswordToken)))
+            .then(proceed(async user => {
+                return (await user.setPassword(
+                    input.newPassword,
+                    this.config.get(AUTH_PASSWORD_SALT_ROUNDS_PROPERTY),
+                )).map(() => user);
+            }))
+            .then(proceed(async (user) => {
+                await this.userRepository.save(user);
+                Logger.log(`Password has been recovered for ${user.username}`);
+                return ok(null);
+            }));
     }
 
     /**
