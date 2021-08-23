@@ -1,6 +1,11 @@
 import * as promptSync from 'prompt-sync';
 import { Logger } from '@nestjs/common';
-import { Command, Handler, CliArgument } from '@nestjs-boilerplate/core';
+import {
+    Command,
+    Handler,
+    CliArgument,
+    ValidationContainerException,
+} from '@nestjs-boilerplate/core';
 import { UserService } from '../services/user.service';
 
 const prompt = promptSync({ sigint: true });
@@ -111,10 +116,13 @@ export class UsersCommand {
         });
 
         if (result.isErr()) {
-            const message = result.unwrapErr()
-                .validationExceptions
-                .map(exception => exception.toString())
-                .join('');
+            const error = result.unwrapErr();
+            const message = error instanceof ValidationContainerException
+                ? error.validationExceptions
+                    .map(exception => exception.toString())
+                    .join('')
+                : error.toString();
+
             Logger.error(message);
         }
     }

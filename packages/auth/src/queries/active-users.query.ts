@@ -5,6 +5,7 @@ import { User } from '../entities/user.entity';
 export class ActiveUsersQuery implements BaseFindQuery<User> {
     constructor(
         private meta: {
+            id?: number;
             username?: string;
             email?: string;
         },
@@ -17,6 +18,9 @@ export class ActiveUsersQuery implements BaseFindQuery<User> {
             },
         };
 
+        if (this.meta.id) {
+            query.where.id = this.meta.id;
+        }
         if (this.meta.username) {
             query.where._username = this.meta.username;
         }

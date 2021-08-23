@@ -11,7 +11,6 @@ import {
 } from '@nestjs-boilerplate/core';
 import { SimpleIocContainer, createClassValidatorContainer } from '@nestjs-boilerplate/testing';
 import { AUTH_PASSWORD_SALT_ROUNDS_PROPERTY } from '../../constants/auth.properties';
-import { UserNotFoundException } from '../../exceptions/user-not-found-exception';
 import { UserService } from '../../services/user.service';
 import { UserVerificationService } from '../../services/user-verification.service';
 import { UserPasswordService } from '../../services/user-password.service';
@@ -28,12 +27,10 @@ import { ChangePasswordInput } from '../../dto/change-password.input';
 import { ForceChangePasswordInput } from '../../dto/force-change-password.input';
 import { ForgotPasswordInput } from '../../dto/forgot-password.input';
 import { ResetPasswordInput } from '../../dto/reset-password.input';
-import { FindUserInput } from '../../dto/find-user.input';
-import { FindUserOutput } from '../../dto/find-user.output';
 import { UserFactory } from '../user.factory';
 
 describe('UserService', () => {
-    const USERNAME_QUERY = { where: { _username: UserFactory.DEFAULT_USERNAME } };
+    const USERNAME_QUERY = { where: { _username: UserFactory.DEFAULT_USERNAME, _isActive: true } };
     const RESET_PASSWORD_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsImtleSI6ImQ2ZWNiYTE5ZDM3NjBiZDVj' +
         'NWMwYWQ2MDJmYTYxMjExZWQwNWQxM2M4MmU3ZDM2ZmU5N2JjZDczNjYxYTAyMGUiLCJpYXQiOjE1OTA0MTcwNDYsImV4cCI6M' +
         'TU5MDUwMzQ0Nn0.v8JtgKvH3fk3OEfeBjhtpW_WnJnmvkZF99I0sQ-eV9E';
@@ -60,8 +57,6 @@ describe('UserService', () => {
     let forceChangePasswordInput: ForceChangePasswordInput;
     let forgotPasswordInput: ForgotPasswordInput;
     let resetPasswordInput: ResetPasswordInput;
-    let findUserInput: FindUserInput;
-    let findUserOutput: FindUserOutput;
 
     beforeEach(async () => {
         container = createClassValidatorContainer();
@@ -130,9 +125,6 @@ describe('UserService', () => {
             resetPasswordToken: RESET_PASSWORD_TOKEN,
             newPassword: `new${UserFactory.DEFAULT_PASSWORD}`,
         };
-
-        findUserInput = { username: user.username };
-        findUserOutput = ClassTransformer.toClassObject(FindUserOutput, user);
     });
 
     describe('#createUser()', () => {
@@ -363,7 +355,12 @@ describe('UserService', () => {
             expect(userPasswordService.comparePassword.mock.calls[0][1])
                 .toBe(UserFactory.DEFAULT_PASSWORD);
             expect(userRepository.findOne.mock.calls[0][0])
-                .toBe(user.id);
+                .toStrictEqual({
+                    where: {
+                        id: user.id,
+                        _isActive: true,
+                    },
+                });
             expect(userRepository.save.mock.calls[0][0])
                 .toBe(user);
         });
@@ -647,30 +644,6 @@ describe('UserService', () => {
                 .toBe(resetPasswordInput.resetPasswordToken);
             expect(userRepository.save.mock.calls[0][0])
                 .toBe(user);
-        });
-    });
-
-    describe('#findUser()', () => {
-        it('when user is not exist should return not found error', async () => {
-            userRepository.findOne.mockResolvedValue(null);
-
-            const findUserResult = await service.findUser(findUserInput);
-
-            expect(findUserResult.isErr()).toBe(true);
-            expect(findUserResult.unwrapErr()).toBeInstanceOf(UserNotFoundException);
-
-            expect(userRepository.findOne.mock.calls[0][0]).toStrictEqual(USERNAME_QUERY);
-        });
-
-        it('when user exists should return successful output', async () => {
-            userRepository.findOne.mockResolvedValue(user);
-
-            const findUserResult = await service.findUser(findUserInput);
-
-            expect(findUserResult.isOk()).toBe(true);
-            expect(findUserResult.unwrap()).toStrictEqual(findUserOutput);
-
-            expect(userRepository.findOne.mock.calls[0][0]).toStrictEqual(USERNAME_QUERY);
         });
     });
 });

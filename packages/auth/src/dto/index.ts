@@ -16,5 +16,3 @@ export * from './change-password.input';
 export * from './forgot-password.input';
 export * from './forgot-password.request';
 export * from './reset-password.input';
-export * from './find-user.input';
-export * from './find-user.output';
