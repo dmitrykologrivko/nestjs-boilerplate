@@ -39,7 +39,6 @@ const jwtAsyncOptions = {
         if (secret) {
             moduleOptions.secret = secret;
         }
-
         if (expiresIn) {
             moduleOptions.signOptions = { expiresIn };
         }

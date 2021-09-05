@@ -6,6 +6,7 @@ import {
     SECRET_KEY_PROPERTY,
     DatabaseModule,
 } from '@nestjs-boilerplate/core';
+import { USER_PASSWORD_SALT_ROUNDS_PROPERTY } from './constants/user.properties';
 import { User } from './entities/user.entity';
 import { Group } from './entities/group.entity';
 import { Permission } from './entities/permission.entity';
@@ -27,9 +28,13 @@ const jwtAsyncOptions = {
         const moduleOptions: JwtModuleOptions = {};
 
         const secret = config.get(SECRET_KEY_PROPERTY);
+        const expiresIn = config.get(USER_PASSWORD_SALT_ROUNDS_PROPERTY);
 
         if (secret) {
             moduleOptions.secret = secret;
+        }
+        if (expiresIn) {
+            moduleOptions.signOptions = { expiresIn };
         }
 
         return moduleOptions;
