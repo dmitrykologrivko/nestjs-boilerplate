@@ -167,8 +167,12 @@ describe('AuthPasswordController (e2e)', () => {
         });
 
         it('when reset password token is not valid should return validation error', async () => {
+            const token = await authTestUtils.generateResetPasswordToken(user);
+            const lastChar = token.charAt(token.length - 1);
+            // Replace the last char in the token to have valid JWT format but not valid reset token itself
+            const wrongToken = `${token.slice(0, -1)}${lastChar === 'a' ? lastChar.toUpperCase() : 'a'}`;
             const req = {
-                resetPasswordToken: `${await authTestUtils.generateResetPasswordToken(user)}.wrong`,
+                resetPasswordToken: wrongToken,
                 newPassword: 'new-password',
             };
 

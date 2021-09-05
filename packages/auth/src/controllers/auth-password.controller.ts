@@ -4,7 +4,6 @@ import {
     Body,
     Post,
     UseGuards,
-    UseInterceptors,
     UsePipes,
     UseFilters,
 } from '@nestjs/common';
@@ -15,11 +14,11 @@ import {
 } from '@nestjs-boilerplate/core';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { UserService } from '../services/user.service';
-import { ChangePasswordInput } from '../dto/change-password.input';
+import { AuthorizedUser } from '../decorators/authorized-user.decorator';
+import { ChangePasswordRequest } from '../dto/change-password.request';
 import { ForgotPasswordRequest } from '../dto/forgot-password.request';
-import { ResetPasswordInput } from '../dto/reset-password.input';
+import { ResetPasswordRequest } from '../dto/reset-password.request';
 import { ValidateResetPasswordTokenRequest } from '../dto/validate-reset-password-token.request';
-import { BindSelfInterceptor } from '../interceptors/bind-self.interceptor';
 
 @UsePipes(ValidationExceptionsPipe)
 @UseFilters(ValidationExceptionsFilter)
@@ -30,12 +29,19 @@ export class AuthPasswordController {
     ) {}
 
     @UseGuards(JwtAuthGuard)
-    @UseInterceptors(BindSelfInterceptor)
     @Post('change')
-    async changePassword(@Request() req, @Body() input: ChangePasswordInput) {
+    async changePassword(
+        @Request() req,
+        @AuthorizedUser() user,
+        @Body() input: ChangePasswordRequest,
+    ) {
         Logger.log(`Attempt to change password (IP ${req.ip})`);
 
-        const result = await this.userService.changePassword(input);
+        const result = await this.userService.changePassword({
+            userId: user.id,
+            currentPassword: input.currentPassword,
+            newPassword: input.newPassword,
+        });
 
         if (result.isErr()) {
             throw result.unwrapErr();
@@ -62,10 +68,13 @@ export class AuthPasswordController {
     }
 
     @Post('reset')
-    async resetPassword(@Request() req, @Body() input: ResetPasswordInput) {
+    async resetPassword(@Request() req, @Body() input: ResetPasswordRequest) {
         Logger.log(`Attempt to recover password (IP ${req.ip})`);
 
-        const result = await this.userService.resetPassword(input);
+        const result = await this.userService.resetPassword({
+            resetPasswordToken: input.resetPasswordToken,
+            newPassword: input.newPassword,
+        });
 
         if (result.isErr()) {
             throw result.unwrapErr();

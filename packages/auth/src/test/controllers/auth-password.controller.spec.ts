@@ -32,7 +32,6 @@ describe('AuthPasswordController', () => {
         user = await UserFactory.makeUser();
 
         changePasswordRequest = {
-            userId: user.id,
             currentPassword: UserFactory.DEFAULT_PASSWORD,
             newPassword: 'new-password',
         };
@@ -56,14 +55,14 @@ describe('AuthPasswordController', () => {
             userService.changePassword.mockReturnValue(Promise.resolve(err(new ValidationContainerException([]))));
 
             await expect(
-                controller.changePassword(REQUEST, changePasswordRequest),
+                controller.changePassword(REQUEST, user, changePasswordRequest),
             ).rejects.toBeInstanceOf(ValidationContainerException);
         });
 
         it('when change password successful should return successful response', async () => {
             userService.changePassword.mockReturnValue(Promise.resolve(ok(null)));
 
-            const result = await controller.changePassword(REQUEST, changePasswordRequest);
+            const result = await controller.changePassword(REQUEST, user, changePasswordRequest);
 
             expect(result).toBeNull();
         });
