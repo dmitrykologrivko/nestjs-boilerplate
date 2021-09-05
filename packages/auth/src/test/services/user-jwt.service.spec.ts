@@ -1,7 +1,7 @@
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
+import { EntityNotFoundException } from '@nestjs-boilerplate/core';
 import { MockProxy, mock } from 'jest-mock-extended';
-import { UserNotFoundException } from '../../exceptions/user-not-found-exception';
 import { AccessTokenInvalidException } from '../../exceptions/access-token-invalid.exception';
 import { User } from '../../entities/user.entity';
 import { RevokedToken } from '../../entities/revoked-token.entity';
@@ -53,7 +53,7 @@ describe('UserJwtService', () => {
             const result = await service.generateAccessToken(user.username);
 
             expect(result.isErr()).toBeTruthy();
-            expect(result.unwrapErr()).toBeInstanceOf(UserNotFoundException);
+            expect(result.unwrapErr()).toBeInstanceOf(EntityNotFoundException);
             expect(userRepository.findOne.mock.calls[0][0]).toEqual(USERNAME_QUERY);
         });
 
@@ -103,7 +103,7 @@ describe('UserJwtService', () => {
             const result = await service.validateAccessToken(accessToken);
 
             expect(result.isErr()).toBeTruthy();
-            expect(result.unwrapErr()).toBeInstanceOf(AccessTokenInvalidException);
+            expect(result.unwrapErr()).toBeInstanceOf(EntityNotFoundException);
 
             expect(revokedTokenRepository.findOne.mock.calls[0][0]).toEqual(REVOKED_TOKEN_QUERY);
             expect(userRepository.findOne.mock.calls[0][0]).toEqual(USERNAME_QUERY);
@@ -142,7 +142,7 @@ describe('UserJwtService', () => {
             const result = await service.validatePayload(payload);
 
             expect(result.isErr()).toBeTruthy();
-            expect(result.unwrapErr()).toBeInstanceOf(AccessTokenInvalidException);
+            expect(result.unwrapErr()).toBeInstanceOf(EntityNotFoundException);
 
             expect(revokedTokenRepository.findOne.mock.calls[0][0]).toEqual(REVOKED_TOKEN_QUERY);
             expect(userRepository.findOne.mock.calls[0][0]).toEqual(USERNAME_QUERY);
@@ -181,7 +181,7 @@ describe('UserJwtService', () => {
             const result = await service.revokeAccessToken(accessToken);
 
             expect(result.isErr()).toBeTruthy();
-            expect(result.unwrapErr()).toBeInstanceOf(AccessTokenInvalidException);
+            expect(result.unwrapErr()).toBeInstanceOf(EntityNotFoundException);
 
             expect(revokedTokenRepository.findOne.mock.calls[0][0]).toEqual(REVOKED_TOKEN_QUERY);
             expect(userRepository.findOne.mock.calls[0][0]).toEqual(USERNAME_QUERY);

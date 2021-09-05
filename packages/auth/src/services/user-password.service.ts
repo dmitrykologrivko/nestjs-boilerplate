@@ -5,16 +5,17 @@ import {
     PropertyConfigService,
     InjectRepository,
     DomainService,
-    AsyncResult,
     Result,
     ok,
     err,
+    proceed,
+    EntityNotFoundException,
 } from '@nestjs-boilerplate/core';
 import { AUTH_PASSWORD_RESET_TIMEOUT_PROPERTY } from '../constants/auth.properties';
 import { User } from '../entities/user.entity';
-import { UserNotFoundException } from '../exceptions/user-not-found-exception';
 import { CredentialsInvalidException } from '../exceptions/credentials-invalid.exception';
 import { ResetPasswordTokenInvalidException } from '../exceptions/reset-password-token-invalid.exception';
+import { ActiveUsersQuery } from '../queries/active-users.query';
 
 @DomainService()
 export class UserPasswordService {
@@ -28,31 +29,24 @@ export class UserPasswordService {
     async validateCredentials(
         username: string,
         password: string,
-    ): Promise<Result<User, CredentialsInvalidException>> {
-        return await AsyncResult.from(this.findUser(username))
-            .mapErr(() => new CredentialsInvalidException())
-            .proceed(async (user): Promise<Result<User, CredentialsInvalidException>> => {
+    ): Promise<Result<User, EntityNotFoundException | CredentialsInvalidException>> {
+        return this.findUser(username)
+            .then(proceed(async user => {
                 const isPasswordMatch = await user.comparePassword(password);
-
-                if (!isPasswordMatch) {
-                    return err(new CredentialsInvalidException());
-                }
-
-                return ok(user);
-            })
-            .toPromise();
+                return isPasswordMatch
+                    ? ok(user)
+                    : err(new CredentialsInvalidException());
+            }));
     }
 
-    async comparePassword(idOrUsername: number | string, password: string): Promise<boolean> {
+    async comparePassword(
+        idOrUsername: number | string,
+        password: string,
+    ): Promise<boolean> {
         const result = await this.findUser(idOrUsername);
-
-        if (result.isErr()) {
-            return false;
-        }
-
-        const user = result.unwrap();
-
-        return await user.comparePassword(password);
+        return result.isOk()
+            ? await result.unwrap().comparePassword(password)
+            : false;
     }
 
     async generateResetPasswordToken(user: User) {
@@ -62,7 +56,9 @@ export class UserPasswordService {
         );
     }
 
-    async validateResetPasswordToken(token: string): Promise<Result<User, ResetPasswordTokenInvalidException>> {
+    async validateResetPasswordToken(
+        token: string,
+    ): Promise<Result<User, ResetPasswordTokenInvalidException>> {
         let payload;
 
         try {
@@ -71,9 +67,9 @@ export class UserPasswordService {
             return err(new ResetPasswordTokenInvalidException());
         }
 
-        const user = await this.userRepository.findOne({
-            where: { id: payload.sub, _isActive: true },
-        });
+        const user = await this.userRepository.findOne(
+            new ActiveUsersQuery({ id: payload.sub }).toFindOptions(),
+        );
 
         if (!user || this.getResetPasswordTokenId(user) !== payload.jti) {
             return err(new ResetPasswordTokenInvalidException());
@@ -97,23 +93,23 @@ export class UserPasswordService {
             .digest('hex');
     }
 
-    private async findUser(idOrUsername: number | string): Promise<Result<User, UserNotFoundException>> {
-        const where: any = { _isActive: true };
+    private async findUser(
+        idOrUsername: number | string,
+    ): Promise<Result<User, EntityNotFoundException>> {
+        let query: ActiveUsersQuery;
 
         if (typeof idOrUsername === 'number') {
-            where.id = idOrUsername;
+            query = new ActiveUsersQuery({ id: idOrUsername });
         }
 
         if (typeof idOrUsername === 'string') {
-            where._username = idOrUsername;
+            query = new ActiveUsersQuery({ username: idOrUsername });
         }
 
-        const user = await this.userRepository.findOne({ where });
+        const user = await this.userRepository.findOne(query.toFindOptions());
 
-        if (!user) {
-            return err(new UserNotFoundException());
-        }
-
-        return ok(user);
+        return user
+            ? ok(user)
+            : err(new EntityNotFoundException());
     }
 }

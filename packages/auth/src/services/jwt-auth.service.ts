@@ -4,7 +4,7 @@ import {
     ApplicationService,
     Result,
     ok,
-    AsyncResult,
+    proceed,
     ClassTransformer,
     ValidationException,
 } from '@nestjs-boilerplate/core';
@@ -24,10 +24,6 @@ import { JwtLogoutOutput } from '../dto/jwt-logout.output';
 import { ValidatePayloadInput } from '../dto/validate-payload.input';
 import { ValidatePayloadOutput } from '../dto/validate-payload.output';
 
-type ValidatePayloadResult = Promise<Result<ValidatePayloadOutput, ValidationException>>;
-type LoginResult = Promise<Result<JwtLoginOutput, ValidationException>>;
-type LogoutResult = Promise<Result<JwtLogoutOutput, ValidationException>>;
-
 @ApplicationService()
 export class JwtAuthService extends BaseAuthService {
     constructor(
@@ -40,47 +36,48 @@ export class JwtAuthService extends BaseAuthService {
         super(userRepository);
     }
 
-    async validatePayload(input: ValidatePayloadInput): ValidatePayloadResult {
-        return AsyncResult.from(this.userJwtService.validatePayload(input.payload))
-            .map(user => {
-                return ClassTransformer.toClassObject(ValidatePayloadOutput, user);
-            })
+    async validatePayload(
+        input: ValidatePayloadInput,
+    ): Promise<Result<ValidatePayloadOutput, ValidationException>> {
+        return (await this.userJwtService.validatePayload(input.payload))
+            .map(user => ClassTransformer.toClassObject(ValidatePayloadOutput, user))
             .mapErr(() => (
                 new ValidationException(
                     'payload',
                     input.payload,
                     { [PAYLOAD_VALID_CONSTRAINT.key]: PAYLOAD_VALID_CONSTRAINT.message },
                 )
-            ))
-            .toPromise();
+            ));
     }
 
-    async login(input: JwtLoginInput): LoginResult {
-        return AsyncResult.from(this.userJwtService.generateAccessToken(input.username))
-            .map(token => ({ accessToken: token }))
+    async login(
+        input: JwtLoginInput,
+    ): Promise<Result<JwtLoginOutput, ValidationException>> {
+        return (await this.userJwtService.generateAccessToken(input.username))
+            .map(accessToken => ({ accessToken }))
             .mapErr(() => (
                 new ValidationException(
                     'username',
                     input.username,
                     { [USERNAME_ACTIVE_CONSTRAINT.key]: USERNAME_ACTIVE_CONSTRAINT.message },
                 )
-            ))
-            .toPromise();
+            ));
     }
 
-    async logout(input: JwtLogoutInput): LogoutResult {
-        return AsyncResult.from(this.userJwtService.revokeAccessToken(input.token))
-            .proceed(async revokedToken => {
+    async logout(
+        input: JwtLogoutInput,
+    ): Promise<Result<JwtLogoutOutput, ValidationException>> {
+        return (await this.userJwtService.revokeAccessToken(input.token)
+            .then(proceed(async revokedToken => {
                 await this.revokedTokenRepository.save(revokedToken);
                 return ok({});
-            })
+            })))
             .mapErr(() => (
-                 new ValidationException(
+                new ValidationException(
                     'token',
                     input.token,
                     { [JWT_TOKEN_VALID_CONSTRAINT.key]: JWT_TOKEN_VALID_CONSTRAINT.message },
                 )
-            ))
-            .toPromise();
+            ));
     }
 }

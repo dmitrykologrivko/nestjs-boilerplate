@@ -2,7 +2,7 @@ import * as crypto from 'crypto';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { MockProxy, mock } from 'jest-mock-extended';
-import { PropertyConfigService } from '@nestjs-boilerplate/core';
+import { PropertyConfigService, EntityNotFoundException } from '@nestjs-boilerplate/core';
 import { AUTH_PASSWORD_RESET_TIMEOUT_PROPERTY } from '../../constants/auth.properties';
 import { CredentialsInvalidException } from '../../exceptions/credentials-invalid.exception';
 import { ResetPasswordTokenInvalidException } from '../../exceptions/reset-password-token-invalid.exception';
@@ -42,13 +42,13 @@ describe('UserPasswordService', () => {
     });
 
     describe('#validateCredentials()', () => {
-        it('when user is not exist should return credentials invalid error', async () => {
+        it('when user is not exist should return entity not found error', async () => {
             userRepository.findOne.mockReturnValue(Promise.resolve(null));
 
             const result = await service.validateCredentials(USERNAME, PASSWORD);
 
             expect(result.isErr()).toBeTruthy();
-            expect(result.unwrapErr()).toBeInstanceOf(CredentialsInvalidException);
+            expect(result.unwrapErr()).toBeInstanceOf(EntityNotFoundException);
             expect(userRepository.findOne.mock.calls[0][0]).toStrictEqual(USERNAME_QUERY);
         });
 

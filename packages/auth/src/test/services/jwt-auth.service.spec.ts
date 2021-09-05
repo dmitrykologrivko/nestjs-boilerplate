@@ -5,8 +5,8 @@ import {
     ValidationException,
     ok,
     err,
+    EntityNotFoundException
 } from '@nestjs-boilerplate/core';
-import { UserNotFoundException } from '../../exceptions/user-not-found-exception';
 import { AccessTokenInvalidException } from '../../exceptions/access-token-invalid.exception';
 import { JwtAuthService } from '../../services/jwt-auth.service';
 import { UserJwtService } from '../../services/user-jwt.service';
@@ -94,7 +94,7 @@ describe('JwtAuthService', () => {
 
     describe('#login()', () => {
         it('when input is not valid should return validation error', async () => {
-            userJwtService.generateAccessToken.mockReturnValue(Promise.resolve(err(UserNotFoundException)));
+            userJwtService.generateAccessToken.mockReturnValue(Promise.resolve(err(EntityNotFoundException)));
 
             const result = await service.login(jwtLoginInput);
 

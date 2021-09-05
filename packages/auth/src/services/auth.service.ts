@@ -4,17 +4,18 @@ import {
     ApplicationService,
     ClassTransformer,
     NonFieldValidationException,
-    AsyncResult,
     Result,
 } from '@nestjs-boilerplate/core';
 import { BaseAuthService } from './base-auth.service';
 import { CREDENTIALS_VALID_CONSTRAINT } from '../constants/auth.constraints';
 import { User } from '../entities/user.entity';
 import { UserPasswordService } from './user-password.service';
+import { BaseLoginInput } from '../dto/base-login.input';
+import { BaseLoginOutput } from '../dto/base-login.output';
+import { BaseLogoutInput } from '../dto/base-logout.input';
+import { BaseLogoutOutput } from '../dto/base-logout.output';
 import { ValidateCredentialsInput } from '../dto/validate-credentials.input';
 import { ValidateCredentialsOutput } from '../dto/validate-credentials.output';
-
-type ValidateCredentialsResult = Promise<Result<ValidateCredentialsOutput, NonFieldValidationException>>;
 
 @ApplicationService()
 export class AuthService extends BaseAuthService {
@@ -26,16 +27,23 @@ export class AuthService extends BaseAuthService {
         super(userRepository);
     }
 
-    async validateCredentials(input: ValidateCredentialsInput): ValidateCredentialsResult {
-        return AsyncResult.from(this.userPasswordService.validateCredentials(input.username, input.password))
-            .map(user => {
-                return ClassTransformer.toClassObject(ValidateCredentialsOutput, user);
-            })
+    login(input: BaseLoginInput): Promise<Result<BaseLoginOutput, any>> {
+        throw new Error('Method not implemented.');
+    }
+
+    logout(input: BaseLogoutInput): Promise<Result<BaseLogoutOutput, any>> {
+        throw new Error('Method not implemented.');
+    }
+
+    async validateCredentials(
+        input: ValidateCredentialsInput
+    ): Promise<Result<ValidateCredentialsOutput, NonFieldValidationException>> {
+        return (await this.userPasswordService.validateCredentials(input.username, input.password))
+            .map(user => ClassTransformer.toClassObject(ValidateCredentialsOutput, user))
             .mapErr(() => (
                 new NonFieldValidationException(
                     { [CREDENTIALS_VALID_CONSTRAINT.key]: CREDENTIALS_VALID_CONSTRAINT.message },
                 )
-            ))
-            .toPromise();
+            ));
     }
 }
