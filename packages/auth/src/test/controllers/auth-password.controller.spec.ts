@@ -1,8 +1,7 @@
 import { MockProxy, mock } from 'jest-mock-extended';
 import { ValidationContainerException, ok, err } from '@nestjs-boilerplate/core';
 import { AuthPasswordController } from '../../controllers/auth-password.controller';
-import { UserService } from '../../services/user.service';
-import { User } from '../../entities/user.entity';
+import { User, UserService } from '@nestjs-boilerplate/user';
 import { UserFactory } from '../user.factory';
 
 describe('AuthPasswordController', () => {

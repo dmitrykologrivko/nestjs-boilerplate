@@ -1,5 +1,5 @@
 import { Exclude } from 'class-transformer';
-import { UserDto } from './user.dto';
+import { UserDto } from '@nestjs-boilerplate/user';
 
 @Exclude()
 export class ValidatePayloadOutput extends UserDto {}

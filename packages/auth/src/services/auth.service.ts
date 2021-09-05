@@ -7,9 +7,11 @@ import {
     Result,
 } from '@nestjs-boilerplate/core';
 import { BaseAuthService } from './base-auth.service';
-import { CREDENTIALS_VALID_CONSTRAINT } from '../constants/auth.constraints';
-import { User } from '../entities/user.entity';
-import { UserPasswordService } from './user-password.service';
+import {
+    User,
+    UserPasswordService,
+    CREDENTIALS_VALID_CONSTRAINT,
+} from '@nestjs-boilerplate/user';
 import { BaseLoginInput } from '../dto/base-login.input';
 import { BaseLoginOutput } from '../dto/base-login.output';
 import { BaseLogoutInput } from '../dto/base-logout.input';

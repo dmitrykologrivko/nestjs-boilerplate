@@ -7,16 +7,11 @@ import {
     SECRET_KEY_PROPERTY,
     DatabaseModule,
 } from '@nestjs-boilerplate/core';
+import { UserModule } from '@nestjs-boilerplate/user';
 import { AUTH_JWT_EXPIRES_IN_PROPERTY } from './constants/auth.properties';
-import { User } from './entities/user.entity';
-import { Group } from './entities/group.entity';
-import { Permission } from './entities/permission.entity';
 import { RevokedToken } from './entities/revoked-token.entity';
 import { AuthService } from './services/auth.service';
 import { JwtAuthService } from './services/jwt-auth.service';
-import { UserService } from './services/user.service';
-import { UserVerificationService } from './services/user-verification.service';
-import { UserPasswordService } from './services/user-password.service';
 import { UserJwtService } from './services/user-jwt.service';
 import { AuthJwtController } from './controllers/auth-jwt.controller';
 import { AuthPasswordController } from './controllers/auth-password.controller';
@@ -26,15 +21,6 @@ import { IsAuthenticatedGuard } from './guards/is-authenticated.guard';
 import { IsAdminGuard } from './guards/is-admin.guard';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { EmailUniqueConstraint } from './validation/email-unique.constraint';
-import { EmailActiveConstraint } from './validation/email-active.constraint';
-import { UsernameUniqueConstraint } from './validation/username-unique.constraint';
-import { UsernameExistsConstraint } from './validation/username-exists.constraint';
-import { PasswordMatchConstraint } from './validation/password-match.constraint';
-import { ResetPasswordTokenValidConstraint } from './validation/reset-password-token-valid.constraint';
-import { BindUserInterceptor } from './interceptors/bind-user.interceptor';
-import { BindSelfInterceptor } from './interceptors/bind-self.interceptor';
-import { UsersCommand } from './commands/users.command';
 import authConfig from './auth.config';
 
 export interface AuthModuleOptions {
@@ -67,16 +53,14 @@ const jwtAsyncOptions = {
     imports: [
         ConfigModule.forFeature(authConfig),
         DatabaseModule.withEntities(
-            [User, Group, Permission, RevokedToken],
+            [RevokedToken],
             { cli: __dirname + '/**/*.entity{.ts,.js}' },
         ),
+        UserModule.forRoot(),
         PassportModule,
         JwtModule.registerAsync(jwtAsyncOptions),
     ],
     providers: [
-        UserService,
-        UserVerificationService,
-        UserPasswordService,
         UserJwtService,
         AuthService,
         JwtAuthService,
@@ -86,26 +70,14 @@ const jwtAsyncOptions = {
         IsAdminGuard,
         LocalStrategy,
         JwtStrategy,
-        EmailUniqueConstraint,
-        EmailActiveConstraint,
-        UsernameUniqueConstraint,
-        UsernameExistsConstraint,
-        PasswordMatchConstraint,
-        ResetPasswordTokenValidConstraint,
-        BindUserInterceptor,
-        BindSelfInterceptor,
-        UsersCommand,
     ],
     exports: [
         DatabaseModule,
-        UserService,
         JwtAuthService,
         LocalAuthGuard,
         JwtAuthGuard,
         IsAuthenticatedGuard,
         IsAdminGuard,
-        BindUserInterceptor,
-        BindSelfInterceptor,
     ],
 })
 export class AuthModule {

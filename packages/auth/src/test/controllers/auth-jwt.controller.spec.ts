@@ -3,7 +3,7 @@ import { ValidationException, ok, err } from '@nestjs-boilerplate/core';
 import {
     JWT_TOKEN_VALID_CONSTRAINT,
     USERNAME_ACTIVE_CONSTRAINT,
-} from '../../constants/auth.constraints';
+} from '@nestjs-boilerplate/user';
 import { AuthJwtController } from '../../controllers/auth-jwt.controller';
 import { JwtAuthService } from '../../services/jwt-auth.service';
 import { UserFactory } from '../user.factory';

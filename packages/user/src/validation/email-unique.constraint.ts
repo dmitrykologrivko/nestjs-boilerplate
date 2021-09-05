@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { ValidatorConstraint, ValidationArguments } from 'class-validator';
-import { EMAIL_ACTIVE_CONSTRAINT } from '../constants/auth.constraints';
+import { EMAIL_UNIQUE_CONSTRAINT } from '../constants/user.constraints';
 import { UserVerificationService } from '../services/user-verification.service';
 
-@ValidatorConstraint({ name: EMAIL_ACTIVE_CONSTRAINT.key, async: true })
+@ValidatorConstraint({ name: EMAIL_UNIQUE_CONSTRAINT.key, async: true })
 @Injectable()
-export class EmailActiveConstraint {
+export class EmailUniqueConstraint {
     constructor(
         private readonly userVerificationService: UserVerificationService,
     ) {}
 
     async validate(email: string) {
-        return await this.userVerificationService.isEmailActive(email);
+        return this.userVerificationService.isEmailUnique(email);
     }
 
     defaultMessage(args: ValidationArguments) {
-        return EMAIL_ACTIVE_CONSTRAINT.message;
+        return EMAIL_UNIQUE_CONSTRAINT.message;
     }
 }

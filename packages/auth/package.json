@@ -8,19 +8,16 @@
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
   "scripts": {
-    "build": "rm -rf dist && ../../node_modules/.bin/tsc -p tsconfig.json"
-  },
-  "dependencies": {
-    "bcrypt": "5.0.1",
-    "prompt-sync": "4.2.0",
-    "uuid": "8.3.2"
+    "build": "../../node_modules/ts-node/dist/bin.js build-package.ts && rm -rf dist && ../../node_modules/.bin/tsc -p tsconfig.json"
   },
   "devDependencies": {
     "@nestjs-boilerplate/core": "^0.1.2",
+    "@nestjs-boilerplate/user": "^0.1.2",
     "@nestjs-boilerplate/testing": "^0.1.2"
   },
   "peerDependencies": {
-    "@nestjs-boilerplate/core": "^0.0.0",
+    "@nestjs-boilerplate/core": "^0.1.2",
+    "@nestjs-boilerplate/user": "^0.1.2",
     "@nestjs/common": "^7.6.18",
     "@nestjs/jwt": "^8.0.0",
     "@nestjs/passport": "^8.0.1",

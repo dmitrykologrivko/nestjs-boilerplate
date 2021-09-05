@@ -1,6 +1,6 @@
 import * as request from 'supertest';
 import { TestBootstrap } from '@nestjs-boilerplate/testing';
-import { User } from '../src/entities';
+import { User } from '@nestjs-boilerplate/user';
 import { UserFactory } from '../src/test/user.factory';
 import { AuthTestUtils } from '../src/test/auth-test.utils';
 import { AppModule } from './src/app.module';

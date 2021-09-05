@@ -12,12 +12,10 @@
     "start": "node dist/main"
   },
   "devDependencies": {
-    "@nestjs-boilerplate/auth": "^0.1.2",
     "@nestjs-boilerplate/core": "^0.1.2"
   },
   "peerDependencies": {
-    "@nestjs-boilerplate/auth": "^0.0.0",
-    "@nestjs-boilerplate/core": "^0.0.0",
+    "@nestjs-boilerplate/core": "^0.1.2",
     "@nestjs/common": "^7.6.18",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",

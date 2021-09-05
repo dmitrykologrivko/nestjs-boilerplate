@@ -1,11 +1,10 @@
 import { Repository } from 'typeorm';
 import { Result, ok, err, EntityNotFoundException } from '@nestjs-boilerplate/core';
-import { User } from '../entities/user.entity';
+import { User, ActiveUsersQuery } from '@nestjs-boilerplate/user';
 import { BaseLoginInput } from '../dto/base-login.input';
 import { BaseLoginOutput } from '../dto/base-login.output';
 import { BaseLogoutInput } from '../dto/base-logout.input';
 import { BaseLogoutOutput } from '../dto/base-logout.output';
-import { ActiveUsersQuery } from '../queries/active-users.query';
 
 export abstract class BaseAuthService {
 

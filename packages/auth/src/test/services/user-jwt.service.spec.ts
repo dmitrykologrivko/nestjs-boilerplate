@@ -1,9 +1,9 @@
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { EntityNotFoundException } from '@nestjs-boilerplate/core';
+import { User } from '@nestjs-boilerplate/user';
 import { MockProxy, mock } from 'jest-mock-extended';
 import { AccessTokenInvalidException } from '../../exceptions/access-token-invalid.exception';
-import { User } from '../../entities/user.entity';
 import { RevokedToken } from '../../entities/revoked-token.entity';
 import { UserJwtService, Payload } from '../../services/user-jwt.service';
 import { UserFactory } from '../user.factory';

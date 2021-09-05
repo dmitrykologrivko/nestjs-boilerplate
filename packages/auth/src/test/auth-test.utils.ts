@@ -1,8 +1,7 @@
 import { Repository } from 'typeorm';
 import { getTargetName } from '@nestjs-boilerplate/core';
-import { User } from '../entities/user.entity';
+import { User, UserPasswordService } from '@nestjs-boilerplate/user';
 import { RevokedToken } from '../entities/revoked-token.entity';
-import { UserPasswordService } from '../services/user-password.service';
 import { UserJwtService } from '../services/user-jwt.service';
 import { UserFactory } from './user.factory';
 

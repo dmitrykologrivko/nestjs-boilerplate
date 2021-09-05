@@ -7,7 +7,7 @@ import {
     ValidationContainerException,
     Result,
 } from '@nestjs-boilerplate/core';
-import { User } from './user.entity';
+import { User } from '@nestjs-boilerplate/user';
 
 @Entity()
 export class RevokedToken extends BaseTypeormEntity {

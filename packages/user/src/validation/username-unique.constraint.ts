@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ValidatorConstraint, ValidationArguments } from 'class-validator';
-import { USERNAME_UNIQUE_CONSTRAINT } from '../constants/auth.constraints';
+import { USERNAME_UNIQUE_CONSTRAINT } from '../constants/user.constraints';
 import { UserVerificationService } from '../services/user-verification.service';
 
 @ValidatorConstraint({ name: USERNAME_UNIQUE_CONSTRAINT.key, async: true })

@@ -14,13 +14,12 @@ import {
     BaseTemplateService,
     Result,
     ok,
-    err,
     proceed,
 } from '@nestjs-boilerplate/core';
 import {
-    AUTH_PROPERTY,
-    AUTH_PASSWORD_SALT_ROUNDS_PROPERTY,
-} from '../constants/auth.properties';
+    USER_PROPERTY,
+    USER_PASSWORD_SALT_ROUNDS_PROPERTY,
+} from '../constants/user.properties';
 import { ResetPasswordTokenInvalidException } from '../exceptions/reset-password-token-invalid.exception';
 import { User } from '../entities/user.entity';
 import { ActiveUsersQuery } from '../queries/active-users.query';
@@ -71,7 +70,7 @@ export class UserService {
                     input.isActive,
                     input.isAdmin,
                     input.isSuperuser,
-                    this.config.get(AUTH_PASSWORD_SALT_ROUNDS_PROPERTY),
+                    this.config.get(USER_PASSWORD_SALT_ROUNDS_PROPERTY),
                 ).then(proceed(async user => {
                     user = await this.userRepository.save(user);
                     return ok(
@@ -94,7 +93,7 @@ export class UserService {
 
                 return user.setPassword(
                     input.newPassword,
-                    this.config.get(AUTH_PASSWORD_SALT_ROUNDS_PROPERTY),
+                    this.config.get(USER_PASSWORD_SALT_ROUNDS_PROPERTY),
                 ).then(proceed(async () => {
                     await this.userRepository.save(user);
                     Logger.log(`Password has been changed for ${user.username}`);
@@ -116,7 +115,7 @@ export class UserService {
 
             return user.setPassword(
                 input.newPassword,
-                this.config.get(AUTH_PASSWORD_SALT_ROUNDS_PROPERTY),
+                this.config.get(USER_PASSWORD_SALT_ROUNDS_PROPERTY),
             ).then(proceed(async () => {
                 await this.userRepository.save(user);
                 Logger.log(`Password has been changed for ${user.username}`);
@@ -138,10 +137,10 @@ export class UserService {
                 const token = await this.passwordService.generateResetPasswordToken(user);
 
                 const mailOptions = this.config.get(MAIL_PROPERTY);
-                const authOptions = this.config.get(AUTH_PROPERTY);
+                const userOptions = this.config.get(USER_PROPERTY);
 
                 const html = await this.templateService.render(
-                    authOptions.password.resetMailTemplate,
+                    userOptions.password.resetMailTemplate,
                     {
                         username: user.username,
                         firstName: user.firstName,
@@ -153,7 +152,7 @@ export class UserService {
                 );
 
                 return (await this.mailService.sendMail({
-                    subject: authOptions.password.resetMailSubject,
+                    subject: userOptions.password.resetMailSubject,
                     to: [user.email],
                     from: mailOptions.defaultFrom,
                     text: '',
@@ -175,7 +174,7 @@ export class UserService {
             .then(proceed(async user => {
                 return user.setPassword(
                     input.newPassword,
-                    this.config.get(AUTH_PASSWORD_SALT_ROUNDS_PROPERTY),
+                    this.config.get(USER_PASSWORD_SALT_ROUNDS_PROPERTY),
                 ).then(proceed(async () => {
                     await this.userRepository.save(user);
                     Logger.log(`Password has been recovered for ${user.username}`);

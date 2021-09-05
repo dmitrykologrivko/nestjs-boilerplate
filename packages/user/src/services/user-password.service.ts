@@ -11,7 +11,7 @@ import {
     proceed,
     EntityNotFoundException,
 } from '@nestjs-boilerplate/core';
-import { AUTH_PASSWORD_RESET_TIMEOUT_PROPERTY } from '../constants/auth.properties';
+import { USER_PASSWORD_RESET_TIMEOUT_PROPERTY } from '../constants/user.properties';
 import { User } from '../entities/user.entity';
 import { CredentialsInvalidException } from '../exceptions/credentials-invalid.exception';
 import { ResetPasswordTokenInvalidException } from '../exceptions/reset-password-token-invalid.exception';
@@ -52,7 +52,7 @@ export class UserPasswordService {
     async generateResetPasswordToken(user: User) {
         return await this.jwtService.signAsync(
             { sub: user.id, jti: this.getResetPasswordTokenId(user) },
-            { expiresIn: this.config.get(AUTH_PASSWORD_RESET_TIMEOUT_PROPERTY) },
+            { expiresIn: this.config.get(USER_PASSWORD_RESET_TIMEOUT_PROPERTY) },
         );
     }
 

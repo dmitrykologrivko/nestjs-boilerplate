@@ -6,7 +6,7 @@ import {
     MemoryMailService,
 } from '@nestjs-boilerplate/testing';
 import { BaseMailService, BaseTemplateService } from '@nestjs-boilerplate/core';
-import { User } from '../src/entities';
+import { User } from '@nestjs-boilerplate/user';
 import { UserFactory } from '../src/test/user.factory';
 import { AuthTestUtils } from '../src/test/auth-test.utils';
 import { AppModule } from './src/app.module';

@@ -3,7 +3,7 @@ import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { MockProxy, mock } from 'jest-mock-extended';
 import { PropertyConfigService, EntityNotFoundException } from '@nestjs-boilerplate/core';
-import { AUTH_PASSWORD_RESET_TIMEOUT_PROPERTY } from '../../constants/auth.properties';
+import { USER_PASSWORD_RESET_TIMEOUT_PROPERTY } from '../../constants/user.properties';
 import { CredentialsInvalidException } from '../../exceptions/credentials-invalid.exception';
 import { ResetPasswordTokenInvalidException } from '../../exceptions/reset-password-token-invalid.exception';
 import { User } from '../../entities/user.entity';
@@ -124,7 +124,7 @@ describe('UserPasswordService', () => {
             expect(payload.sub).toBe(user.id);
             expect(payload.jti).toBe(resetPasswordTokenId);
 
-            expect(config.get.mock.calls[0][0]).toBe(AUTH_PASSWORD_RESET_TIMEOUT_PROPERTY);
+            expect(config.get.mock.calls[0][0]).toBe(USER_PASSWORD_RESET_TIMEOUT_PROPERTY);
         });
     });
 

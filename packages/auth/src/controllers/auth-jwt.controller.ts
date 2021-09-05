@@ -1,7 +1,6 @@
 import {
     Post,
     UseGuards,
-    UsePipes,
     UseFilters,
 } from '@nestjs/common';
 import {

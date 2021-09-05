@@ -1,5 +1,5 @@
 import { IsJWT } from 'class-validator';
-import { ValidatePassword } from '../validation/user.validators';
+import { ValidatePassword } from '@nestjs-boilerplate/user';
 
 export class ResetPasswordRequest {
 

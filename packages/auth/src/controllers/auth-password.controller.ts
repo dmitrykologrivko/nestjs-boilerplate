@@ -12,8 +12,8 @@ import {
     ValidationExceptionsPipe,
     ValidationExceptionsFilter,
 } from '@nestjs-boilerplate/core';
+import { UserService } from '@nestjs-boilerplate/user';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { UserService } from '../services/user.service';
 import { AuthorizedUser } from '../decorators/authorized-user.decorator';
 import { ChangePasswordRequest } from '../dto/change-password.request';
 import { ForgotPasswordRequest } from '../dto/forgot-password.request';

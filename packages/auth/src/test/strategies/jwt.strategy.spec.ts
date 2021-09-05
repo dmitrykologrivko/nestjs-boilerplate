@@ -7,10 +7,9 @@ import {
     ok,
     err,
 } from '@nestjs-boilerplate/core';
-import { PAYLOAD_VALID_CONSTRAINT } from '../../constants/auth.constraints';
+import { User, PAYLOAD_VALID_CONSTRAINT } from '@nestjs-boilerplate/user';
 import { JwtStrategy } from '../../strategies/jwt.strategy';
 import { JwtAuthService } from '../../services/jwt-auth.service';
-import { User } from '../../entities/user.entity';
 import { ValidatePayloadOutput } from '../../dto/validate-payload.output';
 import { UserFactory } from '../user.factory';
 

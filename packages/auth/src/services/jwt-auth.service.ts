@@ -11,11 +11,11 @@ import {
 import { BaseAuthService } from './base-auth.service';
 import { UserJwtService } from './user-jwt.service';
 import {
+    User,
     PAYLOAD_VALID_CONSTRAINT,
     JWT_TOKEN_VALID_CONSTRAINT,
     USERNAME_ACTIVE_CONSTRAINT,
-} from '../constants/auth.constraints';
-import { User } from '../entities/user.entity';
+} from '@nestjs-boilerplate/user';
 import { RevokedToken } from '../entities/revoked-token.entity';
 import { JwtLoginInput } from '../dto/jwt-login.input';
 import { JwtLoginOutput } from '../dto/jwt-login.output';

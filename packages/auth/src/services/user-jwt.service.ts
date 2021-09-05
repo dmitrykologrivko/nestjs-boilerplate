@@ -5,16 +5,14 @@ import {
     InjectRepository,
     DomainService,
     Result,
-    AsyncResult,
     ok,
     err,
     proceed,
     EntityNotFoundException,
 } from '@nestjs-boilerplate/core';
-import { User } from '../entities/user.entity';
+import { User, ActiveUsersQuery } from '@nestjs-boilerplate/user';
 import { RevokedToken } from '../entities/revoked-token.entity';
 import { AccessTokenInvalidException } from '../exceptions/access-token-invalid.exception';
-import { ActiveUsersQuery } from '../queries/active-users.query';
 
 export interface Payload {
     username: string;

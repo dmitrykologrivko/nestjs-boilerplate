@@ -1,4 +1,4 @@
-import { User } from '../entities/user.entity';
+import { User } from '@nestjs-boilerplate/user';
 
 export class UserFactory {
 

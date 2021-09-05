@@ -6,10 +6,9 @@ import {
     ok,
     err,
 } from '@nestjs-boilerplate/core';
-import { CREDENTIALS_VALID_CONSTRAINT } from '../../constants/auth.constraints';
+import { User, CREDENTIALS_VALID_CONSTRAINT } from '@nestjs-boilerplate/user';
 import { LocalStrategy } from '../../strategies/local.strategy';
 import { AuthService } from '../../services/auth.service';
-import { User } from '../../entities/user.entity';
 import { ValidateCredentialsOutput } from '../../dto/validate-credentials.output';
 import { UserFactory } from '../user.factory';
 

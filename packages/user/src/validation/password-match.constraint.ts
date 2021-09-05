@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ValidatorConstraint, ValidationArguments } from 'class-validator';
-import { PASSWORD_MATCH_CONSTRAINT } from '../constants/auth.constraints';
+import { PASSWORD_MATCH_CONSTRAINT } from '../constants/user.constraints';
 import { UserPasswordService } from '../services/user-password.service';
 
 const USER_ID_PROPERTY = 'userId';

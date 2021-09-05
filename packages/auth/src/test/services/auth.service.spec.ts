@@ -6,10 +6,12 @@ import {
     err,
     NonFieldValidationException,
 } from '@nestjs-boilerplate/core';
+import {
+    User,
+    UserPasswordService,
+    CredentialsInvalidException,
+} from '@nestjs-boilerplate/user';
 import { AuthService } from '../../services/auth.service';
-import { UserPasswordService } from '../../services/user-password.service';
-import { CredentialsInvalidException } from '../../exceptions/credentials-invalid.exception';
-import { User } from '../../entities/user.entity';
 import { ValidateCredentialsInput } from '../../dto/validate-credentials.input';
 import { ValidateCredentialsOutput } from '../../dto/validate-credentials.output';
 import { UserFactory } from '../user.factory';

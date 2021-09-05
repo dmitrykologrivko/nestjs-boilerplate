@@ -7,10 +7,10 @@ import {
     err,
     EntityNotFoundException
 } from '@nestjs-boilerplate/core';
+import { User } from '@nestjs-boilerplate/user';
 import { AccessTokenInvalidException } from '../../exceptions/access-token-invalid.exception';
 import { JwtAuthService } from '../../services/jwt-auth.service';
 import { UserJwtService } from '../../services/user-jwt.service';
-import { User } from '../../entities/user.entity';
 import { RevokedToken } from '../../entities/revoked-token.entity';
 import { ValidatePayloadInput } from '../../dto/validate-payload.input';
 import { ValidatePayloadOutput } from '../../dto/validate-payload.output';

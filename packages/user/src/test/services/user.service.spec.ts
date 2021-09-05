@@ -10,7 +10,7 @@ import {
     ok,
 } from '@nestjs-boilerplate/core';
 import { SimpleIocContainer, createClassValidatorContainer } from '@nestjs-boilerplate/testing';
-import { AUTH_PASSWORD_SALT_ROUNDS_PROPERTY } from '../../constants/auth.properties';
+import { USER_PASSWORD_SALT_ROUNDS_PROPERTY } from '../../constants/user.properties';
 import { UserService } from '../../services/user.service';
 import { UserVerificationService } from '../../services/user-verification.service';
 import { UserPasswordService } from '../../services/user-password.service';
@@ -349,7 +349,7 @@ describe('UserService', () => {
             expect(await user.comparePassword(changePasswordInput.newPassword)).toBeTruthy();
 
             expect(config.get.mock.calls[0][0])
-                .toBe(AUTH_PASSWORD_SALT_ROUNDS_PROPERTY);
+                .toBe(USER_PASSWORD_SALT_ROUNDS_PROPERTY);
             expect(userPasswordService.comparePassword.mock.calls[0][0])
                 .toBe(user.id);
             expect(userPasswordService.comparePassword.mock.calls[0][1])
@@ -440,7 +440,7 @@ describe('UserService', () => {
             expect(await user.comparePassword(forceChangePasswordInput.newPassword)).toBeTruthy();
 
             expect(config.get.mock.calls[0][0])
-                .toBe(AUTH_PASSWORD_SALT_ROUNDS_PROPERTY);
+                .toBe(USER_PASSWORD_SALT_ROUNDS_PROPERTY);
             expect(userVerificationService.isUsernameExists.mock.calls[0][0])
                 .toBe(user.username);
             expect(userRepository.findOne.mock.calls[0][0])
@@ -637,7 +637,7 @@ describe('UserService', () => {
             expect(result.unwrap()).toBeNull();
 
             expect(config.get.mock.calls[0][0])
-                .toBe(AUTH_PASSWORD_SALT_ROUNDS_PROPERTY);
+                .toBe(USER_PASSWORD_SALT_ROUNDS_PROPERTY);
             expect(userPasswordService.isResetPasswordTokenValid.mock.calls[0][0])
                 .toBe(resetPasswordInput.resetPasswordToken);
             expect(userPasswordService.validateResetPasswordToken.mock.calls[0][0])
