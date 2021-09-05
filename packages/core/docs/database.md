@@ -264,7 +264,7 @@ To use original entity as relation of other entities of the external package ple
 ```typescript
 import { Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { Entity, getTargetName } from '@nestjs-boilerplate/core';
-import { CustomUser } from './custom-user.entity';
+import { User } from './user.entity';
 
 @Entity()
 export class Token {
