@@ -3,4 +3,4 @@ src
 package-lock.json
 tslint.json
 tsconfig.json
-build-package.ts
+pre-build.ts

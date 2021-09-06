@@ -4,5 +4,5 @@
     "outDir": "./dist",
     "rootDir": "./src"
   },
-  "exclude": ["build-package.ts", "e2e"]
+  "exclude": ["pre-build.ts", "e2e"]
 }

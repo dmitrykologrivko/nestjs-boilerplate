@@ -8,7 +8,8 @@
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
   "scripts": {
-    "build": "../../node_modules/ts-node/dist/bin.js build-package.ts && rm -rf dist && ../../node_modules/.bin/tsc -p tsconfig.json"
+    "pre:build": "../../node_modules/ts-node/dist/bin.js pre-build.ts",
+    "build": "rm -rf dist && ../../node_modules/.bin/tsc -p tsconfig.json"
   },
   "peerDependencies": {
     "@nestjs-boilerplate/auth": "^0.1.2",
