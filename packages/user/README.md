@@ -8,11 +8,18 @@ less repeating common code from project to project. Inspired by Spring Framework
 
 ## Package description
 
-TODO
+User module provides an implementation of User, Permission and Group entities, and additional tools for working with them.
 
 ## Install
 
 `$ npm install @nestjs-boilerplate/user --save`
+
+## Overall
+
+* [Entities](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/user/docs/entities.md)
+* Validation
+* Queries
+* Services
 
 ## Keep in touch
 
