@@ -5,7 +5,4 @@ export interface UserOptions {
         resetMailTemplate: string;
         saltRounds: number;
     },
-    jwt: {
-        expiresIn: string;
-    },
 }
