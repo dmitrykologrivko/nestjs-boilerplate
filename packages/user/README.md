@@ -17,7 +17,7 @@ User module provides an implementation of User, Permission and Group entities, a
 ## Overall
 
 * [Entities](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/user/docs/entities.md)
-* Validation
+* [Validation](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/user/docs/validation.md)
 * Queries
 * Services
 
