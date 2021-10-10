@@ -10,7 +10,6 @@ import {
 import { UserModule } from '@nestjs-boilerplate/user';
 import { AUTH_JWT_EXPIRES_IN_PROPERTY } from './constants/auth.properties';
 import { RevokedToken } from './entities/revoked-token.entity';
-import { AuthService } from './services/auth.service';
 import { JwtAuthService } from './services/jwt-auth.service';
 import { UserJwtService } from './services/user-jwt.service';
 import { AuthJwtController } from './controllers/auth-jwt.controller';
@@ -19,7 +18,6 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { IsAuthenticatedGuard } from './guards/is-authenticated.guard';
 import { IsAdminGuard } from './guards/is-admin.guard';
-import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import authConfig from './auth.config';
 
@@ -61,13 +59,11 @@ const jwtAsyncOptions = {
     ],
     providers: [
         UserJwtService,
-        AuthService,
         JwtAuthService,
         LocalAuthGuard,
         JwtAuthGuard,
         IsAuthenticatedGuard,
         IsAdminGuard,
-        LocalStrategy,
         JwtStrategy,
     ],
     exports: [
