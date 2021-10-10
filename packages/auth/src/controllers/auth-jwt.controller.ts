@@ -18,7 +18,7 @@ import { JwtLoginInput } from '../dto/jwt-login.input';
     ValidationExceptionsFilter,
     AccessTokenInvalidExceptionFilter,
 )
-@ApiController('auth')
+@ApiController('auth/jwt')
 export class AuthJwtController {
     constructor(
         private readonly authService: JwtAuthService,

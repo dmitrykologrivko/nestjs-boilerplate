@@ -25,10 +25,10 @@ describe('AuthJwtController (e2e)', () => {
         await authTestUtils.clearAllUsers();
     });
 
-    describe('/api/auth/login (POST)', () => {
+    describe('/api/auth/jwt/login (POST)', () => {
         it('when user not exist should return validation error', () => {
             return request(app.getHttpServer())
-                .post('/api/auth/login')
+                .post('/api/auth/jwt/login')
                 .send({
                     username: UserFactory.DEFAULT_USERNAME,
                     password: UserFactory.DEFAULT_PASSWORD,
@@ -44,7 +44,7 @@ describe('AuthJwtController (e2e)', () => {
             await authTestUtils.saveUser(user);
 
             return request(app.getHttpServer())
-                .post('/api/auth/login')
+                .post('/api/auth/jwt/login')
                 .send({
                     username: UserFactory.DEFAULT_USERNAME,
                     password: UserFactory.DEFAULT_PASSWORD,
@@ -58,7 +58,7 @@ describe('AuthJwtController (e2e)', () => {
             await authTestUtils.makeAndSaveUser();
 
             return request(app.getHttpServer())
-                .post('/api/auth/login')
+                .post('/api/auth/jwt/login')
                 .send({
                     username: UserFactory.DEFAULT_USERNAME,
                     password: 'some-wrong-password',
@@ -72,7 +72,7 @@ describe('AuthJwtController (e2e)', () => {
             await authTestUtils.makeAndSaveUser();
 
             return request(app.getHttpServer())
-                .post('/api/auth/login')
+                .post('/api/auth/jwt/login')
                 .send({
                     username: UserFactory.DEFAULT_USERNAME,
                     password: UserFactory.DEFAULT_PASSWORD,
@@ -85,7 +85,7 @@ describe('AuthJwtController (e2e)', () => {
         });
     });
 
-    describe('/api/auth/logout (POST)', () => {
+    describe('/api/auth/jwt/logout (POST)', () => {
         let user: User;
         let accessToken: string;
         let jwtAuthHeader: string;
@@ -105,7 +105,7 @@ describe('AuthJwtController (e2e)', () => {
 
         it('when request is not authorized should return unauthorized error', async () => {
             return request(app.getHttpServer())
-                .post('/api/auth/logout')
+                .post('/api/auth/jwt/logout')
                 .expect(401)
                 .expect(unauthorizedResponse);
         });
@@ -114,7 +114,7 @@ describe('AuthJwtController (e2e)', () => {
             await authTestUtils.revokeJwtToken(accessToken);
 
             return request(app.getHttpServer())
-                .post('/api/auth/logout')
+                .post('/api/auth/jwt/logout')
                 .set('Accept', 'application/json')
                 .set('Authorization', jwtAuthHeader)
                 .expect(401)
@@ -125,7 +125,7 @@ describe('AuthJwtController (e2e)', () => {
             await authTestUtils.userRepository.remove(user);
 
             return request(app.getHttpServer())
-                .post('/api/auth/logout')
+                .post('/api/auth/jwt/logout')
                 .set('Accept', 'application/json')
                 .set('Authorization', jwtAuthHeader)
                 .expect(401)
@@ -134,7 +134,7 @@ describe('AuthJwtController (e2e)', () => {
 
         it('when access token is valid should return successful response', async () => {
             return request(app.getHttpServer())
-                .post('/api/auth/logout')
+                .post('/api/auth/jwt/logout')
                 .set('Accept', 'application/json')
                 .set('Authorization', jwtAuthHeader)
                 .expect(201);
