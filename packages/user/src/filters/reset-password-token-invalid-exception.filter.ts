@@ -7,7 +7,7 @@ export class ResetPasswordTokenInvalidExceptionFilter implements ExceptionFilter
         const ctx = host.switchToHttp();
         const response = ctx.getResponse();
 
-        response.status(401).json({
+        response.status(401).send({
             statusCode: 401,
             error: 'Unauthorized',
             message: 'Unauthorized',

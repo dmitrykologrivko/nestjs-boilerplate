@@ -14,7 +14,6 @@ import { JwtAuthService } from './services/jwt-auth.service';
 import { UserJwtService } from './services/user-jwt.service';
 import { AuthJwtController } from './controllers/auth-jwt.controller';
 import { AuthPasswordController } from './controllers/auth-password.controller';
-import { LocalAuthGuard } from './guards/local-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { IsAuthenticatedGuard } from './guards/is-authenticated.guard';
 import { IsAdminGuard } from './guards/is-admin.guard';
@@ -60,7 +59,6 @@ const jwtAsyncOptions = {
     providers: [
         UserJwtService,
         JwtAuthService,
-        LocalAuthGuard,
         JwtAuthGuard,
         IsAuthenticatedGuard,
         IsAdminGuard,
@@ -69,7 +67,6 @@ const jwtAsyncOptions = {
     exports: [
         DatabaseModule,
         JwtAuthService,
-        LocalAuthGuard,
         JwtAuthGuard,
         IsAuthenticatedGuard,
         IsAdminGuard,
