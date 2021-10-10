@@ -5,6 +5,7 @@ import { UserFactory } from '../src/test/user.factory';
 import { AuthTestUtils } from '../src/test/auth-test.utils';
 import { AppModule } from './src/app.module';
 import unauthorizedResponse from './responses/unauthorized.response';
+import loginInvalidCredentialsResponse from './responses/login-invalid-credentials';
 
 describe('AuthJwtController (e2e)', () => {
     let app;
@@ -25,7 +26,7 @@ describe('AuthJwtController (e2e)', () => {
     });
 
     describe('/api/auth/login (POST)', () => {
-        it('when user not exist should return unauthorized error', () => {
+        it('when user not exist should return validation error', () => {
             return request(app.getHttpServer())
                 .post('/api/auth/login')
                 .send({
@@ -33,11 +34,11 @@ describe('AuthJwtController (e2e)', () => {
                     password: UserFactory.DEFAULT_PASSWORD,
                 })
                 .set('Accept', 'application/json')
-                .expect(401)
-                .expect(unauthorizedResponse);
+                .expect(400)
+                .expect(loginInvalidCredentialsResponse);
         });
 
-        it('when user is inactive should return unauthorized error', async () => {
+        it('when user is inactive should return validation error', async () => {
             const user = await authTestUtils.makeAndSaveUser();
             user.deactivateUser();
             await authTestUtils.saveUser(user);
@@ -49,11 +50,11 @@ describe('AuthJwtController (e2e)', () => {
                     password: UserFactory.DEFAULT_PASSWORD,
                 })
                 .set('Accept', 'application/json')
-                .expect(401)
-                .expect(unauthorizedResponse);
+                .expect(400)
+                .expect(loginInvalidCredentialsResponse);
         });
 
-        it('when wrong password is provided should return unauthorized error', async () => {
+        it('when wrong password is provided should return validation error', async () => {
             await authTestUtils.makeAndSaveUser();
 
             return request(app.getHttpServer())
@@ -63,8 +64,8 @@ describe('AuthJwtController (e2e)', () => {
                     password: 'some-wrong-password',
                 })
                 .set('Accept', 'application/json')
-                .expect(401)
-                .expect(unauthorizedResponse);
+                .expect(400)
+                .expect(loginInvalidCredentialsResponse);
         });
 
         it('when username and password are correct should return access token', async () => {
@@ -91,7 +92,10 @@ describe('AuthJwtController (e2e)', () => {
 
         beforeEach(async () => {
             user = await authTestUtils.makeAndSaveUser();
-            accessToken = await authTestUtils.generateJwtToken(user);
+            accessToken = await authTestUtils.generateJwtToken(
+                UserFactory.DEFAULT_USERNAME,
+                UserFactory.DEFAULT_PASSWORD,
+            );
             jwtAuthHeader = await authTestUtils.getJwtAuthHeader(accessToken);
         });
 

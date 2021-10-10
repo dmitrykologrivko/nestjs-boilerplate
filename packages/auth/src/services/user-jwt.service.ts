@@ -10,7 +10,7 @@ import {
     proceed,
     EntityNotFoundException,
 } from '@nestjs-boilerplate/core';
-import { User, ActiveUsersQuery } from '@nestjs-boilerplate/user';
+import { User, ActiveUsersQuery, CredentialsInvalidException } from '@nestjs-boilerplate/user';
 import { RevokedToken } from '../entities/revoked-token.entity';
 import { AccessTokenInvalidException } from '../exceptions/access-token-invalid.exception';
 
@@ -32,8 +32,16 @@ export class UserJwtService {
 
     async generateAccessToken(
         username: string,
-    ): Promise<Result<string, EntityNotFoundException>> {
+        password: string,
+    ): Promise<Result<string, EntityNotFoundException | CredentialsInvalidException>> {
         return this.findUser(username)
+            .then(proceed(async (user: User): Promise<Result<User, CredentialsInvalidException>> => {
+                if ((await user.comparePassword(password))) {
+                    return ok(user);
+                } else {
+                    return err(new CredentialsInvalidException());
+                }
+            }))
             .then(proceed(async user => {
                 const token = await this.jwtService.signAsync({
                     username: user.username,

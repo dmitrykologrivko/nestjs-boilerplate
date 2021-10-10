@@ -5,17 +5,15 @@ import {
     Result,
     ok,
     proceed,
+    ClassValidator,
     ClassTransformer,
-    ValidationException,
+    ValidationContainerException,
+    NonFieldValidationException,
 } from '@nestjs-boilerplate/core';
+import { CREDENTIALS_VALID_CONSTRAINT } from '@nestjs-boilerplate/user';
 import { BaseAuthService } from './base-auth.service';
 import { UserJwtService } from './user-jwt.service';
-import {
-    User,
-    PAYLOAD_VALID_CONSTRAINT,
-    JWT_TOKEN_VALID_CONSTRAINT,
-    USERNAME_ACTIVE_CONSTRAINT,
-} from '@nestjs-boilerplate/user';
+import { User } from '@nestjs-boilerplate/user';
 import { RevokedToken } from '../entities/revoked-token.entity';
 import { JwtLoginInput } from '../dto/jwt-login.input';
 import { JwtLoginOutput } from '../dto/jwt-login.output';
@@ -23,6 +21,7 @@ import { JwtLogoutInput } from '../dto/jwt-logout.input';
 import { JwtLogoutOutput } from '../dto/jwt-logout.output';
 import { ValidatePayloadInput } from '../dto/validate-payload.input';
 import { ValidatePayloadOutput } from '../dto/validate-payload.output';
+import { AccessTokenInvalidException } from '../exceptions/access-token-invalid.exception';
 
 @ApplicationService()
 export class JwtAuthService extends BaseAuthService {
@@ -38,46 +37,38 @@ export class JwtAuthService extends BaseAuthService {
 
     async validatePayload(
         input: ValidatePayloadInput,
-    ): Promise<Result<ValidatePayloadOutput, ValidationException>> {
+    ): Promise<Result<ValidatePayloadOutput, AccessTokenInvalidException>> {
         return (await this.userJwtService.validatePayload(input.payload))
             .map(user => ClassTransformer.toClassObject(ValidatePayloadOutput, user))
-            .mapErr(() => (
-                new ValidationException(
-                    'payload',
-                    input.payload,
-                    { [PAYLOAD_VALID_CONSTRAINT.key]: PAYLOAD_VALID_CONSTRAINT.message },
-                )
-            ));
+            .mapErr(() => new AccessTokenInvalidException());
     }
 
     async login(
         input: JwtLoginInput,
-    ): Promise<Result<JwtLoginOutput, ValidationException>> {
-        return (await this.userJwtService.generateAccessToken(input.username))
-            .map(accessToken => ({ accessToken }))
-            .mapErr(() => (
-                new ValidationException(
-                    'username',
-                    input.username,
-                    { [USERNAME_ACTIVE_CONSTRAINT.key]: USERNAME_ACTIVE_CONSTRAINT.message },
-                )
-            ));
+    ): Promise<Result<JwtLoginOutput, ValidationContainerException | NonFieldValidationException>> {
+        return ClassValidator.validate(JwtLoginInput, input)
+            .then(proceed(async () => {
+                return (await this.userJwtService.generateAccessToken(input.username, input.password))
+                    .map(accessToken => ({ accessToken }))
+                    .mapErr(() => {
+                        return new NonFieldValidationException({
+                            [CREDENTIALS_VALID_CONSTRAINT.key]: CREDENTIALS_VALID_CONSTRAINT.message
+                        });
+                    });
+            }));
     }
 
     async logout(
         input: JwtLogoutInput,
-    ): Promise<Result<JwtLogoutOutput, ValidationException>> {
-        return (await this.userJwtService.revokeAccessToken(input.token)
+    ): Promise<Result<JwtLogoutOutput, ValidationContainerException | AccessTokenInvalidException>> {
+        return ClassValidator.validate(JwtLogoutInput, input)
+            .then(proceed(async () => {
+                return (await this.userJwtService.revokeAccessToken(input.token))
+                    .mapErr(() => new AccessTokenInvalidException());
+            }))
             .then(proceed(async revokedToken => {
                 await this.revokedTokenRepository.save(revokedToken);
                 return ok({});
-            })))
-            .mapErr(() => (
-                new ValidationException(
-                    'token',
-                    input.token,
-                    { [JWT_TOKEN_VALID_CONSTRAINT.key]: JWT_TOKEN_VALID_CONSTRAINT.message },
-                )
-            ));
+            }));
     }
 }

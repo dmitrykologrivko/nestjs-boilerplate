@@ -12,7 +12,10 @@ import {
     ValidationExceptionsPipe,
     ValidationExceptionsFilter,
 } from '@nestjs-boilerplate/core';
-import { UserService } from '@nestjs-boilerplate/user';
+import {
+    UserService,
+    ResetPasswordTokenInvalidExceptionFilter,
+} from '@nestjs-boilerplate/user';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { AuthorizedUser } from '../decorators/authorized-user.decorator';
 import { ChangePasswordRequest } from '../dto/change-password.request';
@@ -21,7 +24,10 @@ import { ResetPasswordRequest } from '../dto/reset-password.request';
 import { ValidateResetPasswordTokenRequest } from '../dto/validate-reset-password-token.request';
 
 @UsePipes(ValidationExceptionsPipe)
-@UseFilters(ValidationExceptionsFilter)
+@UseFilters(
+    ValidationExceptionsFilter,
+    ResetPasswordTokenInvalidExceptionFilter,
+)
 @ApiController('auth/password')
 export class AuthPasswordController {
     constructor(

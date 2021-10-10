@@ -55,7 +55,11 @@ describe('AuthPasswordController (e2e)', () => {
 
     beforeEach(async () => {
         user = await authTestUtils.makeAndSaveUser();
-        jwtAuthHeader = await authTestUtils.getJwtAuthHeader(user);
+        const accessToken = await authTestUtils.generateJwtToken(
+            UserFactory.DEFAULT_USERNAME,
+            UserFactory.DEFAULT_PASSWORD,
+        );
+        jwtAuthHeader = await authTestUtils.getJwtAuthHeader(accessToken);
     });
 
     afterEach(async () => {

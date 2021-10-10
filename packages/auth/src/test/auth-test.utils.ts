@@ -31,8 +31,8 @@ export class AuthTestUtils {
         return await this.saveUser(user);
     }
 
-    async generateJwtToken(user: User) {
-        const result = await this._userJwtService.generateAccessToken(user.username);
+    async generateJwtToken(username: string, password: string) {
+        const result = await this._userJwtService.generateAccessToken(username, password);
         return result.unwrap();
     }
 
@@ -41,10 +41,8 @@ export class AuthTestUtils {
         await this._revokedTokenRepository.save(result.unwrap());
     }
 
-    async getJwtAuthHeader(userOrToken: User | string) {
-        return `Bearer ${typeof userOrToken === 'string'
-            ? userOrToken
-            : await this.generateJwtToken(userOrToken)}`;
+    async getJwtAuthHeader(token: string) {
+        return `Bearer ${token}`;
     }
 
     async generateResetPasswordToken(user: User) {

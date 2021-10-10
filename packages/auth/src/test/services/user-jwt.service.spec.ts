@@ -10,6 +10,7 @@ import { UserFactory } from '../user.factory';
 
 describe('UserJwtService', () => {
     const USERNAME = UserFactory.DEFAULT_USERNAME;
+    const PASSWORD = UserFactory.DEFAULT_PASSWORD;
     const JTI = 'ff008c0f71d295';
     const USERNAME_QUERY = { where: { _username: USERNAME, _isActive: true } };
     const REVOKED_TOKEN_QUERY = { where: { _token: JTI } };
@@ -50,7 +51,7 @@ describe('UserJwtService', () => {
         it('when user not found should return error', async () => {
             userRepository.findOne.mockReturnValue(Promise.resolve(null));
 
-            const result = await service.generateAccessToken(user.username);
+            const result = await service.generateAccessToken(USERNAME, PASSWORD);
 
             expect(result.isErr()).toBeTruthy();
             expect(result.unwrapErr()).toBeInstanceOf(EntityNotFoundException);
@@ -60,7 +61,7 @@ describe('UserJwtService', () => {
         it('when user exist should return valid token', async () => {
             userRepository.findOne.mockReturnValue(Promise.resolve(user));
 
-            const result = await service.generateAccessToken(user.username);
+            const result = await service.generateAccessToken(USERNAME, PASSWORD);
 
             expect(result.isOk()).toBeTruthy();
 
