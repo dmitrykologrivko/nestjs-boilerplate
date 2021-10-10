@@ -8,7 +8,7 @@
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
   "scripts": {
-    "pre:build": "../../node_modules/ts-node/dist/bin.js pre-build.ts",
+    "prebuild": "../../node_modules/ts-node/dist/bin.js pre-build.ts",
     "build": "rm -rf dist && ../../node_modules/.bin/tsc -p tsconfig.json"
   },
   "peerDependencies": {
