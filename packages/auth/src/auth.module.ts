@@ -1,6 +1,14 @@
 import { Module, DynamicModule } from '@nestjs/common';
-import { PassportModule } from '@nestjs/passport';
-import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
+import {
+    PassportModule,
+    AuthModuleOptions as PassportAuthModuleOptions,
+    AuthModuleAsyncOptions as PassportAuthModuleAsyncOptions,
+} from '@nestjs/passport';
+import {
+    JwtModule,
+    JwtModuleOptions,
+    JwtModuleAsyncOptions,
+} from '@nestjs/jwt';
 import {
     ConfigModule,
     PropertyConfigService,
@@ -23,6 +31,10 @@ import authConfig from './auth.config';
 export interface AuthModuleOptions {
     enableAuthJwtApi?: boolean;
     enableAuthPasswordApi?: boolean;
+    passportModuleOptions?: PassportAuthModuleOptions;
+    passportModuleAsyncOptions?: PassportAuthModuleAsyncOptions;
+    jwtModuleOptions?: JwtModuleOptions;
+    jwtModuleAsyncOptions?: JwtModuleAsyncOptions;
 }
 
 const jwtAsyncOptions = {
@@ -53,8 +65,6 @@ const jwtAsyncOptions = {
             { cli: __dirname + '/**/*.entity{.ts,.js}' },
         ),
         UserModule.forRoot(),
-        PassportModule,
-        JwtModule.registerAsync(jwtAsyncOptions),
     ],
     providers: [
         UserJwtService,
@@ -85,8 +95,27 @@ export class AuthModule {
             controllers.push(AuthPasswordController);
         }
 
+        const imports = [];
+
+        if (!options.passportModuleOptions && !options.passportModuleAsyncOptions) {
+            imports.push(PassportModule);
+        } else if (options.passportModuleAsyncOptions) {
+            imports.push(PassportModule.registerAsync(options.passportModuleAsyncOptions));
+        } else {
+            imports.push(PassportModule.register(options.passportModuleOptions));
+        }
+
+        if (!options.jwtModuleOptions && !options.jwtModuleAsyncOptions) {
+            imports.push(JwtModule.registerAsync(jwtAsyncOptions));
+        } else if (options.jwtModuleAsyncOptions) {
+            imports.push(JwtModule.registerAsync(options.jwtModuleAsyncOptions));
+        } else {
+            imports.push(JwtModule.register(options.jwtModuleOptions));
+        }
+
         return {
             module: AuthModule,
+            imports,
             controllers,
         };
     }
