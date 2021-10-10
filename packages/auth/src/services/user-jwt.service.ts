@@ -94,7 +94,7 @@ export class UserJwtService {
         const user = await this.userRepository.findOne(
             new ActiveUsersQuery({ username }).toFindOptions(),
         );
-        
+
         return user
             ? ok(user)
             : err(new EntityNotFoundException());
