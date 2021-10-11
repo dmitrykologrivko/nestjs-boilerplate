@@ -22,6 +22,8 @@ import { UserFactory } from '../user.factory';
 describe('JwtAuthService', () => {
     const ACCESS_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.e30.ZRrHA1JJJW8opsbCGfG_HACGpVUMN_a9IV7pAx_Zmeo';
     const JTI = 'ff008d0e71d294';
+    const IAT = 1633982876051;
+    const EXP = 1633982876055;
 
     let service: JwtAuthService;
     let userRepository: MockProxy<Repository<User>>;
@@ -32,6 +34,8 @@ describe('JwtAuthService', () => {
         username: string,
         sub: number,
         jti: string,
+        iat: number,
+        exp: number,
     };
     let validatePayloadInput: ValidatePayloadInput;
     let validatePayloadOutput: ValidatePayloadOutput;
@@ -52,6 +56,8 @@ describe('JwtAuthService', () => {
             username: user.username,
             sub: user.id,
             jti: JTI,
+            iat: IAT,
+            exp: EXP,
         };
 
         validatePayloadInput = { payload };

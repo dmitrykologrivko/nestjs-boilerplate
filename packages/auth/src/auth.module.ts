@@ -13,7 +13,6 @@ import {
     ConfigModule,
     PropertyConfigService,
     SECRET_KEY_PROPERTY,
-    DatabaseModule,
 } from '@nestjs-boilerplate/core';
 import { UserModule } from '@nestjs-boilerplate/user';
 import { AUTH_JWT_EXPIRES_IN_PROPERTY } from './constants/auth.properties';
@@ -75,7 +74,6 @@ const jwtAsyncOptions = {
         JwtStrategy,
     ],
     exports: [
-        DatabaseModule,
         JwtAuthService,
         JwtAuthGuard,
         IsAuthenticatedGuard,
