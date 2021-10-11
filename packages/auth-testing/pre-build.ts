@@ -43,7 +43,7 @@ function makeRevokedTokensService() {
 
     copyFileSync(REVOKED_TOKENS_SERVICE_SRC_PATH, REVOKED_TOKENS_SERVICE_DIST_PATH);
     writeFileSync(
-        REVOKED_TOKENS_SERVICE_SRC_PATH,
+        REVOKED_TOKENS_SERVICE_DIST_PATH,
         readFileSync(REVOKED_TOKENS_SERVICE_DIST_PATH, { encoding: 'utf8', flag: 'r' })
             .replace(REPLACE_IMPORT_REGEX, AUTH_MODULE_IMPORT),
     );
