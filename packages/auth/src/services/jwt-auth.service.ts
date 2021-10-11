@@ -14,7 +14,6 @@ import { CREDENTIALS_VALID_CONSTRAINT } from '@nestjs-boilerplate/user';
 import { BaseAuthService } from './base-auth.service';
 import { UserJwtService } from './user-jwt.service';
 import { User } from '@nestjs-boilerplate/user';
-import { RevokedToken } from '../entities/revoked-token.entity';
 import { JwtLoginInput } from '../dto/jwt-login.input';
 import { JwtLoginOutput } from '../dto/jwt-login.output';
 import { JwtLogoutInput } from '../dto/jwt-logout.input';
@@ -28,8 +27,6 @@ export class JwtAuthService extends BaseAuthService {
     constructor(
         @InjectRepository(User)
         protected readonly userRepository: Repository<User>,
-        @InjectRepository(RevokedToken)
-        protected readonly revokedTokenRepository: Repository<RevokedToken>,
         private readonly userJwtService: UserJwtService,
     ) {
         super(userRepository);
@@ -64,11 +61,8 @@ export class JwtAuthService extends BaseAuthService {
         return ClassValidator.validate(JwtLogoutInput, input)
             .then(proceed(async () => {
                 return (await this.userJwtService.revokeAccessToken(input.token))
+                    .map(() => ({}))
                     .mapErr(() => new AccessTokenInvalidException());
-            }))
-            .then(proceed(async revokedToken => {
-                await this.revokedTokenRepository.save(revokedToken);
-                return ok({});
             }));
     }
 }

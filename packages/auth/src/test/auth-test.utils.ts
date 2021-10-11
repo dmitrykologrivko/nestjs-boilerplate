@@ -1,21 +1,22 @@
 import { Repository } from 'typeorm';
+import { Logger } from '@nestjs/common';
 import { getTargetName } from '@nestjs-boilerplate/core';
 import { User, UserPasswordService } from '@nestjs-boilerplate/user';
-import { RevokedToken } from '../entities/revoked-token.entity';
 import { UserJwtService } from '../services/user-jwt.service';
+import { BaseRevokedTokensService } from '../services/base-revoked-tokens.service';
 import { UserFactory } from './user.factory';
 
 export class AuthTestUtils {
     private readonly _userRepository: Repository<User>;
-    private readonly _revokedTokenRepository: Repository<RevokedToken>;
     private readonly _userJwtService: UserJwtService;
     private readonly _userPasswordService: UserPasswordService;
+    private readonly _revokedTokensService: BaseRevokedTokensService;
 
     constructor(app: any) {
         this._userRepository = app.get(`${getTargetName(User)}Repository`);
-        this._revokedTokenRepository = app.get(`${RevokedToken.name}Repository`);
         this._userJwtService = app.get(UserJwtService);
         this._userPasswordService = app.get(UserPasswordService);
+        this._revokedTokensService = app.get(BaseRevokedTokensService);
     }
 
     async saveUser(user: User) {
@@ -37,8 +38,10 @@ export class AuthTestUtils {
     }
 
     async revokeJwtToken(token: string) {
-        const result = await this._userJwtService.revokeAccessToken(token);
-        await this._revokedTokenRepository.save(result.unwrap());
+        if (!this._revokedTokensService) {
+            Logger.warn('Revoked Tokens Service is not setup');
+        }
+        await this._userJwtService.revokeAccessToken(token);
     }
 
     async getJwtAuthHeader(token: string) {
@@ -53,7 +56,7 @@ export class AuthTestUtils {
         return this._userRepository;
     }
 
-    get revokedTokenRepository(): Repository<RevokedToken> {
-        return this._revokedTokenRepository;
+    get revokedTokensService(): BaseRevokedTokensService {
+        return this._revokedTokensService;
     }
 }

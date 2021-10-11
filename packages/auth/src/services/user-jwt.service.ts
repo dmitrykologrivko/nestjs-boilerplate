@@ -11,13 +11,15 @@ import {
     EntityNotFoundException,
 } from '@nestjs-boilerplate/core';
 import { User, ActiveUsersQuery, CredentialsInvalidException } from '@nestjs-boilerplate/user';
-import { RevokedToken } from '../entities/revoked-token.entity';
+import { BaseRevokedTokensService } from './base-revoked-tokens.service';
 import { AccessTokenInvalidException } from '../exceptions/access-token-invalid.exception';
 
 export interface Payload {
     username: string;
     sub: number;
     jti: string;
+    iat: number;
+    exp: number;
 }
 
 @DomainService()
@@ -25,9 +27,8 @@ export class UserJwtService {
     constructor(
         @InjectRepository(User)
         protected readonly userRepository: Repository<User>,
-        @InjectRepository(RevokedToken)
-        protected readonly revokedTokenRepository: Repository<RevokedToken>,
         private readonly jwtService: JwtService,
+        private readonly revokedTokensService?: BaseRevokedTokensService,
     ) {}
 
     async generateAccessToken(
@@ -63,26 +64,30 @@ export class UserJwtService {
     async validatePayload(
         payload: Payload,
     ): Promise<Result<User, EntityNotFoundException | AccessTokenInvalidException>> {
-        const revokedToken = await this.revokedTokenRepository.findOne({
-            where: { _token: payload.jti },
-        });
+        let result = Result.ok(null);
 
-        if (revokedToken) {
-            return err(new AccessTokenInvalidException());
+        if (this.revokedTokensService) {
+            result = (await this.revokedTokensService.isTokenRevoked(payload.jti))
+                .proceed(isTokenRevoked => isTokenRevoked ? err(new AccessTokenInvalidException()) : ok(null));
         }
 
-        return this.findUser(payload.username);
+        return result.proceedAsync(() => this.findUser(payload.username));
     }
 
     async revokeAccessToken(
         token: string,
-    ): Promise<Result<RevokedToken, EntityNotFoundException | AccessTokenInvalidException>> {
+    ): Promise<Result<void, EntityNotFoundException | AccessTokenInvalidException>> {
         return this.verifyJwt(token)
             .then(proceed(async payload => {
                 return (await this.validatePayload(payload))
-                    .map(user => ({ user, payload }));
+                    .map((): Payload => payload);
             }))
-            .then(proceed(val => Promise.resolve(RevokedToken.create(val.payload.jti, val.user))));
+            .then(proceed(async payload => {
+                if (!this.revokedTokensService) {
+                    return ok(null);
+                }
+                return this.revokedTokensService.revokeToken(payload.jti, payload.exp);
+            }));
     }
 
     private async verifyJwt(

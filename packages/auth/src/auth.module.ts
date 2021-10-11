@@ -17,9 +17,9 @@ import {
 } from '@nestjs-boilerplate/core';
 import { UserModule } from '@nestjs-boilerplate/user';
 import { AUTH_JWT_EXPIRES_IN_PROPERTY } from './constants/auth.properties';
-import { RevokedToken } from './entities/revoked-token.entity';
 import { JwtAuthService } from './services/jwt-auth.service';
 import { UserJwtService } from './services/user-jwt.service';
+import { BaseRevokedTokensService } from './services/base-revoked-tokens.service';
 import { AuthJwtController } from './controllers/auth-jwt.controller';
 import { AuthPasswordController } from './controllers/auth-password.controller';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -60,15 +60,15 @@ const jwtAsyncOptions = {
 @Module({
     imports: [
         ConfigModule.forFeature(authConfig),
-        DatabaseModule.withEntities(
-            [RevokedToken],
-            { cli: __dirname + '/**/*.entity{.ts,.js}' },
-        ),
         UserModule.forRoot(),
     ],
     providers: [
         UserJwtService,
         JwtAuthService,
+        {
+            provide: BaseRevokedTokensService,
+            useValue: null,
+        },
         JwtAuthGuard,
         IsAuthenticatedGuard,
         IsAdminGuard,

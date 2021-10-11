@@ -1,6 +1,8 @@
 import * as request from 'supertest';
 import { TestBootstrap } from '@nestjs-boilerplate/testing';
 import { User } from '@nestjs-boilerplate/user';
+import { BaseRevokedTokensService } from '../src/services/base-revoked-tokens.service';
+import { RevokedTokensService } from '../src/test/revoked-tokens.service';
 import { UserFactory } from '../src/test/user.factory';
 import { AuthTestUtils } from '../src/test/auth-test.utils';
 import { AppModule } from './src/app.module';
@@ -13,7 +15,12 @@ describe('AuthJwtController (e2e)', () => {
 
     beforeAll(async () => {
         app = await new TestBootstrap(AppModule)
-            .startApplication();
+            .startApplication({
+                onCreateTestingModule(builder) {
+                    return builder.overrideProvider(BaseRevokedTokensService)
+                        .useValue(new RevokedTokensService());
+                }
+            });
         authTestUtils = new AuthTestUtils(app);
     });
 
@@ -100,7 +107,7 @@ describe('AuthJwtController (e2e)', () => {
         });
 
         afterEach(async () => {
-            await authTestUtils.revokedTokenRepository.clear();
+            await authTestUtils.revokedTokensService.clearRevokedTokens();
         });
 
         it('when request is not authorized should return unauthorized error', async () => {

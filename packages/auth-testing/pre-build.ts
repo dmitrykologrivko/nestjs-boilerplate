@@ -37,6 +37,18 @@ function makeAuthTestUtils() {
     );
 }
 
+function makeRevokedTokensService() {
+    const REVOKED_TOKENS_SERVICE_SRC_PATH = '../auth/src/test/revoked-tokens.service.ts';
+    const REVOKED_TOKENS_SERVICE_DIST_PATH = `${PACKAGE_SRC_DIR}/revoked-tokens.service.ts`;
+
+    copyFileSync(REVOKED_TOKENS_SERVICE_SRC_PATH, REVOKED_TOKENS_SERVICE_DIST_PATH);
+    writeFileSync(
+        REVOKED_TOKENS_SERVICE_SRC_PATH,
+        readFileSync(REVOKED_TOKENS_SERVICE_DIST_PATH, { encoding: 'utf8', flag: 'r' })
+            .replace(REPLACE_IMPORT_REGEX, AUTH_MODULE_IMPORT),
+    );
+}
+
 // Clear source dir
 if (existsSync(PACKAGE_SRC_DIR)) {
     rmdirSync(PACKAGE_SRC_DIR, { recursive: true });
@@ -48,6 +60,7 @@ mkdirSync(PACKAGE_SRC_DIR);
 // Make source files
 makeUserFactory();
 makeAuthTestUtils();
+makeRevokedTokensService();
 
 // Make index.ts
 execSync(`cti create -w -b ${PACKAGE_SRC_DIR}`);

@@ -2,7 +2,6 @@ import { Repository } from 'typeorm';
 import { MockProxy, mock } from 'jest-mock-extended';
 import {
     ClassTransformer,
-    ValidationContainerException,
     NonFieldValidationException,
     ok,
     err,
@@ -12,7 +11,6 @@ import { User } from '@nestjs-boilerplate/user';
 import { AccessTokenInvalidException } from '../../exceptions/access-token-invalid.exception';
 import { JwtAuthService } from '../../services/jwt-auth.service';
 import { UserJwtService } from '../../services/user-jwt.service';
-import { RevokedToken } from '../../entities/revoked-token.entity';
 import { ValidatePayloadInput } from '../../dto/validate-payload.input';
 import { ValidatePayloadOutput } from '../../dto/validate-payload.output';
 import { JwtLoginInput } from '../../dto/jwt-login.input';
@@ -27,11 +25,9 @@ describe('JwtAuthService', () => {
 
     let service: JwtAuthService;
     let userRepository: MockProxy<Repository<User>>;
-    let revokedTokenRepository: MockProxy<Repository<RevokedToken>>;
     let userJwtService: MockProxy<UserJwtService> & UserJwtService;
 
     let user: User;
-    let revokedToken: RevokedToken;
     let payload: {
         username: string,
         sub: number,
@@ -46,14 +42,11 @@ describe('JwtAuthService', () => {
 
     beforeEach(async () => {
         userRepository = mock<Repository<User>>();
-        revokedTokenRepository = mock<Repository<RevokedToken>>();
         userJwtService = mock<UserJwtService>();
 
-        service = new JwtAuthService(userRepository, revokedTokenRepository, userJwtService);
+        service = new JwtAuthService(userRepository, userJwtService);
 
         user = await UserFactory.makeUser();
-
-        revokedToken = RevokedToken.create(JTI, user).unwrap();
 
         payload = {
             username: user.username,
@@ -127,15 +120,13 @@ describe('JwtAuthService', () => {
         });
 
         it('when input is valid should return empty output', async () => {
-            userJwtService.revokeAccessToken.mockReturnValue(Promise.resolve(ok(revokedToken)));
-            revokedTokenRepository.save.mockReturnValue(Promise.resolve(revokedToken));
+            userJwtService.revokeAccessToken.mockReturnValue(Promise.resolve(ok(null)));
 
             const result = await service.logout(jwtLogoutInput);
 
             expect(result.isOk()).toBe(true);
             expect(result.unwrap()).toStrictEqual(jwtLogoutOutput);
             expect(userJwtService.revokeAccessToken.mock.calls[0][0]).toBe(jwtLogoutInput.token);
-            expect(revokedTokenRepository.save.mock.calls[0][0]).toBe(revokedToken);
         });
     });
 });
