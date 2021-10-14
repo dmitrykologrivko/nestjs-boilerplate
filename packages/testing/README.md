@@ -14,7 +14,7 @@ Testing is a package that provides additional tools for testing NestJS Boilerpla
 
 ### First
 
-Install [core package.](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/getting-started.md)
+Install [core package](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/getting-started.md).
 
 ### Then
 
