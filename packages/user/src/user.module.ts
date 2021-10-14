@@ -1,4 +1,4 @@
-import { Module, DynamicModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import {
     ConfigModule,
@@ -76,11 +76,4 @@ const jwtAsyncOptions = {
         ResetPasswordTokenValidConstraint,
     ],
 })
-export class UserModule {
-
-    static forRoot(): DynamicModule {
-        return {
-            module: UserModule,
-        };
-    }
-}
+export class UserModule {}

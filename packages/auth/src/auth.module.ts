@@ -1,14 +1,6 @@
 import { Module, DynamicModule, Type } from '@nestjs/common';
-import {
-    PassportModule,
-    AuthModuleOptions as PassportAuthModuleOptions,
-    AuthModuleAsyncOptions as PassportAuthModuleAsyncOptions,
-} from '@nestjs/passport';
-import {
-    JwtModule,
-    JwtModuleOptions,
-    JwtModuleAsyncOptions,
-} from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import {
     ConfigModule,
     PropertyConfigService,
@@ -29,10 +21,8 @@ import authConfig from './auth.config';
 export interface AuthModuleOptions<T extends BaseRevokedTokensService = BaseRevokedTokensService> {
     enableAuthJwtApi?: boolean;
     enableAuthPasswordApi?: boolean;
-    passportModuleOptions?: PassportAuthModuleOptions;
-    passportModuleAsyncOptions?: PassportAuthModuleAsyncOptions;
-    jwtModuleOptions?: JwtModuleOptions;
-    jwtModuleAsyncOptions?: JwtModuleAsyncOptions;
+    passportModule?: PassportModule;
+    jwtModule?: JwtModule;
     revokedTokensService?: Type<T>;
 }
 
@@ -59,7 +49,7 @@ const jwtAsyncOptions = {
 @Module({
     imports: [
         ConfigModule.forFeature(authConfig),
-        UserModule.forRoot(),
+        UserModule,
     ],
     providers: [
         UserJwtService,
@@ -90,20 +80,16 @@ export class AuthModule {
 
         const imports = [];
 
-        if (!options.passportModuleOptions && !options.passportModuleAsyncOptions) {
-            imports.push(PassportModule);
-        } else if (options.passportModuleAsyncOptions) {
-            imports.push(PassportModule.registerAsync(options.passportModuleAsyncOptions));
+        if (options.passportModule) {
+            imports.push(options.passportModule);
         } else {
-            imports.push(PassportModule.register(options.passportModuleOptions));
+            imports.push(PassportModule);
         }
 
-        if (!options.jwtModuleOptions && !options.jwtModuleAsyncOptions) {
-            imports.push(JwtModule.registerAsync(jwtAsyncOptions));
-        } else if (options.jwtModuleAsyncOptions) {
-            imports.push(JwtModule.registerAsync(options.jwtModuleAsyncOptions));
+        if (options.jwtModule) {
+            imports.push(options.jwtModule);
         } else {
-            imports.push(JwtModule.register(options.jwtModuleOptions));
+            imports.push(JwtModule.registerAsync(jwtAsyncOptions));
         }
 
         const revokedTokensServiceProvider = options.revokedTokensService
