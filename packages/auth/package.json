@@ -12,6 +12,7 @@
     "build": "rm -rf dist && ../../node_modules/.bin/tsc -p tsconfig.json"
   },
   "devDependencies": {
+    "@nestjs/testing": "7.6.18",
     "@nestjs-boilerplate/core": "^0.1.2",
     "@nestjs-boilerplate/user": "^0.1.2",
     "@nestjs-boilerplate/testing": "^0.1.2"

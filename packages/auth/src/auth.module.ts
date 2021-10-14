@@ -110,15 +110,16 @@ export class AuthModule {
             ? { provide: BaseRevokedTokensService, useExisting: options.revokedTokensService }
             : { provide: BaseRevokedTokensService, useValue: null };
 
-        imports.push(revokedTokensServiceProvider);
-
         return {
             module: AuthModule,
             imports,
+            providers: [
+                revokedTokensServiceProvider,
+            ],
             controllers,
             exports: [
                 revokedTokensServiceProvider.provide,
-            ]
+            ],
         };
     }
 }

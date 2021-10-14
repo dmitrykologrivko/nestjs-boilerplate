@@ -1,4 +1,5 @@
 import * as request from 'supertest';
+import { TestingModuleBuilder } from '@nestjs/testing';
 import { TestBootstrap } from '@nestjs-boilerplate/testing';
 import { User } from '@nestjs-boilerplate/user';
 import { BaseRevokedTokensService } from '../src/services/base-revoked-tokens.service';
@@ -16,10 +17,10 @@ describe('AuthJwtController (e2e)', () => {
     beforeAll(async () => {
         app = await new TestBootstrap(AppModule)
             .startApplication({
-                onCreateTestingModule(builder) {
+                onCreateTestingModule(builder: TestingModuleBuilder) {
                     return builder.overrideProvider(BaseRevokedTokensService)
                         .useValue(new RevokedTokensService());
-                }
+                },
             });
         authTestUtils = new AuthTestUtils(app);
     });
