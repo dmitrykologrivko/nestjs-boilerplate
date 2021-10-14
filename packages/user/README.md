@@ -12,7 +12,13 @@ User module provides an implementation of User, Permission and Group entities, a
 
 ## Install
 
-`$ npm install @nestjs-boilerplate/user --save`
+### First
+
+Install [core package.](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/getting-started.md)
+
+### Then
+
+`$ npm install @nestjs-boilerplate/user @nestjs/jwt --save`
 
 ## Overall
 

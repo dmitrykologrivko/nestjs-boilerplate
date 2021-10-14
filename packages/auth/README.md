@@ -8,7 +8,26 @@ less repeating common code from project to project. Inspired by Spring Framework
 
 ## Package description
 
-N/A
+Auth module provides a basis for application authentication based on `passport` and `@nestjs-boilerplate/user` modules.
+It contains helpful services, guards, decorators, and REST API implementation of login/logout, changing/resetting passwords.
+
+## Install
+
+### First
+
+Install [core package](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/getting-started.md)
+and [user package](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/user/README.md#install)
+
+### Then
+
+`$ npm install @nestjs-boilerplate/auth passport @nestjs/passport passport-jwt @nestjs/jwt --save`
+
+## Overall
+
+* [Controllers](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/auth/docs/controllers.md)
+* [Decorators](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/auth/docs/decorators.md)
+* [Guards](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/auth/docs/guards.md)
+* [Services](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/auth/docs/services.md)
 
 ## Keep in touch
 

@@ -1,4 +1,4 @@
-import { Module, DynamicModule } from '@nestjs/common';
+import { Module, DynamicModule, Type } from '@nestjs/common';
 import {
     PassportModule,
     AuthModuleOptions as PassportAuthModuleOptions,
@@ -22,18 +22,18 @@ import { BaseRevokedTokensService } from './services/base-revoked-tokens.service
 import { AuthJwtController } from './controllers/auth-jwt.controller';
 import { AuthPasswordController } from './controllers/auth-password.controller';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { IsAuthenticatedGuard } from './guards/is-authenticated.guard';
 import { IsAdminGuard } from './guards/is-admin.guard';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import authConfig from './auth.config';
 
-export interface AuthModuleOptions {
+export interface AuthModuleOptions<T extends BaseRevokedTokensService = BaseRevokedTokensService> {
     enableAuthJwtApi?: boolean;
     enableAuthPasswordApi?: boolean;
     passportModuleOptions?: PassportAuthModuleOptions;
     passportModuleAsyncOptions?: PassportAuthModuleAsyncOptions;
     jwtModuleOptions?: JwtModuleOptions;
     jwtModuleAsyncOptions?: JwtModuleAsyncOptions;
+    revokedTokensService?: Type<T>;
 }
 
 const jwtAsyncOptions = {
@@ -64,19 +64,14 @@ const jwtAsyncOptions = {
     providers: [
         UserJwtService,
         JwtAuthService,
-        {
-            provide: BaseRevokedTokensService,
-            useValue: null,
-        },
         JwtAuthGuard,
-        IsAuthenticatedGuard,
         IsAdminGuard,
         JwtStrategy,
     ],
     exports: [
+        UserJwtService,
         JwtAuthService,
         JwtAuthGuard,
-        IsAuthenticatedGuard,
         IsAdminGuard,
     ],
 })
@@ -111,10 +106,19 @@ export class AuthModule {
             imports.push(JwtModule.register(options.jwtModuleOptions));
         }
 
+        const revokedTokensServiceProvider = options.revokedTokensService
+            ? { provide: BaseRevokedTokensService, useExisting: options.revokedTokensService }
+            : { provide: BaseRevokedTokensService, useValue: null };
+
+        imports.push(revokedTokensServiceProvider);
+
         return {
             module: AuthModule,
             imports,
             controllers,
+            exports: [
+                revokedTokensServiceProvider.provide,
+            ]
         };
     }
 }

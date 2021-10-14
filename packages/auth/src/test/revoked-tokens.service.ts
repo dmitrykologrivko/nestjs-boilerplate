@@ -4,7 +4,7 @@ import { BaseRevokedTokensService } from '../services/base-revoked-tokens.servic
 export class RevokedTokensService extends BaseRevokedTokensService {
     private store: Set<string> = new Set<string>();
 
-    async revokeToken(token: string, ttl: number): Promise<Result<void, any>> {
+    async revokeToken(token: string, ttl?: number): Promise<Result<void, any>> {
         this.store.add(token);
         return ok(null);
     }
