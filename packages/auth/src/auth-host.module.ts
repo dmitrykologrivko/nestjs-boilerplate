@@ -1,17 +1,38 @@
-import { Module, DynamicModule, Type } from '@nestjs/common';
-import { PassportModule } from '@nestjs/passport';
-import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
+import {
+    Module,
+    DynamicModule,
+    Type,
+} from '@nestjs/common';
+import {
+    AuthModuleOptions as PassportModuleOptions,
+    AuthModuleAsyncOptions as PassportModuleAsyncOptions,
+} from '@nestjs/passport';
+import {
+    JwtModuleOptions,
+    JwtModuleAsyncOptions,
+} from '@nestjs/jwt';
 import { PropertyConfigService, SECRET_KEY_PROPERTY } from '@nestjs-boilerplate/core';
 import { AUTH_JWT_EXPIRES_IN_PROPERTY } from './constants/auth.properties';
 import { BaseRevokedTokensService } from './services/base-revoked-tokens.service';
 
 export interface AuthHostModuleOptions<T extends BaseRevokedTokensService = BaseRevokedTokensService> {
-    passportModule?: PassportModule;
-    jwtModule?: JwtModule;
+    passportModuleOptions?: PassportModuleOptions;
+    passportModuleAsyncOptions?: PassportModuleAsyncOptions;
+    jwtModuleOptions?: JwtModuleOptions;
+    jwtModuleAsyncOptions?: JwtModuleAsyncOptions;
     revokedTokensService?: Type<T>;
 }
 
-const jwtAsyncOptions = {
+export const AUTH_PASSPORT_OPTIONS_TOKEN = 'AUTH_PASSPORT_OPTIONS_TOKEN';
+export const AUTH_JWT_OPTIONS_TOKEN = 'AUTH_JWT_OPTIONS_TOKEN';
+
+const defaultPassportOptionsProvider = {
+    provide: AUTH_PASSPORT_OPTIONS_TOKEN,
+    useValue: {},
+};
+
+const defaultJwtOptionsProvider = {
+    provide: AUTH_JWT_OPTIONS_TOKEN,
     imports: [PropertyConfigService],
     useFactory: (config: PropertyConfigService) => {
         const moduleOptions: JwtModuleOptions = {};
@@ -35,33 +56,56 @@ const jwtAsyncOptions = {
 export class AuthHostModule {
 
     static forRoot(options: AuthHostModuleOptions = {}): DynamicModule {
-        const imports = [];
+        const providers = [];
 
-        if (options.passportModule) {
-            imports.push(options.passportModule);
+        if (options.passportModuleOptions) {
+            providers.push({
+                provide: AUTH_PASSPORT_OPTIONS_TOKEN,
+                useValue: options.passportModuleOptions,
+            });
+        } else if (options.passportModuleAsyncOptions) {
+            providers.push({
+                ...options.passportModuleOptions,
+                provide: AUTH_PASSPORT_OPTIONS_TOKEN,
+            });
         } else {
-            imports.push(PassportModule);
+            providers.push(defaultPassportOptionsProvider);
         }
 
-        if (options.jwtModule) {
-            imports.push(options.jwtModule);
+        if (options.jwtModuleOptions) {
+            providers.push({
+                provide: AUTH_JWT_OPTIONS_TOKEN,
+                useValue: options.jwtModuleOptions,
+            });
+        } else if (options.jwtModuleAsyncOptions) {
+            providers.push({
+                ...options.jwtModuleAsyncOptions,
+                provide: AUTH_PASSPORT_OPTIONS_TOKEN,
+            });
         } else {
-            imports.push(JwtModule.registerAsync(jwtAsyncOptions));
+            providers.push(defaultJwtOptionsProvider);
         }
 
-        const revokedTokensServiceProvider = options.revokedTokensService
-            ? { provide: BaseRevokedTokensService, useExisting: options.revokedTokensService }
-            : { provide: BaseRevokedTokensService, useValue: null };
+        if (options.revokedTokensService) {
+            providers.push({
+                provide: BaseRevokedTokensService,
+                useExisting: options.revokedTokensService,
+            });
+        } else {
+            providers.push({
+                provide: BaseRevokedTokensService,
+                useValue: null,
+            });
+        }
 
         return {
             module: AuthHostModule,
-            imports,
             global: true,
-            providers: [revokedTokensServiceProvider],
+            providers,
             exports: [
-                JwtModule,
-                PassportModule,
-                revokedTokensServiceProvider.provide,
+                AUTH_PASSPORT_OPTIONS_TOKEN,
+                AUTH_JWT_OPTIONS_TOKEN,
+                BaseRevokedTokensService,
             ],
         }
     }

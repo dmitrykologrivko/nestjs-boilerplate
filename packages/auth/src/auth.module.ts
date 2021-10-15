@@ -1,4 +1,6 @@
 import { Module, DynamicModule } from '@nestjs/common';
+import { PassportModule, AuthModuleOptions as PassportModuleOptions } from '@nestjs/passport';
+import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs-boilerplate/core';
 import { UserModule } from '@nestjs-boilerplate/user';
 import { JwtAuthService } from './services/jwt-auth.service';
@@ -9,7 +11,12 @@ import { AuthPasswordController } from './controllers/auth-password.controller';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { IsAdminGuard } from './guards/is-admin.guard';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { AuthHostModule, AuthHostModuleOptions } from './auth-host.module';
+import {
+    AuthHostModule,
+    AuthHostModuleOptions,
+    AUTH_PASSPORT_OPTIONS_TOKEN,
+    AUTH_JWT_OPTIONS_TOKEN,
+} from './auth-host.module';
 import authConfig from './auth.config';
 
 export interface AuthModuleOptions<T extends BaseRevokedTokensService = BaseRevokedTokensService> extends AuthHostModuleOptions<T> {
@@ -19,6 +26,18 @@ export interface AuthModuleOptions<T extends BaseRevokedTokensService = BaseRevo
 
 @Module({
     imports: [
+        PassportModule.registerAsync({
+            useFactory: (options: PassportModuleOptions) => {
+                return options;
+            },
+            inject: [AUTH_PASSPORT_OPTIONS_TOKEN],
+        }),
+        JwtModule.registerAsync({
+            useFactory: (options: JwtModuleOptions) => {
+                return options;
+            },
+            inject: [AUTH_JWT_OPTIONS_TOKEN],
+        }),
         ConfigModule.forFeature(authConfig),
         UserModule,
     ],
