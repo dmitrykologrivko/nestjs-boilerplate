@@ -41,7 +41,8 @@ export class AuthTestUtils {
         if (!this._revokedTokensService) {
             Logger.warn('Revoked Tokens Service is not setup');
         }
-        await this._userJwtService.revokeAccessToken(token);
+        (await this._userJwtService.revokeAccessToken(token))
+            .unwrap();
     }
 
     async getJwtAuthHeader(token: string) {

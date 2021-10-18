@@ -2,10 +2,11 @@ import { Repository } from 'typeorm';
 import { MockProxy, mock } from 'jest-mock-extended';
 import {
     ClassTransformer,
+    PropertyConfigService,
     NonFieldValidationException,
     ok,
     err,
-    EntityNotFoundException
+    EntityNotFoundException,
 } from '@nestjs-boilerplate/core';
 import { User } from '@nestjs-boilerplate/user';
 import { AccessTokenInvalidException } from '../../exceptions/access-token-invalid.exception';
@@ -28,6 +29,7 @@ describe('JwtAuthService', () => {
     let service: JwtAuthService;
     let userRepository: MockProxy<Repository<User>>;
     let userJwtService: MockProxy<UserJwtService> & UserJwtService;
+    let config: MockProxy<PropertyConfigService>;
 
     let user: User;
     let payload: {
@@ -47,8 +49,9 @@ describe('JwtAuthService', () => {
     beforeEach(async () => {
         userRepository = mock<Repository<User>>();
         userJwtService = mock<UserJwtService>();
+        config = mock<PropertyConfigService>();
 
-        service = new JwtAuthService(userRepository, userJwtService);
+        service = new JwtAuthService(userRepository, userJwtService, config);
 
         user = await UserFactory.makeUser();
 
@@ -117,6 +120,7 @@ describe('JwtAuthService', () => {
     describe('#logout()', () => {
         it('when input is not valid should return error', async () => {
             userJwtService.revokeAccessToken.mockReturnValue(Promise.resolve(err(AccessTokenInvalidException)));
+            config.get.mockReturnValue(true);
 
             const result = await service.logout(jwtLogoutInput);
 
@@ -127,6 +131,7 @@ describe('JwtAuthService', () => {
 
         it('when input is valid should return empty output', async () => {
             userJwtService.revokeAccessToken.mockReturnValue(Promise.resolve(ok(null)));
+            config.get.mockReturnValue(true);
 
             const result = await service.logout(jwtLogoutInput);
 

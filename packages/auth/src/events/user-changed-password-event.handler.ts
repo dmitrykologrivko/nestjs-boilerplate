@@ -10,7 +10,7 @@ import {
     proceed,
 } from '@nestjs-boilerplate/core';
 import { UserChangedPasswordEvent } from '@nestjs-boilerplate/user';
-import { AUTH_JTW_REVOKE_AFTER_CHANGED_PASSWORD_PROPERTY } from '../constants/auth.properties';
+import { AUTH_JWT_REVOKE_AFTER_CHANGED_PASSWORD_PROPERTY } from '../constants/auth.properties';
 import { BaseRevokedTokensService } from '../services/base-revoked-tokens.service';
 import { UserJwtService } from '../services/user-jwt.service';
 
@@ -30,7 +30,7 @@ export class UserChangedPasswordEventHandler extends BaseEventHandler<UserChange
 
     async handle(event: UserChangedPasswordEvent, unitOfWork: QueryRunner): Promise<Result<void, EventFailedException>> {
         const jwt: string = event?.extra?.jwt;
-        const canRevoke = this.config.get(AUTH_JTW_REVOKE_AFTER_CHANGED_PASSWORD_PROPERTY);
+        const canRevoke = this.config.get(AUTH_JWT_REVOKE_AFTER_CHANGED_PASSWORD_PROPERTY);
 
         if (!jwt || !canRevoke) {
             return ok(null);

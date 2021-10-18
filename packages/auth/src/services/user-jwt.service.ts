@@ -13,6 +13,7 @@ import {
 import { User, ActiveUsersQuery, CredentialsInvalidException } from '@nestjs-boilerplate/user';
 import { BaseRevokedTokensService } from './base-revoked-tokens.service';
 import { AccessTokenInvalidException } from '../exceptions/access-token-invalid.exception';
+import { RevokedTokensServiceNotConfiguredException } from '../exceptions/revoked-tokens-service-not-configured.exception';
 
 export interface Payload {
     username: string;
@@ -76,7 +77,7 @@ export class UserJwtService {
 
     async revokeAccessToken(
         token: string,
-    ): Promise<Result<void, EntityNotFoundException | AccessTokenInvalidException>> {
+    ): Promise<Result<void, EntityNotFoundException | AccessTokenInvalidException | RevokedTokensServiceNotConfiguredException>> {
         return this.verifyJwt(token)
             .then(proceed(async payload => {
                 return (await this.validatePayload(payload))
@@ -84,7 +85,7 @@ export class UserJwtService {
             }))
             .then(proceed(async payload => {
                 if (!this.revokedTokensService) {
-                    return ok(null);
+                    return err(new RevokedTokensServiceNotConfiguredException());
                 }
                 return this.revokedTokensService.revokeToken(payload.jti, payload.exp);
             }));
