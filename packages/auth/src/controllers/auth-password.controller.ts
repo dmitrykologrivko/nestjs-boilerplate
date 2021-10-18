@@ -18,6 +18,7 @@ import {
 } from '@nestjs-boilerplate/user';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { AuthorizedUser } from '../decorators/authorized-user.decorator';
+import { BearerToken } from '../decorators/bearer-token.decorator';
 import { ChangePasswordRequest } from '../dto/change-password.request';
 import { ForgotPasswordRequest } from '../dto/forgot-password.request';
 import { ResetPasswordRequest } from '../dto/reset-password.request';
@@ -39,6 +40,7 @@ export class AuthPasswordController {
     async changePassword(
         @Request() req,
         @AuthorizedUser() user,
+        @BearerToken() token,
         @Body() input: ChangePasswordRequest,
     ) {
         Logger.log(`Attempt to change password (IP ${req.ip})`);
@@ -47,6 +49,9 @@ export class AuthPasswordController {
             userId: user.id,
             currentPassword: input.currentPassword,
             newPassword: input.newPassword,
+            extra: {
+                jwt: token,
+            },
         });
 
         if (result.isErr()) {

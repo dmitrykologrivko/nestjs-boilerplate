@@ -25,6 +25,7 @@ Install [core package.](https://github.com/dmitrykologrivko/nestjs-boilerplate/b
 * [Entities](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/user/docs/entities.md)
 * [Validation](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/user/docs/validation.md)
 * [Queries](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/user/docs/queries.md)
+* [Events](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/user/docs/events.md)
 * [Services](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/user/docs/services.md)
 * [Commands](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/user/docs/commands.md)
 

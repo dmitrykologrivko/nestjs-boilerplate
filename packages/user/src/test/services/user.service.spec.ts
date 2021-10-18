@@ -1,4 +1,9 @@
-import { Repository } from 'typeorm';
+import {
+    Repository,
+    Connection,
+    QueryRunner,
+    EntityManager,
+} from 'typeorm';
 import { MockProxy, mock } from 'jest-mock-extended';
 import {
     ClassTransformer,
@@ -7,6 +12,7 @@ import {
     PropertyConfigService,
     BaseMailService,
     BaseTemplateService,
+    EventBus,
     ok,
 } from '@nestjs-boilerplate/core';
 import { SimpleIocContainer, createClassValidatorContainer } from '@nestjs-boilerplate/testing';
@@ -27,6 +33,8 @@ import { ChangePasswordInput } from '../../dto/change-password.input';
 import { ForceChangePasswordInput } from '../../dto/force-change-password.input';
 import { ForgotPasswordInput } from '../../dto/forgot-password.input';
 import { ResetPasswordInput } from '../../dto/reset-password.input';
+import { UserChangedPasswordEvent } from '../../events/user-changed-password.event';
+import { UserRecoveredPasswordEvent } from '../../events/user-recovered-password.event';
 import { UserFactory } from '../user.factory';
 
 describe('UserService', () => {
@@ -36,12 +44,15 @@ describe('UserService', () => {
         'TU5MDUwMzQ0Nn0.v8JtgKvH3fk3OEfeBjhtpW_WnJnmvkZF99I0sQ-eV9E';
 
     let container: SimpleIocContainer;
+    let entityManager: MockProxy<EntityManager>;
+    let connection: MockProxy<Connection>;
     let userVerificationService: MockProxy<UserVerificationService> & UserVerificationService;
     let userPasswordService: MockProxy<UserPasswordService> & UserPasswordService;
     let userRepository: MockProxy<Repository<User>>;
     let mailService: MockProxy<BaseMailService>;
     let templateService: MockProxy<BaseTemplateService>;
     let config: MockProxy<PropertyConfigService> & PropertyConfigService;
+    let eventBus: MockProxy<EventBus>;
     let usernameUniqueConstraint: UsernameUniqueConstraint;
     let usernameExistsConstraint: UsernameExistsConstraint;
     let emailUniqueConstraint: EmailUniqueConstraint;
@@ -61,12 +72,21 @@ describe('UserService', () => {
     beforeEach(async () => {
         container = createClassValidatorContainer();
 
+        entityManager = mock<EntityManager>();
+        connection = mock<Connection>({
+            createQueryRunner(mode): QueryRunner {
+                return mock<QueryRunner>({
+                    manager: entityManager,
+                });
+            }
+        });
         userVerificationService = mock<UserVerificationService>();
         userPasswordService = mock<UserPasswordService>();
         userRepository = mock<Repository<User>>();
         mailService = mock<BaseMailService>();
         templateService = mock<BaseTemplateService>();
         config = mock<PropertyConfigService>();
+        eventBus = mock<EventBus>();
         usernameUniqueConstraint = new UsernameUniqueConstraint(userVerificationService);
         usernameExistsConstraint = new UsernameExistsConstraint(userVerificationService);
         emailUniqueConstraint = new EmailUniqueConstraint(userVerificationService);
@@ -75,11 +95,13 @@ describe('UserService', () => {
         resetPasswordTokenValidConstraint = new ResetPasswordTokenValidConstraint(userPasswordService);
 
         service = new UserService(
+            connection,
             userRepository,
             userPasswordService,
             mailService,
             templateService,
             config,
+            eventBus,
         );
 
         container.register(UserVerificationService, userVerificationService, true);
@@ -336,8 +358,9 @@ describe('UserService', () => {
         it('when input is valid should change password', async () => {
             config.get.mockReturnValue(10);
             userPasswordService.comparePassword.mockResolvedValue(true);
-            userRepository.findOne.mockResolvedValue(user);
-            userRepository.save.mockResolvedValue(user);
+            entityManager.findOne.mockResolvedValue(user);
+            entityManager.save.mockResolvedValue(user);
+            eventBus.publish.mockResolvedValue(ok(null));
 
             expect(await user.comparePassword(changePasswordInput.currentPassword)).toBeTruthy();
 
@@ -354,15 +377,19 @@ describe('UserService', () => {
                 .toBe(user.id);
             expect(userPasswordService.comparePassword.mock.calls[0][1])
                 .toBe(UserFactory.DEFAULT_PASSWORD);
-            expect(userRepository.findOne.mock.calls[0][0])
+            expect(entityManager.findOne.mock.calls[0][0])
+                .toStrictEqual(User);
+            expect(entityManager.findOne.mock.calls[0][1])
                 .toStrictEqual({
                     where: {
                         id: user.id,
                         _isActive: true,
                     },
                 });
-            expect(userRepository.save.mock.calls[0][0])
+            expect(entityManager.save.mock.calls[0][0])
                 .toBe(user);
+            expect(eventBus.publish.mock.calls[0][0])
+                .toBeInstanceOf(UserChangedPasswordEvent);
         });
     });
 
@@ -427,8 +454,9 @@ describe('UserService', () => {
         it('when input is valid should change password', async () => {
             config.get.mockReturnValue(10);
             userVerificationService.isUsernameExists.mockResolvedValue(true);
-            userRepository.findOne.mockResolvedValue(user);
-            userRepository.save.mockResolvedValue(user);
+            entityManager.findOne.mockResolvedValue(user);
+            entityManager.save.mockResolvedValue(user);
+            eventBus.publish.mockResolvedValue(ok(null));
 
             expect(await user.comparePassword(UserFactory.DEFAULT_PASSWORD)).toBeTruthy();
 
@@ -443,10 +471,14 @@ describe('UserService', () => {
                 .toBe(USER_PASSWORD_SALT_ROUNDS_PROPERTY);
             expect(userVerificationService.isUsernameExists.mock.calls[0][0])
                 .toBe(user.username);
-            expect(userRepository.findOne.mock.calls[0][0])
+            expect(entityManager.findOne.mock.calls[0][0])
+                .toStrictEqual(User);
+            expect(entityManager.findOne.mock.calls[0][1])
                 .toStrictEqual(USERNAME_QUERY);
-            expect(userRepository.save.mock.calls[0][0])
+            expect(entityManager.save.mock.calls[0][0])
                 .toBe(user);
+            expect(eventBus.publish.mock.calls[0][0])
+                .toBeInstanceOf(UserChangedPasswordEvent);
         });
     });
 
@@ -625,7 +657,8 @@ describe('UserService', () => {
             config.get.mockReturnValue(10);
             userPasswordService.isResetPasswordTokenValid.mockResolvedValue(true);
             userPasswordService.validateResetPasswordToken.mockResolvedValue(ok(user));
-            userRepository.save.mockResolvedValue(user);
+            entityManager.save.mockResolvedValue(user);
+            eventBus.publish.mockResolvedValue(ok(null));
 
             expect(await user.comparePassword(UserFactory.DEFAULT_PASSWORD)).toBeTruthy();
 
@@ -642,8 +675,10 @@ describe('UserService', () => {
                 .toBe(resetPasswordInput.resetPasswordToken);
             expect(userPasswordService.validateResetPasswordToken.mock.calls[0][0])
                 .toBe(resetPasswordInput.resetPasswordToken);
-            expect(userRepository.save.mock.calls[0][0])
+            expect(entityManager.save.mock.calls[0][0])
                 .toBe(user);
+            expect(eventBus.publish.mock.calls[0][0])
+                .toBeInstanceOf(UserRecoveredPasswordEvent);
         });
     });
 });

@@ -115,7 +115,7 @@ Let's implement event handler for order confirmed event.
 ```typescript
 import { QueryRunner } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { BaseEventHandler, EventFailedException } from '@nestjs-boilerplate/core';
+import { BaseEventHandler, EventFailedException, Result, ok } from '@nestjs-boilerplate/core';
 import { OrderConfirmedEvent } from './order-confirmed.event';
 
 @Injectable()
@@ -130,6 +130,7 @@ export class OrderConfirmedEventHandler extends BaseEventHandler<OrderConfirmedE
         unitOfWork?: U,
     ): Promise<Result<void, EventFailedException>> {
         console.log(`Handled ${OrderConfirmedEvent.NAME} for order id ${event.orderId}`);
+        return ok(null);
     }
 }
 ```
@@ -139,7 +140,7 @@ We can also implement the handling of several events in one event handler class.
 ```typescript
 import { QueryRunner } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { BaseEventHandler, EventFailedException } from '@nestjs-boilerplate/core';
+import { BaseEventHandler, EventFailedException, Result, ok } from '@nestjs-boilerplate/core';
 import { OrderConfirmedEvent } from './order-confirmed.event';
 import { OrderCancelledEvent } from './order-cancelled.event';
 
@@ -159,6 +160,7 @@ export class OrderEventsHandler extends BaseEventHandler<OrderConfirmedEvent | O
         } else {
             console.log(`Handled ${OrderCancelledEvent.NAME} for order id ${event.orderId}`);
         }
+        return ok(null);
     }
 }
 ```
@@ -172,11 +174,11 @@ application initialization time. As `EventBus` is an injectable class then we ca
 import { Module, OnModuleInit } from '@nestjs/common';
 import { DatabaseModule, EventBus } from '@nestjs-boilerplate/core';
 import { Order } from './order.entity';
-import { OrderConfirmedEvent } from './order-confirmed.event';
+import { OrderConfirmedEventHandler } from './order-confirmed-event.handler';
 
 @Module({
     imports: [
-        DatabaseModule.withEntities([order]),
+        DatabaseModule.withEntities([Order]),
     ],
     providers: [OrderConfirmedEventHandler],
 })

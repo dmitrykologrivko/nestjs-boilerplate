@@ -1,7 +1,7 @@
-import { Module, DynamicModule } from '@nestjs/common';
+import { Module, DynamicModule, OnModuleInit } from '@nestjs/common';
 import { PassportModule, AuthModuleOptions as PassportModuleOptions } from '@nestjs/passport';
 import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
-import { ConfigModule } from '@nestjs-boilerplate/core';
+import { ConfigModule, EventBus } from '@nestjs-boilerplate/core';
 import { UserModule } from '@nestjs-boilerplate/user';
 import { JwtAuthService } from './services/jwt-auth.service';
 import { UserJwtService } from './services/user-jwt.service';
@@ -11,6 +11,7 @@ import { AuthPasswordController } from './controllers/auth-password.controller';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { IsAdminGuard } from './guards/is-admin.guard';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { UserChangedPasswordEventHandler } from './events/user-changed-password-event.handler';
 import {
     AuthHostModule,
     AuthHostModuleOptions,
@@ -47,6 +48,7 @@ export interface AuthModuleOptions<T extends BaseRevokedTokensService = BaseRevo
         JwtAuthGuard,
         IsAdminGuard,
         JwtStrategy,
+        UserChangedPasswordEventHandler,
     ],
     exports: [
         UserJwtService,
@@ -55,7 +57,15 @@ export interface AuthModuleOptions<T extends BaseRevokedTokensService = BaseRevo
         IsAdminGuard,
     ],
 })
-export class AuthModule {
+export class AuthModule implements OnModuleInit {
+    constructor(
+        private eventBus: EventBus,
+        private userChangedPasswordEventHandler: UserChangedPasswordEventHandler,
+    ) {}
+
+    onModuleInit(): any {
+        this.eventBus.registerHandler(this.userChangedPasswordEventHandler);
+    }
 
     static forRoot(options: AuthModuleOptions = {}): DynamicModule {
         const controllers = [];

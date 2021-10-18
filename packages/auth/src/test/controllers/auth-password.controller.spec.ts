@@ -12,6 +12,7 @@ describe('AuthPasswordController', () => {
         },
         protocol: 'http',
     };
+    const ACCESS_TOKEN = 'qf3fssf54djfsv78';
     const RESET_PASSWORD_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9';
 
     let controller: AuthPasswordController;
@@ -54,14 +55,14 @@ describe('AuthPasswordController', () => {
             userService.changePassword.mockReturnValue(Promise.resolve(err(new ValidationContainerException([]))));
 
             await expect(
-                controller.changePassword(REQUEST, user, changePasswordRequest),
+                controller.changePassword(REQUEST, user, ACCESS_TOKEN, changePasswordRequest),
             ).rejects.toBeInstanceOf(ValidationContainerException);
         });
 
         it('when change password successful should return successful response', async () => {
             userService.changePassword.mockReturnValue(Promise.resolve(ok(null)));
 
-            const result = await controller.changePassword(REQUEST, user, changePasswordRequest);
+            const result = await controller.changePassword(REQUEST, user, ACCESS_TOKEN, changePasswordRequest);
 
             expect(result).toBeNull();
         });

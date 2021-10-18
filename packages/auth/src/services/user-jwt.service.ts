@@ -90,7 +90,7 @@ export class UserJwtService {
             }));
     }
 
-    private async verifyJwt(
+    async verifyJwt(
         token: string,
     ): Promise<Result<Payload, AccessTokenInvalidException>> {
         try {

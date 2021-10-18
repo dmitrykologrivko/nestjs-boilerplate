@@ -25,6 +25,7 @@ operations based on JWT auth type.
 | validateAccessToken  | Verifies JWT token and validates payload. Returns User instance if JTW is not expired and payload is valid (payload token is not blocked and user is active) |
 | validatePayload      | Validates JWT payload. Returns User instance if payload is valid (payload token is not blocked and user is active)                                           |
 | revokeAccessToken    | Blocks token from JWT payload if block list store is configured                                                                                              |
+| verifyJwt            | Verifies JWT token. Returns payload object.                                                                                                                  |
 
 
 ## BaseRevokedTokensService

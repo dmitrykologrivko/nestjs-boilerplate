@@ -7,10 +7,17 @@
 | Method               | Description                                                                |
 |----------------------|----------------------------------------------------------------------------|
 | createUser           | Creates a new user entity                                                  |
-| changePassword       | Allows changing the user password if provided current password is correct  |
+| changePassword       | Allows changing the user password if provided current password is correct. |
 | forceChangePassword  | Allows force changing the user password                                    |
 | forgotPassword       | Generates reset password token and sends to user email                     |
 | resetPassword        | Resets user password by reset password token                               |
+
+This application service publishes the following domain events:
+
+| Event                      | Description                                                                |
+|----------------------------|----------------------------------------------------------------------------|
+| UserChangedPasswordEvent   | Will be published once user changed password                               |
+| UserRecoveredPasswordEvent | Will be published once user completed resetting password                   |
 
 ## User Password Service
 
