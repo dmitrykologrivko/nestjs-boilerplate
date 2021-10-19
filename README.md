@@ -16,7 +16,10 @@ Check out the core package [README](/packages/core/README.md) to getting started
 ## Packages
 
 * [Core](/packages/core/README.md) is the main module of NestJS Boilerplate. Provides a framework with main tools.
-* [Auth](/packages/auth/README.md) module provides a user authentication system for NestJS Boilerplate.
+* [User](/packages/user/README.md) module provides an implementation of User, Permission and Group entities, 
+and additional tools for working with them.
+* [Auth](/packages/auth/README.md) module provides a basis for application authentication of NestJS Boilerplate 
+applications.
 * [Testing](/packages/testing/README.md) module provides helpful tools for unit and e2e tests of NestJS Boilerplate
   applications.
 * [Auth Testing](/packages/auth-testing/README.md) module provides helpful tools for unit and e2e tests of
