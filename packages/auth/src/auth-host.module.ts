@@ -3,6 +3,7 @@ import {
     DynamicModule,
     Type,
 } from '@nestjs/common';
+import { ModuleOptions } from '@nestjs-boilerplate/core';
 import {
     AuthModuleOptions as PassportModuleOptions,
     AuthModuleAsyncOptions as PassportModuleAsyncOptions,
@@ -16,10 +17,8 @@ import { AUTH_JWT_EXPIRES_IN_PROPERTY } from './constants/auth.properties';
 import { BaseRevokedTokensService } from './services/base-revoked-tokens.service';
 
 export interface AuthHostModuleOptions<T extends BaseRevokedTokensService = BaseRevokedTokensService> {
-    passportModuleOptions?: PassportModuleOptions;
-    passportModuleAsyncOptions?: PassportModuleAsyncOptions;
-    jwtModuleOptions?: JwtModuleOptions;
-    jwtModuleAsyncOptions?: JwtModuleAsyncOptions;
+    passport?: ModuleOptions<PassportModuleOptions, PassportModuleAsyncOptions>;
+    jwt?: ModuleOptions<JwtModuleOptions, JwtModuleAsyncOptions>;
     revokedTokensService?: Type<T>;
 }
 
@@ -58,28 +57,28 @@ export class AuthHostModule {
     static forRoot(options: AuthHostModuleOptions = {}): DynamicModule {
         const providers = [];
 
-        if (options.passportModuleOptions) {
+        if (options.passport && !options.passport.type) {
             providers.push({
                 provide: AUTH_PASSPORT_OPTIONS_TOKEN,
-                useValue: options.passportModuleOptions,
+                useValue: options.passport.value,
             });
-        } else if (options.passportModuleAsyncOptions) {
+        } else if (options.passport && options.passport.type === 'async') {
             providers.push({
-                ...options.passportModuleOptions,
+                ...options.passport.value,
                 provide: AUTH_PASSPORT_OPTIONS_TOKEN,
             });
         } else {
             providers.push(defaultPassportOptionsProvider);
         }
 
-        if (options.jwtModuleOptions) {
+        if (options.jwt && !options.jwt.type) {
             providers.push({
                 provide: AUTH_JWT_OPTIONS_TOKEN,
-                useValue: options.jwtModuleOptions,
+                useValue: options.jwt.value,
             });
-        } else if (options.jwtModuleAsyncOptions) {
+        } else if (options.jwt && options.jwt.type === 'async') {
             providers.push({
-                ...options.jwtModuleAsyncOptions,
+                ...options.jwt.value,
                 provide: AUTH_PASSPORT_OPTIONS_TOKEN,
             });
         } else {
