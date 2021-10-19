@@ -4,7 +4,6 @@ import {
     Body,
     Post,
     UseGuards,
-    UseInterceptors,
     UsePipes,
     UseFilters,
 } from '@nestjs/common';
@@ -13,16 +12,23 @@ import {
     ValidationExceptionsPipe,
     ValidationExceptionsFilter,
 } from '@nestjs-boilerplate/core';
+import {
+    UserService,
+    ResetPasswordTokenInvalidExceptionFilter,
+} from '@nestjs-boilerplate/user';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { UserService } from '../services/user.service';
-import { ChangePasswordInput } from '../dto/change-password.input';
-import { ForgotPasswordInput } from '../dto/forgot-password.input';
-import { ResetPasswordInput } from '../dto/reset-password.input';
+import { AuthorizedUser } from '../decorators/authorized-user.decorator';
+import { BearerToken } from '../decorators/bearer-token.decorator';
+import { ChangePasswordRequest } from '../dto/change-password.request';
+import { ForgotPasswordRequest } from '../dto/forgot-password.request';
+import { ResetPasswordRequest } from '../dto/reset-password.request';
 import { ValidateResetPasswordTokenRequest } from '../dto/validate-reset-password-token.request';
-import { BindSelfInterceptor } from '../interceptors/bind-self.interceptor';
 
 @UsePipes(ValidationExceptionsPipe)
-@UseFilters(ValidationExceptionsFilter)
+@UseFilters(
+    ValidationExceptionsFilter,
+    ResetPasswordTokenInvalidExceptionFilter,
+)
 @ApiController('auth/password')
 export class AuthPasswordController {
     constructor(
@@ -30,12 +36,23 @@ export class AuthPasswordController {
     ) {}
 
     @UseGuards(JwtAuthGuard)
-    @UseInterceptors(BindSelfInterceptor)
     @Post('change')
-    async changePassword(@Request() req, @Body() input: ChangePasswordInput) {
+    async changePassword(
+        @Request() req,
+        @AuthorizedUser() user,
+        @BearerToken() token,
+        @Body() input: ChangePasswordRequest,
+    ) {
         Logger.log(`Attempt to change password (IP ${req.ip})`);
 
-        const result = await this.userService.changePassword(input);
+        const result = await this.userService.changePassword({
+            userId: user.id,
+            currentPassword: input.currentPassword,
+            newPassword: input.newPassword,
+            extra: {
+                jwt: token,
+            },
+        });
 
         if (result.isErr()) {
             throw result.unwrapErr();
@@ -45,10 +62,14 @@ export class AuthPasswordController {
     }
 
     @Post('forgot')
-    async forgotPassword(@Request() req, @Body() input: ForgotPasswordInput) {
+    async forgotPassword(@Request() req, @Body() input: ForgotPasswordRequest) {
         Logger.log(`Attempt to send recover password email (IP ${req.ip})`);
 
-        const result = await this.userService.forgotPassword(input);
+        const result = await this.userService.forgotPassword({
+            email: input.email,
+            host: req.headers.host,
+            protocol: req.protocol,
+        });
 
         if (result.isErr()) {
             throw result.unwrapErr();
@@ -58,10 +79,13 @@ export class AuthPasswordController {
     }
 
     @Post('reset')
-    async resetPassword(@Request() req, @Body() input: ResetPasswordInput) {
+    async resetPassword(@Request() req, @Body() input: ResetPasswordRequest) {
         Logger.log(`Attempt to recover password (IP ${req.ip})`);
 
-        const result = await this.userService.resetPassword(input);
+        const result = await this.userService.resetPassword({
+            resetPasswordToken: input.resetPasswordToken,
+            newPassword: input.newPassword,
+        });
 
         if (result.isErr()) {
             throw result.unwrapErr();

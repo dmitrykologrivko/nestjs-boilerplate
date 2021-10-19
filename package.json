@@ -39,7 +39,6 @@
     "lerna": "4.0.0",
     "passport": "0.4.1",
     "passport-jwt": "4.0.0",
-    "passport-local": "1.0.0",
     "reflect-metadata": "0.1.13",
     "rxjs": "7.3.0",
     "supertest": "6.1.5",

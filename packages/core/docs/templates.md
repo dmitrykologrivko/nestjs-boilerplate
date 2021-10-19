@@ -43,8 +43,7 @@ import { AppController } from './app.controller';
    ],
    controllers: [AppController],
 })
-export class AppModule {
-}
+export class AppModule {}
 ```
 
 As the final step, you need to inject `BaseTemplateService` into your application controller and use `render` method
@@ -72,19 +71,24 @@ for sending by emails.
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { BaseTemplateService } from '@nestjs-boilerplate/core';
-import { EmailService } from './email.service';
+import { BaseTemplateService, BaseMailService } from '@nestjs-boilerplate/core';
 
 @Injectable()
 export class WelcomeService {
     constructor(
         protected readonly templateService: BaseTemplateService,
-        protected readonly emailService: EmailService,
+        protected readonly mailService: BaseMailService,
     ) {}
 
     async sendWelcomeEmail(username: string) {
-        const html = await this.templateService.render('welcome.html', { username });
-        await this.emailService.sendEmail('test@example.com', html);
+        const html = await this.templateService.render('welcome.html', { username };
+        return this.mailService.sendMail({
+            subject: 'Welcome!',
+            to: ['test@example.com'],
+            from: 'noreply@example.com',
+            text: '',
+            html,
+        });
     }
 }
 ```

@@ -2,16 +2,16 @@ import { Repository } from 'typeorm';
 import { MockProxy, mock } from 'jest-mock-extended';
 import {
     ClassTransformer,
-    ValidationException,
+    PropertyConfigService,
+    NonFieldValidationException,
     ok,
     err,
+    EntityNotFoundException,
 } from '@nestjs-boilerplate/core';
-import { UserNotFoundException } from '../../exceptions/user-not-found-exception';
+import { User } from '@nestjs-boilerplate/user';
 import { AccessTokenInvalidException } from '../../exceptions/access-token-invalid.exception';
 import { JwtAuthService } from '../../services/jwt-auth.service';
 import { UserJwtService } from '../../services/user-jwt.service';
-import { User } from '../../entities/user.entity';
-import { RevokedToken } from '../../entities/revoked-token.entity';
 import { ValidatePayloadInput } from '../../dto/validate-payload.input';
 import { ValidatePayloadOutput } from '../../dto/validate-payload.output';
 import { JwtLoginInput } from '../../dto/jwt-login.input';
@@ -21,20 +21,23 @@ import { JwtLogoutOutput } from '../../dto/jwt-logout.output';
 import { UserFactory } from '../user.factory';
 
 describe('JwtAuthService', () => {
-    const ACCESS_TOKEN = 'qf3fssf54djfsv78';
+    const ACCESS_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.e30.ZRrHA1JJJW8opsbCGfG_HACGpVUMN_a9IV7pAx_Zmeo';
     const JTI = 'ff008d0e71d294';
+    const IAT = 1633982876051;
+    const EXP = 1633982876055;
 
     let service: JwtAuthService;
     let userRepository: MockProxy<Repository<User>>;
-    let revokedTokenRepository: MockProxy<Repository<RevokedToken>>;
     let userJwtService: MockProxy<UserJwtService> & UserJwtService;
+    let config: MockProxy<PropertyConfigService>;
 
     let user: User;
-    let revokedToken: RevokedToken;
     let payload: {
         username: string,
         sub: number,
         jti: string,
+        iat: number,
+        exp: number,
     };
     let validatePayloadInput: ValidatePayloadInput;
     let validatePayloadOutput: ValidatePayloadOutput;
@@ -45,25 +48,25 @@ describe('JwtAuthService', () => {
 
     beforeEach(async () => {
         userRepository = mock<Repository<User>>();
-        revokedTokenRepository = mock<Repository<RevokedToken>>();
         userJwtService = mock<UserJwtService>();
+        config = mock<PropertyConfigService>();
 
-        service = new JwtAuthService(userRepository, revokedTokenRepository, userJwtService);
+        service = new JwtAuthService(userRepository, userJwtService, config);
 
         user = await UserFactory.makeUser();
-
-        revokedToken = RevokedToken.create(JTI, user).unwrap();
 
         payload = {
             username: user.username,
             sub: user.id,
             jti: JTI,
+            iat: IAT,
+            exp: EXP,
         };
 
         validatePayloadInput = { payload };
         validatePayloadOutput = ClassTransformer.toClassObject(ValidatePayloadOutput, user);
 
-        jwtLoginInput = { username: user.username };
+        jwtLoginInput = { username: user.username, password: UserFactory.DEFAULT_PASSWORD };
         jwtLoginOutput = { accessToken: ACCESS_TOKEN };
 
         jwtLogoutInput = { token: ACCESS_TOKEN };
@@ -71,13 +74,13 @@ describe('JwtAuthService', () => {
     });
 
     describe('#validatePayload()', () => {
-        it('when input is not valid should return validation error', async () => {
+        it('when input is not valid should return error', async () => {
             userJwtService.validatePayload.mockReturnValue(Promise.resolve(err(AccessTokenInvalidException)));
 
             const result = await service.validatePayload(validatePayloadInput);
 
             expect(result.isErr()).toBe(true);
-            expect(result.unwrapErr()).toBeInstanceOf(ValidationException);
+            expect(result.unwrapErr()).toBeInstanceOf(AccessTokenInvalidException);
             expect(userJwtService.validatePayload.mock.calls[0][0]).toBe(validatePayloadInput.payload);
         });
 
@@ -94,12 +97,12 @@ describe('JwtAuthService', () => {
 
     describe('#login()', () => {
         it('when input is not valid should return validation error', async () => {
-            userJwtService.generateAccessToken.mockReturnValue(Promise.resolve(err(UserNotFoundException)));
+            userJwtService.generateAccessToken.mockReturnValue(Promise.resolve(err(EntityNotFoundException)));
 
             const result = await service.login(jwtLoginInput);
 
             expect(result.isErr()).toBe(true);
-            expect(result.unwrapErr()).toBeInstanceOf(ValidationException);
+            expect(result.unwrapErr()).toBeInstanceOf(NonFieldValidationException);
             expect(userJwtService.generateAccessToken.mock.calls[0][0]).toBe(jwtLoginInput.username);
         });
 
@@ -115,26 +118,26 @@ describe('JwtAuthService', () => {
     });
 
     describe('#logout()', () => {
-        it('when input is not valid should return validation error', async () => {
+        it('when input is not valid should return error', async () => {
             userJwtService.revokeAccessToken.mockReturnValue(Promise.resolve(err(AccessTokenInvalidException)));
+            config.get.mockReturnValue(true);
 
             const result = await service.logout(jwtLogoutInput);
 
             expect(result.isErr()).toBe(true);
-            expect(result.unwrapErr()).toBeInstanceOf(ValidationException);
+            expect(result.unwrapErr()).toBeInstanceOf(AccessTokenInvalidException);
             expect(userJwtService.revokeAccessToken.mock.calls[0][0]).toBe(jwtLogoutInput.token);
         });
 
         it('when input is valid should return empty output', async () => {
-            userJwtService.revokeAccessToken.mockReturnValue(Promise.resolve(ok(revokedToken)));
-            revokedTokenRepository.save.mockReturnValue(Promise.resolve(revokedToken));
+            userJwtService.revokeAccessToken.mockReturnValue(Promise.resolve(ok(null)));
+            config.get.mockReturnValue(true);
 
             const result = await service.logout(jwtLogoutInput);
 
             expect(result.isOk()).toBe(true);
             expect(result.unwrap()).toStrictEqual(jwtLogoutOutput);
             expect(userJwtService.revokeAccessToken.mock.calls[0][0]).toBe(jwtLogoutInput.token);
-            expect(revokedTokenRepository.save.mock.calls[0][0]).toBe(revokedToken);
         });
     });
 });

@@ -10,7 +10,6 @@ export default () => {
                     isNotEmpty: 'currentPassword should not be empty',
                     minLength: 'currentPassword must be longer than or equal to 8 characters',
                     maxLength: 'currentPassword must be shorter than or equal to 128 characters',
-                    passwordMatch: 'Does not match with current user password',
                 },
             },
             {

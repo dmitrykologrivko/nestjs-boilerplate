@@ -3,5 +3,7 @@ export class ValidatePayloadInput {
         username: string,
         sub: number,
         jti: string,
+        iat: number,
+        exp: number,
     };
 }

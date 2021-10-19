@@ -33,8 +33,8 @@ export class EventBus {
     }
 
     async publish<U>(event: BaseEvent, unitOfWork?: U): Promise<Result<void, EventsFailedException>> {
-        let container: EventsFailedException = new EventsFailedException();
-        
+        const container: EventsFailedException = new EventsFailedException();
+
         for (const handler of this.handlers) {
             if (handler.supports()?.includes(event.name)) {
                 // The EventBus handles all handlers even if any of them return/throw an exception

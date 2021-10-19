@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { CoreModule, DatabaseModule } from '@nestjs-boilerplate/core';
-import { AuthModule } from '@nestjs-boilerplate/auth';
 import { Note } from './note.entity';
 import { NoteService } from './note.service';
 import { NoteController } from './note.controller';
@@ -13,7 +12,6 @@ import appConfig from './app.config';
                 load: [appConfig],
             },
         }),
-        AuthModule.forRoot(),
         DatabaseModule.withEntities([Note]),
     ],
     providers: [NoteService],

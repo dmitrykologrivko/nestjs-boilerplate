@@ -1,114 +1,71 @@
-import { Module, DynamicModule } from '@nestjs/common';
-import { PassportModule } from '@nestjs/passport';
+import { Module, DynamicModule, OnModuleInit } from '@nestjs/common';
+import { PassportModule, AuthModuleOptions as PassportModuleOptions } from '@nestjs/passport';
 import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
-import {
-    ConfigModule,
-    PropertyConfigService,
-    SECRET_KEY_PROPERTY,
-    DatabaseModule,
-} from '@nestjs-boilerplate/core';
-import { AUTH_JWT_EXPIRES_IN_PROPERTY } from './constants/auth.properties';
-import { User } from './entities/user.entity';
-import { Group } from './entities/group.entity';
-import { Permission } from './entities/permission.entity';
-import { RevokedToken } from './entities/revoked-token.entity';
-import { AuthService } from './services/auth.service';
+import { ConfigModule, EventBus } from '@nestjs-boilerplate/core';
+import { UserModule } from '@nestjs-boilerplate/user';
 import { JwtAuthService } from './services/jwt-auth.service';
-import { UserService } from './services/user.service';
-import { UserVerificationService } from './services/user-verification.service';
-import { UserPasswordService } from './services/user-password.service';
 import { UserJwtService } from './services/user-jwt.service';
+import { BaseRevokedTokensService } from './services/base-revoked-tokens.service';
 import { AuthJwtController } from './controllers/auth-jwt.controller';
 import { AuthPasswordController } from './controllers/auth-password.controller';
-import { LocalAuthGuard } from './guards/local-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { IsAuthenticatedGuard } from './guards/is-authenticated.guard';
 import { IsAdminGuard } from './guards/is-admin.guard';
-import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { EmailUniqueConstraint } from './validation/email-unique.constraint';
-import { EmailActiveConstraint } from './validation/email-active.constraint';
-import { UsernameUniqueConstraint } from './validation/username-unique.constraint';
-import { UsernameExistsConstraint } from './validation/username-exists.constraint';
-import { PasswordMatchConstraint } from './validation/password-match.constraint';
-import { ResetPasswordTokenValidConstraint } from './validation/reset-password-token-valid.constraint';
-import { BindUserInterceptor } from './interceptors/bind-user.interceptor';
-import { BindSelfInterceptor } from './interceptors/bind-self.interceptor';
-import { UsersCommand } from './commands/users.command';
+import { UserChangedPasswordEventHandler } from './events/user-changed-password-event.handler';
+import {
+    AuthHostModule,
+    AuthHostModuleOptions,
+    AUTH_PASSPORT_OPTIONS_TOKEN,
+    AUTH_JWT_OPTIONS_TOKEN,
+} from './auth-host.module';
 import authConfig from './auth.config';
 
-export interface AuthModuleOptions {
+export interface AuthModuleOptions<T extends BaseRevokedTokensService = BaseRevokedTokensService> extends AuthHostModuleOptions<T> {
     enableAuthJwtApi?: boolean;
     enableAuthPasswordApi?: boolean;
 }
 
-const jwtAsyncOptions = {
-    imports: [PropertyConfigService],
-    useFactory: (config: PropertyConfigService) => {
-        const moduleOptions: JwtModuleOptions = {};
-
-        const secret = config.get(SECRET_KEY_PROPERTY);
-        const expiresIn = config.get(AUTH_JWT_EXPIRES_IN_PROPERTY);
-
-        if (secret) {
-            moduleOptions.secret = secret;
-        }
-
-        if (expiresIn) {
-            moduleOptions.signOptions = { expiresIn };
-        }
-
-        return moduleOptions;
-    },
-    inject: [PropertyConfigService],
-};
-
 @Module({
     imports: [
+        PassportModule.registerAsync({
+            useFactory: (options: PassportModuleOptions) => {
+                return options;
+            },
+            inject: [AUTH_PASSPORT_OPTIONS_TOKEN],
+        }),
+        JwtModule.registerAsync({
+            useFactory: (options: JwtModuleOptions) => {
+                return options;
+            },
+            inject: [AUTH_JWT_OPTIONS_TOKEN],
+        }),
         ConfigModule.forFeature(authConfig),
-        DatabaseModule.withEntities(
-            [User, Group, Permission, RevokedToken],
-            { cli: __dirname + '/**/*.entity{.ts,.js}' },
-        ),
-        PassportModule,
-        JwtModule.registerAsync(jwtAsyncOptions),
+        UserModule,
     ],
     providers: [
-        UserService,
-        UserVerificationService,
-        UserPasswordService,
         UserJwtService,
-        AuthService,
         JwtAuthService,
-        LocalAuthGuard,
         JwtAuthGuard,
-        IsAuthenticatedGuard,
         IsAdminGuard,
-        LocalStrategy,
         JwtStrategy,
-        EmailUniqueConstraint,
-        EmailActiveConstraint,
-        UsernameUniqueConstraint,
-        UsernameExistsConstraint,
-        PasswordMatchConstraint,
-        ResetPasswordTokenValidConstraint,
-        BindUserInterceptor,
-        BindSelfInterceptor,
-        UsersCommand,
+        UserChangedPasswordEventHandler,
     ],
     exports: [
-        DatabaseModule,
-        UserService,
+        UserJwtService,
         JwtAuthService,
-        LocalAuthGuard,
         JwtAuthGuard,
-        IsAuthenticatedGuard,
         IsAdminGuard,
-        BindUserInterceptor,
-        BindSelfInterceptor,
     ],
 })
-export class AuthModule {
+export class AuthModule implements OnModuleInit {
+    constructor(
+        private eventBus: EventBus,
+        private userChangedPasswordEventHandler: UserChangedPasswordEventHandler,
+    ) {}
+
+    onModuleInit(): any {
+        this.eventBus.registerHandler(this.userChangedPasswordEventHandler);
+    }
 
     static forRoot(options: AuthModuleOptions = {}): DynamicModule {
         const controllers = [];
@@ -123,6 +80,7 @@ export class AuthModule {
 
         return {
             module: AuthModule,
+            imports: [AuthHostModule.forRoot(options)],
             controllers,
         };
     }

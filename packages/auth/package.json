@@ -8,19 +8,18 @@
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
   "scripts": {
+    "prebuild": "../../node_modules/ts-node/dist/bin.js pre-build.ts",
     "build": "rm -rf dist && ../../node_modules/.bin/tsc -p tsconfig.json"
   },
-  "dependencies": {
-    "bcrypt": "5.0.1",
-    "prompt-sync": "4.2.0",
-    "uuid": "8.3.2"
-  },
   "devDependencies": {
+    "@nestjs/testing": "7.6.18",
     "@nestjs-boilerplate/core": "^0.1.2",
+    "@nestjs-boilerplate/user": "^0.1.2",
     "@nestjs-boilerplate/testing": "^0.1.2"
   },
   "peerDependencies": {
-    "@nestjs-boilerplate/core": "^0.0.0",
+    "@nestjs-boilerplate/core": "^0.1.2",
+    "@nestjs-boilerplate/user": "^0.1.2",
     "@nestjs/common": "^7.6.18",
     "@nestjs/jwt": "^8.0.0",
     "@nestjs/passport": "^8.0.1",
@@ -28,7 +27,6 @@
     "class-validator": "^0.13.1",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
-    "passport-local": "^1.0.0",
     "typeorm": "^0.2.36"
   },
   "repository": {

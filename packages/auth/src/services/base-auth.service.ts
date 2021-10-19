@@ -1,11 +1,10 @@
 import { Repository } from 'typeorm';
-import { Result, ok, err } from '@nestjs-boilerplate/core';
-import { User } from '../entities/user.entity';
+import { Result, ok, err, EntityNotFoundException } from '@nestjs-boilerplate/core';
+import { User, ActiveUsersQuery } from '@nestjs-boilerplate/user';
 import { BaseLoginInput } from '../dto/base-login.input';
 import { BaseLoginOutput } from '../dto/base-login.output';
 import { BaseLogoutInput } from '../dto/base-logout.input';
 import { BaseLogoutOutput } from '../dto/base-logout.output';
-import { UserNotFoundException } from '../exceptions/user-not-found-exception';
 
 export abstract class BaseAuthService {
 
@@ -13,21 +12,15 @@ export abstract class BaseAuthService {
         protected readonly userRepository: Repository<User>,
     ) {}
 
-    async login(input: BaseLoginInput): Promise<Result<BaseLoginOutput, any>> {
-        throw new Error('Login method is not implemented');
-    }
+    abstract login(input: BaseLoginInput): Promise<Result<BaseLoginOutput, any>>;
 
-    async logout(input: BaseLogoutInput): Promise<Result<BaseLogoutOutput, any>> {
-        throw new Error('Logout method is not implemented');
-    }
+    abstract logout(input: BaseLogoutInput): Promise<Result<BaseLogoutOutput, any>>;
 
-    protected async findUser(username: string): Promise<Result<User, UserNotFoundException>> {
-        const user = await this.userRepository.findOne({
-            where: { _username: username, _isActive: true },
-        });
+    protected async findUser(query: ActiveUsersQuery): Promise<Result<User, EntityNotFoundException>> {
+        const user = await this.userRepository.findOne(query.toFindOptions());
 
         if (!user) {
-            return err(new UserNotFoundException());
+            return err(new EntityNotFoundException());
         }
 
         return ok(user);

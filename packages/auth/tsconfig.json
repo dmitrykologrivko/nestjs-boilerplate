@@ -3,5 +3,13 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src"
-  }
+  },
+  "exclude": [
+    "pre-build.ts",
+    "**/dist",
+    "**/test",
+    "**/e2e",
+    "**/*spec.ts",
+    "**/*e2e-spec.ts"
+  ]
 }

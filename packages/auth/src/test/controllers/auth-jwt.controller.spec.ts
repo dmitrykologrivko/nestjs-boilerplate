@@ -3,7 +3,7 @@ import { ValidationException, ok, err } from '@nestjs-boilerplate/core';
 import {
     JWT_TOKEN_VALID_CONSTRAINT,
     USERNAME_ACTIVE_CONSTRAINT,
-} from '../../constants/auth.constraints';
+} from '@nestjs-boilerplate/user';
 import { AuthJwtController } from '../../controllers/auth-jwt.controller';
 import { JwtAuthService } from '../../services/jwt-auth.service';
 import { UserFactory } from '../user.factory';
@@ -12,8 +12,9 @@ describe('AuthJwtController', () => {
     let controller: AuthJwtController;
     let jwtAuthService: MockProxy<JwtAuthService> & JwtAuthService;
 
-    const user = {
+    const jwtLoginInput = {
         username: UserFactory.DEFAULT_USERNAME,
+        password: UserFactory.DEFAULT_PASSWORD,
     };
     const accessToken = 'qf3fssf54djfsv78';
 
@@ -31,25 +32,25 @@ describe('AuthJwtController', () => {
             jwtAuthService.login.mockReturnValue(Promise.resolve(err(
                 new ValidationException(
                     'username',
-                    user.username,
+                    jwtLoginInput.username,
                     { [USERNAME_ACTIVE_CONSTRAINT.key]: USERNAME_ACTIVE_CONSTRAINT.message },
                 ),
             )));
 
             await expect(
-                controller.login(user),
+                controller.login(jwtLoginInput),
             ).rejects.toBeInstanceOf(ValidationException);
 
-            expect(jwtAuthService.login.mock.calls[0][0]).toStrictEqual({ username: user.username });
+            expect(jwtAuthService.login.mock.calls[0][0]).toStrictEqual(jwtLoginInput);
         });
 
         it('when login successful should return access token', async () => {
             jwtAuthService.login.mockReturnValue(Promise.resolve(ok(loginResponse)));
 
-            const result = await controller.login(user);
+            const result = await controller.login(jwtLoginInput);
 
             expect(result).toBe(loginResponse);
-            expect(jwtAuthService.login.mock.calls[0][0]).toStrictEqual({ username: user.username });
+            expect(jwtAuthService.login.mock.calls[0][0]).toStrictEqual(jwtLoginInput);
         });
     });
 

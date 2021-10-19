@@ -6,7 +6,6 @@ export default () => {
                 children: [],
                 constraints: {
                     isJwt: 'resetPasswordToken must be a jwt string',
-                    resetPasswordTokenValid: 'Reset password token is not valid',
                 },
                 property: 'resetPasswordToken',
             },

@@ -1,6 +1,12 @@
 import * as request from 'supertest';
-import { TestBootstrap } from '@nestjs-boilerplate/testing';
-import { User } from '../src/entities';
+import { mock } from 'jest-mock-extended';
+import {
+    TestBootstrap,
+    TestMailModule,
+    MemoryMailService,
+} from '@nestjs-boilerplate/testing';
+import { BaseMailService, BaseTemplateService } from '@nestjs-boilerplate/core';
+import { User } from '@nestjs-boilerplate/user';
 import { UserFactory } from '../src/test/user.factory';
 import { AuthTestUtils } from '../src/test/auth-test.utils';
 import { AppModule } from './src/app.module';
@@ -16,6 +22,7 @@ import validateResetPasswordInvalidTokenResponse from './responses/validate-rese
 
 describe('AuthPasswordController (e2e)', () => {
     let app;
+    let mailService: MemoryMailService;
     let authTestUtils: AuthTestUtils;
 
     let user: User;
@@ -23,7 +30,22 @@ describe('AuthPasswordController (e2e)', () => {
 
     beforeAll(async () => {
         app = await new TestBootstrap(AppModule)
-            .startApplication();
+            .startApplication({
+                testingMetadata: {
+                    imports: [TestMailModule],
+                },
+                onCreateTestingModule: builder => {
+                    const templateService = mock<BaseTemplateService>();
+                    templateService.render.mockResolvedValue('<html><body>Test</body></html>');
+
+                    return builder
+                        .overrideProvider(BaseMailService)
+                        .useClass(MemoryMailService)
+                        .overrideProvider(BaseTemplateService)
+                        .useValue(templateService);
+                },
+                onTestingModuleCreated: testingMetadata => (mailService = testingMetadata.get(BaseMailService)),
+            });
         authTestUtils = new AuthTestUtils(app);
     });
 
@@ -33,7 +55,11 @@ describe('AuthPasswordController (e2e)', () => {
 
     beforeEach(async () => {
         user = await authTestUtils.makeAndSaveUser();
-        jwtAuthHeader = await authTestUtils.getJwtAuthHeader(user);
+        const accessToken = await authTestUtils.generateJwtToken(
+            UserFactory.DEFAULT_USERNAME,
+            UserFactory.DEFAULT_PASSWORD,
+        );
+        jwtAuthHeader = await authTestUtils.getJwtAuthHeader(accessToken);
     });
 
     afterEach(async () => {
@@ -121,11 +147,16 @@ describe('AuthPasswordController (e2e)', () => {
                 newPassword: 'new-password',
             };
 
-            return request(app.getHttpServer())
+            expect(mailService.outbox.length).toBe(0);
+
+            await request(app.getHttpServer())
                 .post('/api/auth/password/forgot')
                 .send(req)
                 .set('Accept', 'application/json')
                 .expect(201);
+
+            expect(mailService.outbox.length).toBe(1);
+            expect(mailService.outbox[0].subject).toBe('Reset Password');
         });
     });
 
@@ -140,8 +171,12 @@ describe('AuthPasswordController (e2e)', () => {
         });
 
         it('when reset password token is not valid should return validation error', async () => {
+            const token = await authTestUtils.generateResetPasswordToken(user);
+            const lastChar = token.charAt(token.length - 1);
+            // Replace the last char in the token to have valid JWT format but not valid reset token itself
+            const wrongToken = `${token.slice(0, -1)}${lastChar === 'a' ? lastChar.toUpperCase() : 'a'}`;
             const req = {
-                resetPasswordToken: `${await authTestUtils.generateResetPasswordToken(user)}.wrong`,
+                resetPasswordToken: wrongToken,
                 newPassword: 'new-password',
             };
 
