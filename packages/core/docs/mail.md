@@ -24,8 +24,7 @@ import {BaseEmailService} from 'packages/core/dist/index';
 class WelcomeService {
     constructor(
         protected readonly emailService: BaseMailService,
-    ) {
-    }
+    ) {}
 
     async sendWelcomeEmail(username: string, email: string) {
         await this.emailService.sendEmail({
@@ -278,7 +277,7 @@ mail service.
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { CoreModule, MailModule } from '@nestjs-boilerplate/core';
+import { CoreModule } from '@nestjs-boilerplate/core';
 import { AppController } from './app.controller';
 import { CustomSmtpMailModule } from './custom-smtp-mail.service';
 import { CustomSmtpMailService } from './custom-smtp-mail.service';
@@ -286,9 +285,9 @@ import { CustomSmtpMailService } from './custom-smtp-mail.service';
 @Module({
     imports: [
         CoreModule.forRoot({
-            mail: MailModule.forRoot<CustomSmtpMailService>({
+            mail: {
                 service: CustomSmtpMailService,
-            })
+            },
         }),
         CustomSmtpMailModule,
     ],
