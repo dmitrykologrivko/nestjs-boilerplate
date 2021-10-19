@@ -4,6 +4,10 @@ import { CommandsScanner } from './commands-scanner';
 import { ManagementService } from './management.service';
 
 @Module({
-    providers: [MetadataScanner, CommandsScanner, ManagementService],
+    providers: [
+        MetadataScanner,
+        CommandsScanner,
+        ManagementService
+    ],
 })
 export class ManagementModule {}

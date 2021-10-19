@@ -31,7 +31,7 @@ Load your app config by using `load` option of config module options.
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { CoreModule, ConfigModule } from '@nestjs-boilerplate/core';
+import { CoreModule } from '@nestjs-boilerplate/core';
 import { AppController } from './app.controller';
 import { CustomSmtpMailModule } from './custom-smtp-mail.service';
 import { CustomSmtpMailService } from './custom-smtp-mail.service';
@@ -40,9 +40,9 @@ import appConfig from './app.config';
 @Module({
     imports: [
         CoreModule.forRoot({
-            config: ConfigModule.forRoot({
+            config: {
                 load: [appConfig],
-            }),
+            },
         }),
         CustomSmtpMailModule,
     ],

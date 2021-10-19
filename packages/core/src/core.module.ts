@@ -1,19 +1,19 @@
 import { Module, DynamicModule } from '@nestjs/common';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
-import { ConfigModule } from './config/config.module';
+import { ConfigModule, ConfigModuleOptions } from './config/config.module';
 import { DatabaseModule } from './database/database.module';
 import { DomainModule } from './domain/domin.module';
-import { MailModule } from './mail/mail.module';
+import { MailModule, MailModuleOptions } from './mail/mail.module';
 import { ServerModule } from './server';
 import { ManagementModule } from './management/management.module';
-import { TemplateModule } from './template/template.module';
+import { TemplateModule, TemplateModuleOptions } from './template/template.module';
 import { UtilsModule } from './utils/utils.module';
+import { Constructor } from './utils/type.utils';
 
 export interface CoreModuleOptions extends Pick<ModuleMetadata, 'imports'> {
-    config?: ConfigModule;
-    database?: DatabaseModule;
-    mail?: MailModule;
-    template?: TemplateModule;
+    config?: ConfigModuleOptions;
+    mail?: MailModuleOptions;
+    template?: TemplateModuleOptions;
 }
 
 @Module({
@@ -30,9 +30,9 @@ export class CoreModule {
         const imports = options.imports || [];
 
         this.connectConfig(imports, options);
-        this.connectDatabase(imports, options);
         this.connectMail(imports, options);
         this.connectTemplate(imports, options);
+        this.connectDatabase(imports);
 
         return {
             module: CoreModule,
@@ -42,25 +42,16 @@ export class CoreModule {
 
     private static connectConfig(imports: any[], options: CoreModuleOptions) {
         if (options.config) {
-            imports.push(options.config);
+            imports.push(ConfigModule.forRoot(options.config));
             return;
         }
 
         imports.push(ConfigModule.forRoot({}));
     }
 
-    private static connectDatabase(imports: any[], options: CoreModuleOptions) {
-        if (options.database) {
-            imports.push(options.database);
-            return;
-        }
-
-        imports.push(DatabaseModule.withConfig());
-    }
-
     private static connectMail(imports: any[], options: CoreModuleOptions) {
         if (options.mail) {
-            imports.push(options.mail);
+            imports.push(MailModule.forRoot(options.mail));
             return;
         }
 
@@ -69,10 +60,20 @@ export class CoreModule {
 
     private static connectTemplate(imports: any[], options: CoreModuleOptions) {
         if (options.template) {
-            imports.push(options.template);
+            imports.push(TemplateModule.forRoot(options.template));
             return;
         }
 
         imports.push(TemplateModule.forRoot());
+    }
+
+    private static connectDatabase(imports: any[]) {
+        if (!this.containsModule(imports, DatabaseModule)) {
+            imports.push(DatabaseModule.withConfig());
+        }
+    }
+
+    private static containsModule(imports: any[], module: Constructor) {
+        return imports.filter(value => value?.module === module).length !== 0;
     }
 }
