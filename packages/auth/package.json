@@ -1,6 +1,6 @@
 {
   "name": "@nestjs-boilerplate/auth",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "",
   "author": "Dmitry Kologrivko",
   "license": "MIT",
@@ -11,14 +11,14 @@
     "build": "rm -rf dist && ../../node_modules/.bin/tsc -p tsconfig.json"
   },
   "devDependencies": {
-    "@nestjs/testing": "^7.6.18",
-    "@nestjs-boilerplate/core": "^0.1.2",
-    "@nestjs-boilerplate/user": "^0.1.2",
-    "@nestjs-boilerplate/testing": "^0.1.2"
+    "@nestjs-boilerplate/core": "^0.2.0",
+    "@nestjs-boilerplate/testing": "^0.2.0",
+    "@nestjs-boilerplate/user": "^0.2.0",
+    "@nestjs/testing": "^7.6.18"
   },
   "peerDependencies": {
-    "@nestjs-boilerplate/core": "^0.1.2",
-    "@nestjs-boilerplate/user": "^0.1.2",
+    "@nestjs-boilerplate/core": "^0.2.0",
+    "@nestjs-boilerplate/user": "^0.2.0",
     "@nestjs/common": "^7.6.18",
     "@nestjs/jwt": "^8.0.0",
     "@nestjs/passport": "^8.0.1",
@@ -35,5 +35,8 @@
   "bugs": {
     "url": "https://github.com/dmitrykologrivko/nestjs-boilerplate/issues"
   },
-  "homepage": "https://github.com/dmitrykologrivko/nestjs-boilerplate#readme"
+  "homepage": "https://github.com/dmitrykologrivko/nestjs-boilerplate#readme",
+  "publishConfig": {
+    "access": "public"
+  }
 }
