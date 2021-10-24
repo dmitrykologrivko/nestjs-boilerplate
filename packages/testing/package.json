@@ -13,7 +13,7 @@
     "@nestjs-boilerplate/core": "^0.1.2"
   },
   "peerDependencies": {
-    "@nestjs-boilerplate/core": "^0.1.1",
+    "@nestjs-boilerplate/core": "^0.1.2",
     "@nestjs/common": "^7.6.18",
     "@nestjs/core": "^7.6.18",
     "@nestjs/testing": "^7.6.18"
