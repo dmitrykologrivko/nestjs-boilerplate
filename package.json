@@ -10,7 +10,7 @@
     "bootstrap": "lerna bootstrap --hoist",
     "version": "lerna version --no-git-tag-version --no-push",
     "postversion": "./node_modules/.bin/ts-node post-version.ts",
-    "publish": "npm run build && lerna publish from-git",
+    "publish": "npm run build && lerna publish from-package",
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "test": "jest --config jest.json",
     "test:watch": "jest --config jest.json --watch",
