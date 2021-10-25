@@ -12,6 +12,12 @@ Testing is a package that provides additional tools for testing NestJS Boilerpla
 
 ## Install
 
+### First
+
+Install [core package](https://github.com/dmitrykologrivko/nestjs-boilerplate/blob/master/packages/core/docs/getting-started.md).
+
+### Then
+
 `$ npm install @nestjs-boilerplate/testing --save-dev`
 
 ## Test bootstrappers
@@ -107,7 +113,7 @@ describe('PostController (e2e)', () => {
         it('should publish post and send email', async () => {
             expect(mailService.outbox.length).toEqual(0);
 
-            request(app.getHttpServer())
+            await request(app.getHttpServer())
                 .post('/api/notes/1/publish')
                 .expect(200);
 

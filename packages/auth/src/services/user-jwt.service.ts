@@ -5,19 +5,22 @@ import {
     InjectRepository,
     DomainService,
     Result,
-    AsyncResult,
     ok,
     err,
+    proceed,
+    EntityNotFoundException,
 } from '@nestjs-boilerplate/core';
-import { User } from '../entities/user.entity';
-import { RevokedToken } from '../entities/revoked-token.entity';
+import { User, ActiveUsersQuery, CredentialsInvalidException } from '@nestjs-boilerplate/user';
+import { BaseRevokedTokensService } from './base-revoked-tokens.service';
 import { AccessTokenInvalidException } from '../exceptions/access-token-invalid.exception';
-import { UserNotFoundException } from '../exceptions/user-not-found-exception';
+import { RevokedTokensServiceNotConfiguredException } from '../exceptions/revoked-tokens-service-not-configured.exception';
 
 export interface Payload {
     username: string;
     sub: number;
     jti: string;
+    iat: number;
+    exp: number;
 }
 
 @DomainService()
@@ -25,14 +28,23 @@ export class UserJwtService {
     constructor(
         @InjectRepository(User)
         protected readonly userRepository: Repository<User>,
-        @InjectRepository(RevokedToken)
-        protected readonly revokedTokenRepository: Repository<RevokedToken>,
         private readonly jwtService: JwtService,
+        private readonly revokedTokensService?: BaseRevokedTokensService,
     ) {}
 
-    async generateAccessToken(username: string): Promise<Result<string, UserNotFoundException>> {
-        return AsyncResult.from(this.findUser(username))
-            .proceed(async user => {
+    async generateAccessToken(
+        username: string,
+        password: string,
+    ): Promise<Result<string, EntityNotFoundException | CredentialsInvalidException>> {
+        return this.findUser(username)
+            .then(proceed(async (user: User): Promise<Result<User, CredentialsInvalidException>> => {
+                if ((await user.comparePassword(password))) {
+                    return ok(user);
+                } else {
+                    return err(new CredentialsInvalidException());
+                }
+            }))
+            .then(proceed(async user => {
                 const token = await this.jwtService.signAsync({
                     username: user.username,
                     sub: user.id,
@@ -40,48 +52,48 @@ export class UserJwtService {
                 });
 
                 return ok(token);
-            })
-            .toPromise();
+            }));
     }
 
-    async validateAccessToken(token: string): Promise<Result<User, AccessTokenInvalidException>> {
-        return AsyncResult.from(this.verifyJwt(token))
-            .proceed(payload => this.validatePayload(payload))
-            .toPromise();
+    async validateAccessToken(
+        token: string,
+    ): Promise<Result<User, EntityNotFoundException | AccessTokenInvalidException>> {
+        return this.verifyJwt(token)
+            .then(proceed(payload => this.validatePayload(payload)));
     }
 
-    async validatePayload(payload: Payload): Promise<Result<User, AccessTokenInvalidException>> {
-        return AsyncResult.from(async () => {
-                const revokedToken = await this.revokedTokenRepository.findOne({
-                    where: { _token: payload.jti },
-                });
+    async validatePayload(
+        payload: Payload,
+    ): Promise<Result<User, EntityNotFoundException | AccessTokenInvalidException>> {
+        let result = Result.ok(null);
 
-                if (revokedToken) {
-                    return err(new AccessTokenInvalidException());
+        if (this.revokedTokensService) {
+            result = (await this.revokedTokensService.isTokenRevoked(payload.jti))
+                .proceed(isTokenRevoked => isTokenRevoked ? err(new AccessTokenInvalidException()) : ok(null));
+        }
+
+        return result.proceedAsync(() => this.findUser(payload.username));
+    }
+
+    async revokeAccessToken(
+        token: string,
+    ): Promise<Result<void, EntityNotFoundException | AccessTokenInvalidException | RevokedTokensServiceNotConfiguredException>> {
+        return this.verifyJwt(token)
+            .then(proceed(async payload => {
+                return (await this.validatePayload(payload))
+                    .map((): Payload => payload);
+            }))
+            .then(proceed(async payload => {
+                if (!this.revokedTokensService) {
+                    return err(new RevokedTokensServiceNotConfiguredException());
                 }
-
-                return ok(null);
-            })
-            .proceed(() => {
-                return AsyncResult.from(this.findUser(payload.username))
-                    .mapErr(() => new AccessTokenInvalidException())
-                    .toPromise();
-            })
-            .toPromise();
+                return this.revokedTokensService.revokeToken(payload.jti, payload.exp);
+            }));
     }
 
-    async revokeAccessToken(token: string): Promise<Result<RevokedToken, AccessTokenInvalidException>> {
-        return await AsyncResult.from(this.verifyJwt(token))
-            .proceed(payload => {
-                return AsyncResult.from(this.validatePayload(payload))
-                    .map(user => ({ user, payload }))
-                    .toPromise();
-            })
-            .proceed(val => Promise.resolve(RevokedToken.create(val.payload.jti, val.user)))
-            .toPromise();
-    }
-
-    private async verifyJwt(token: string): Promise<Result<Payload, AccessTokenInvalidException>> {
+    async verifyJwt(
+        token: string,
+    ): Promise<Result<Payload, AccessTokenInvalidException>> {
         try {
             const payload = await this.jwtService.verifyAsync(token);
             return ok(payload);
@@ -90,15 +102,15 @@ export class UserJwtService {
         }
     }
 
-    private async findUser(username: string): Promise<Result<User, UserNotFoundException>> {
-        const user = await this.userRepository.findOne({
-            where: { _username: username, _isActive: true },
-        });
+    private async findUser(
+        username: string,
+    ): Promise<Result<User, EntityNotFoundException>> {
+        const user = await this.userRepository.findOne(
+            new ActiveUsersQuery({ username }).toFindOptions(),
+        );
 
-        if (!user) {
-            return err(new UserNotFoundException());
-        }
-
-        return ok(user);
+        return user
+            ? ok(user)
+            : err(new EntityNotFoundException());
     }
 }

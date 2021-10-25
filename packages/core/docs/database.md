@@ -17,21 +17,24 @@ You can connect your databases by using `withOptions` method which provides a wa
 of `DatabaseModuleOptions` for multiple databases.
 
 ```typescript
-import {Module} from '@nestjs/common';
-import {DatabaseModule} from 'packages/core/dist/index';
+import { Module } from '@nestjs/common';
+import { CoreModule, DatabaseModule } from 'packages/core/dist/index';
 
 @Module({
     imports: [
-        DatabaseModule.withOptions([{
-            type: 'sqlite',
-            database: 'database',
-            autoLoadEntities: true,
-            synchronize: true,
-        }]),
+       CoreModule.forRoot({
+          imports: [
+             DatabaseModule.withOptions([{
+                type: 'sqlite',
+                database: 'database',
+                autoLoadEntities: true,
+                synchronize: true,
+             }]),
+          ],
+       }),
     ],
 })
-export class AppModule {
-}
+export class AppModule {}
 ```
 
 Also, you can load database connection options from `ormconfig.json` file
@@ -45,17 +48,21 @@ helpful if you want to keep using `ormconfig.json` file.
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { DatabaseModule, DEFAULT_CONNECTION_NAME } from '@nestjs-boilerplate/core';
+import { CoreModule, DatabaseModule, DEFAULT_CONNECTION_NAME } from '@nestjs-boilerplate/core';
 
 @Module({
     imports: [
-        DatabaseModule.withOptions(
-            [{
-                name: DEFAULT_CONNECTION_NAME,
-                autoLoadEntities: true
-            }],
-            true,
-        ),
+       CoreModule.forRoot({
+          imports: [
+             DatabaseModule.withOptions(
+                  [{
+                     name: DEFAULT_CONNECTION_NAME,
+                     autoLoadEntities: true
+                  }],
+                  true,
+             ),
+          ],
+       }),
     ],
 })
 export class AppModule {}
@@ -66,15 +73,19 @@ from defined application config.
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { DatabaseModule, Property } from '@nestjs-boilerplate/core';
+import { CoreModule, DatabaseModule, Property } from '@nestjs-boilerplate/core';
 
 const DEFAULT_DATABASE_PROPERTY: Property<DatabaseModuleOptions> = { path: 'databases.default' };
 
 @Module({
   imports: [
-      DatabaseModule.withConfig([
-          DEFAULT_DATABASE_PROPERTY,
-      ]),
+      CoreModule.forRoot({
+         imports: [
+            DatabaseModule.withConfig([
+               DEFAULT_DATABASE_PROPERTY,
+            ]),
+         ],
+      }),
   ],
 })
 export class AppModule {}
@@ -264,7 +275,7 @@ To use original entity as relation of other entities of the external package ple
 ```typescript
 import { Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { Entity, getTargetName } from '@nestjs-boilerplate/core';
-import { CustomUser } from './custom-user.entity';
+import { User } from './user.entity';
 
 @Entity()
 export class Token {

@@ -1,12 +1,18 @@
 import { MockProxy, mock } from 'jest-mock-extended';
 import { ValidationContainerException, ok, err } from '@nestjs-boilerplate/core';
 import { AuthPasswordController } from '../../controllers/auth-password.controller';
-import { UserService } from '../../services/user.service';
-import { User } from '../../entities/user.entity';
+import { User, UserService } from '@nestjs-boilerplate/user';
 import { UserFactory } from '../user.factory';
 
 describe('AuthPasswordController', () => {
-    const REQUEST = { ip: '0.0.0.0' };
+    const REQUEST = {
+        ip: '0.0.0.0',
+        headers: {
+            host: 'localhost',
+        },
+        protocol: 'http',
+    };
+    const ACCESS_TOKEN = 'qf3fssf54djfsv78';
     const RESET_PASSWORD_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9';
 
     let controller: AuthPasswordController;
@@ -26,7 +32,6 @@ describe('AuthPasswordController', () => {
         user = await UserFactory.makeUser();
 
         changePasswordRequest = {
-            userId: user.id,
             currentPassword: UserFactory.DEFAULT_PASSWORD,
             newPassword: 'new-password',
         };
@@ -50,14 +55,14 @@ describe('AuthPasswordController', () => {
             userService.changePassword.mockReturnValue(Promise.resolve(err(new ValidationContainerException([]))));
 
             await expect(
-                controller.changePassword(REQUEST, changePasswordRequest),
+                controller.changePassword(REQUEST, user, ACCESS_TOKEN, changePasswordRequest),
             ).rejects.toBeInstanceOf(ValidationContainerException);
         });
 
         it('when change password successful should return successful response', async () => {
             userService.changePassword.mockReturnValue(Promise.resolve(ok(null)));
 
-            const result = await controller.changePassword(REQUEST, changePasswordRequest);
+            const result = await controller.changePassword(REQUEST, user, ACCESS_TOKEN, changePasswordRequest);
 
             expect(result).toBeNull();
         });

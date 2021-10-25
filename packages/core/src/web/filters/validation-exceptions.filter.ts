@@ -1,5 +1,4 @@
 import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
-import { Response } from 'express';
 import { ValidationException } from '../../utils/validation/validation.exception';
 import { NonFieldValidationException } from '../../utils/validation/non-field-validation.exception';
 import { ValidationContainerException } from '../../utils/validation/validation-container.exception';
@@ -8,7 +7,7 @@ import { ValidationContainerException } from '../../utils/validation/validation-
 export class ValidationExceptionsFilter implements ExceptionFilter {
     catch(exception: unknown, host: ArgumentsHost) {
         const ctx = host.switchToHttp();
-        const response: Response = ctx.getResponse();
+        const response = ctx.getResponse();
 
         const statusCode = 400;
         let message = [];
@@ -21,7 +20,7 @@ export class ValidationExceptionsFilter implements ExceptionFilter {
             message = message.concat(exception.validationExceptions);
         }
 
-        response.status(400).json({
+        response.status(400).send({
             statusCode,
             error: 'Bad Request',
             message,

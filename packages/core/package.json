@@ -1,6 +1,6 @@
 {
   "name": "@nestjs-boilerplate/core",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "",
   "author": "Dmitry Kologrivko",
   "license": "MIT",
@@ -10,21 +10,21 @@
     "build": "rm -rf dist && ../../node_modules/.bin/tsc -p tsconfig.json"
   },
   "dependencies": {
-    "create-ts-index": "1.13.6",
-    "minimist": "1.2.5",
-    "nodemailer": "6.6.3",
-    "nunjucks": "3.2.3",
-    "sqlite3": "5.0.2"
+    "create-ts-index": "^1.13.6",
+    "minimist": "^1.2.5",
+    "nodemailer": "^6.7.0",
+    "nunjucks": "^3.2.3",
+    "sqlite3": "^5.0.2"
   },
   "peerDependencies": {
     "@nestjs/common": "^7.6.18",
-    "@nestjs/config": "^1.0.1",
+    "@nestjs/config": "^1.0.2",
     "@nestjs/core": "^7.6.18",
     "@nestjs/typeorm": "^7.1.5",
-    "class-transformer": "^0.4.0",
-    "class-validator": "^0.13.1",
+    "class-transformer": "~0.4.0",
+    "class-validator": "~0.13.1",
     "reflect-metadata": "^0.1.13",
-    "typeorm": "^0.2.36"
+    "typeorm": "^0.2.38"
   },
   "peerDependenciesMeta": {
     "@nestjs/platform-express": {
@@ -32,8 +32,8 @@
     }
   },
   "devDependencies": {
-    "@types/nodemailer": "6.4.4",
-    "@types/nunjucks": "3.1.5"
+    "@types/nodemailer": "^6.4.4",
+    "@types/nunjucks": "^3.2.0"
   },
   "repository": {
     "type": "git",

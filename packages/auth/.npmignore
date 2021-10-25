@@ -4,3 +4,4 @@ e2e
 package-lock.json
 tslint.json
 tsconfig.json
+pre-build.ts

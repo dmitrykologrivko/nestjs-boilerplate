@@ -1,28 +1,30 @@
 {
   "name": "@nestjs-boilerplate/auth-testing",
-  "private": "true",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "",
   "author": "Dmitry Kologrivko",
   "license": "MIT",
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
   "scripts": {
-    "build": "ts-node build-package.ts && rm -rf dist && ../../node_modules/.bin/tsc -p tsconfig.json"
+    "prebuild": "../../node_modules/ts-node/dist/bin.js pre-build.ts",
+    "build": "rm -rf dist && ../../node_modules/.bin/tsc -p tsconfig.json"
   },
   "peerDependencies": {
-    "@nestjs-boilerplate/auth": "^0.0.0",
-    "@nestjs-boilerplate/core": "^0.0.0",
-    "@nestjs-boilerplate/testing": "^0.0.0",
+    "@nestjs-boilerplate/auth": "^0.2.0",
+    "@nestjs-boilerplate/core": "^0.2.0",
+    "@nestjs-boilerplate/testing": "^0.2.0",
+    "@nestjs-boilerplate/user": "^0.2.0",
     "@nestjs/common": "^7.6.18",
     "@nestjs/core": "^7.6.18",
     "@nestjs/testing": "^7.6.18"
   },
   "devDependencies": {
-    "@nestjs-boilerplate/auth": "^0.1.2",
-    "@nestjs-boilerplate/core": "^0.1.2",
-    "@nestjs-boilerplate/testing": "^0.1.2",
-    "create-ts-index": "1.13.6"
+    "@nestjs-boilerplate/auth": "^0.2.0",
+    "@nestjs-boilerplate/core": "^0.2.0",
+    "@nestjs-boilerplate/testing": "^0.2.0",
+    "@nestjs-boilerplate/user": "^0.2.0",
+    "create-ts-index": "^1.13.6"
   },
   "repository": {
     "type": "git",
@@ -31,5 +33,8 @@
   "bugs": {
     "url": "https://github.com/dmitrykologrivko/nestjs-boilerplate/issues"
   },
-  "homepage": "https://github.com/dmitrykologrivko/nestjs-boilerplate#readme"
+  "homepage": "https://github.com/dmitrykologrivko/nestjs-boilerplate#readme",
+  "publishConfig": {
+    "access": "public"
+  }
 }
