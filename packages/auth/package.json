@@ -10,23 +10,23 @@
     "prebuild": "../../node_modules/ts-node/dist/bin.js pre-build.ts",
     "build": "rm -rf dist && ../../node_modules/.bin/tsc -p tsconfig.json"
   },
+  "peerDependencies": {
+    "@nestjs-boilerplate/core": "^0.2.0",
+    "@nestjs-boilerplate/user": "^0.2.0",
+    "@nestjs/common": "^9.0.0",
+    "@nestjs/jwt": "^9.0.0",
+    "@nestjs/passport": "^9.0.0",
+    "class-transformer": "~0.5.1",
+    "class-validator": "~0.13.2",
+    "passport": "^0.6.0",
+    "passport-jwt": "^4.0.0",
+    "typeorm": "^0.3.0"
+  },
   "devDependencies": {
     "@nestjs-boilerplate/core": "^0.2.0",
     "@nestjs-boilerplate/testing": "^0.2.0",
     "@nestjs-boilerplate/user": "^0.2.0",
-    "@nestjs/testing": "^7.6.18"
-  },
-  "peerDependencies": {
-    "@nestjs-boilerplate/core": "^0.2.0",
-    "@nestjs-boilerplate/user": "^0.2.0",
-    "@nestjs/common": "^7.6.18",
-    "@nestjs/jwt": "^8.0.0",
-    "@nestjs/passport": "^8.0.1",
-    "class-transformer": "~0.4.0",
-    "class-validator": "~0.13.1",
-    "passport": "^0.4.1",
-    "passport-jwt": "^4.0.0",
-    "typeorm": "^0.2.38"
+    "@nestjs/testing": "^9.2.1"
   },
   "repository": {
     "type": "git",

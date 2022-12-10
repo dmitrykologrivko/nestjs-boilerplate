@@ -19,12 +19,17 @@ export class NoteController {}
 ```
 
 Additional decorator options:
-`useGlobalPrefix` allows using a globally defined prefix instead of automatically add `api` prefix.
-`rootPrefix` allows overriding `api` prefix to custom provided.
-`version` allows providing version of api.
-`versionPrefix` allows providing custom version prefix, default `v` value.
-`additionalPrefixes` allows providing additional prefixes that will be added before the controller route path prefix.
+`rootPrefix` allows overriding `api` prefix to custom provided.\
+`versionNumber` allows providing version of api.\
+`versionPrefix` allows providing custom version prefix, default `v` value.\
+`additionalPrefixes` allows providing additional prefixes that will be added before the controller route path prefix.\
 `path` allows providing the controller route path prefix.
+
+It is an optional decorator you can use the usual `Controller` decorator. 
+Furthermore, you can use [global prefixes](https://docs.nestjs.com/faq/global-prefix) and 
+[versioning](https://docs.nestjs.com/techniques/versioning) available out of the box.
+It might be more useful in your scenario. However, if you want to have different APIs endpoints (web, mobile, 
+vendor, etc.) `ApiController` decorator will be helpful.
 
 ### ListFilter
 

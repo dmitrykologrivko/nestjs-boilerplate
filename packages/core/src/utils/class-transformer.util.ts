@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import {
-    classToPlain,
-    classToClass,
-    plainToClass,
+    instanceToPlain,
+    instanceToInstance,
+    plainToInstance,
     ClassTransformOptions,
 } from 'class-transformer';
 import { Constructor } from './type.utils';
@@ -22,7 +22,7 @@ export class ClassTransformer {
      * @returns {T} class (constructor) object
      */
     static toClassObject<T, V>(cls: Constructor<T>, plain: V, options?: ClassTransformOptions): T {
-        return plainToClass(cls, plain, options);
+        return plainToInstance(cls, plain, options);
     }
 
     /**
@@ -33,7 +33,7 @@ export class ClassTransformer {
      * @return array of class (constructor) objects
      */
     static toClassObjects<T, V>(cls: Constructor<T>, plain: V[], options?: ClassTransformOptions): T[] {
-        return plainToClass(cls, plain, options);
+        return plainToInstance(cls, plain, options);
     }
 
     /**
@@ -44,7 +44,7 @@ export class ClassTransformer {
      */
     // tslint:disable-next-line:ban-types
     static toLiteralObject<T>(object: T, options?: ClassTransformOptions): Object {
-        return classToPlain(object, options);
+        return instanceToPlain(object, options);
     }
 
     /**
@@ -56,7 +56,7 @@ export class ClassTransformer {
     // tslint:disable-next-line:ban-types
     static toLiteralObjects<T>(object: T[], options?: ClassTransformOptions): Object[] {
         // @ts-ignore
-        return classToPlain(object, options);
+        return instanceToPlain(object, options);
     }
 
     /**
@@ -66,7 +66,7 @@ export class ClassTransformer {
      * @return copy of provided object
      */
     static copyObject<T>(object: T, options?: ClassTransformOptions): T {
-        return classToClass(object, options);
+        return instanceToInstance(object, options);
     }
 
     /**
@@ -76,7 +76,7 @@ export class ClassTransformer {
      * @return array of copies of provided objects
      */
     static copyObjects<T>(object: T[], options?: ClassTransformOptions): T[] {
-        return classToClass(object, options);
+        return instanceToInstance(object, options);
     }
 
     /**

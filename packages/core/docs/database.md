@@ -37,37 +37,6 @@ import { CoreModule, DatabaseModule } from 'packages/core/dist/index';
 export class AppModule {}
 ```
 
-Also, you can load database connection options from `ormconfig.json` file
-(see [official docs](https://typeorm.io/#/using-ormconfig/using-ormconfigjson)). You need to provide an array of
-connection options as the first parameter and `true` as the second parameter of `withOptions` method.
-Provided connection options will be merged with the connection options from `ormconfig.json` file.
-In the array of connection options each element needs to contain a name of connection option from config file
-to have association with it. It can be helpful if you need to provide options that typeorm does not support
-placing in the `ormconfig.json` file, for example `retryAttempts` or `autoLoadEntities` options. It can be also
-helpful if you want to keep using `ormconfig.json` file.
-
-```typescript
-import { Module } from '@nestjs/common';
-import { CoreModule, DatabaseModule, DEFAULT_CONNECTION_NAME } from '@nestjs-boilerplate/core';
-
-@Module({
-    imports: [
-       CoreModule.forRoot({
-          imports: [
-             DatabaseModule.withOptions(
-                  [{
-                     name: DEFAULT_CONNECTION_NAME,
-                     autoLoadEntities: true
-                  }],
-                  true,
-             ),
-          ],
-       }),
-    ],
-})
-export class AppModule {}
-```
-
 You can connect your databases by using `withConfig` method which provides a way to load `DatabaseModuleOptions`
 from defined application config.
 
@@ -182,7 +151,7 @@ import { User } from './user.entity';
 
 @Module({
   imports: [
-      DatabaseModule.withEntities([User], { connection: 'authConnection' }),
+      DatabaseModule.withEntities([User], { dataSource: 'authConnection' }),
   ],
 })
 export class UserModule {}
@@ -351,7 +320,7 @@ import * as migrations from './migrations';
 
 @Module({
   imports: [
-      DatabaseModule.withMigrations(migrations, { connection: 'authConnection' }),
+      DatabaseModule.withMigrations(migrations, { dataSource: 'authConnection' }),
   ],
 })
 export class AppModule {}
@@ -371,7 +340,7 @@ import * as migrations from './migrations';
   imports: [
       DatabaseModule.withMigrations(
           migrations,
-          { cli: __dirname + '/migrations/[!index]*{.ts,.js}' },
+          { cli: __dirname + '/migrations/!(index)*{.ts,.js}' },
       ),
       DatabaseModule.withConfig(),
   ],
@@ -402,9 +371,7 @@ Example:\
 
 **Optional params:**\
 `connection` name of the database connection. Using `default` as default name if actual value is not provided.\
-`destination` destination folder for the migration file. Default value `src/migrations`.\
-`useTypescript` if this flag is provided then ts-node will be used to run original typeorm cli command.
-(use this only in development mode) This is can be helpful if you use Webpack bundling.
+`destination` destination folder for the migration file. Default value `src/migrations`.
 
 ### Generate migration
 
@@ -419,15 +386,8 @@ None
 
 **Optional params:**\
 `name` name of a new migration. Default value is `auto`.\
-`connection` name of the database connection. Using `default` as default name if actual value is not provided.\
-`destination` destination folder for the migration file. Default value `src/migrations`.\
-`useTypescript` if this flag is provided then ts-node will be used to run original typeorm cli command.
-(use this only in development mode) This is can be helpful if you use Webpack bundling.
-
-**Note:** If you use in the project Webpack bundling you need to provide a path to entities in the source files folder 
-(src) instead of the distribution folder (dist). As typeorm cli works only with JS files, it will be looking for 
-entities using ts-node for dynamic transpile TS files. (if `useTypescript` flag was used) Paths to entities from 
-node_modules dependencies may stay the same if you develop or use an external package that contains entities.
+`dataSource` name of the database connection. Using `default` as default name if actual value is not provided.\
+`destination` destination folder for the migration file. Default value `src/migrations`.
 
 ### Run migrations
 
@@ -441,7 +401,37 @@ Example:\
 None
 
 **Optional params:**\
-`connection` name of the database connection. Using `default` as default name if actual value is not provided.\
+`dataSource` name of the database connection. Using `default` as default name if actual value is not provided.\
+`fake` provide this flag if you want to add the migration to the migrations table without running it 
+
+### Revert migrations
+
+To revert last migration you can run `migrations:revert` command. To revert several migrations you need to run revert 
+command multiple times. 
+(see [official docs](https://typeorm.io/#/migrations/running-and-reverting-migrations) for reference)
+
+Example:\
+`npm run command migrations:revert`
+
+**Required params:**\
+None
+
+**Optional params:**\
+`dataSource` name of the database connection. Using `default` as default name if actual value is not provided.\
+`fake` provide this flag if you want to add the migration to the migrations table without running it
+
+### Show migrations
+
+To show all migrations and whether they've been run or not use you can run `migrations:show` command.
+
+Example:\
+`npm run command migrations:show`
+
+**Required params:**\
+None
+
+**Optional params:**\
+`dataSource` name of the database connection. Using `default` as default name if actual value is not provided.
 
 ## Webpack integration
 
@@ -454,3 +444,10 @@ To workaround issue with loading migrations you can for example build them separ
 
 Fortunately NestJS Boilerplate automatically loads entities by default, and also you can easily load migrations
 (see Migrations section above).
+
+For using CLI commands you need to provide a paths to entities and migrations in the source files folder
+(src) instead of the distribution folder (dist). As typeorm cli works only with JS files, NestJS Boilerplate
+will be looking for entities using ts-node for dynamic transpile TS files. Example of entities path 
+`process.cwd() + '/src/**/*.entity.ts'` and migrations path `process.cwd() + '/src/migrations/!(index)*.ts'`
+Paths to entities from node_modules dependencies may stay the same if you develop or use an external package 
+that contains entities.

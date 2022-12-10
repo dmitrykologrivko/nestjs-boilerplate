@@ -1,24 +1,15 @@
-import { ModuleRef } from '@nestjs/core';
-import { getConnectionToken } from '@nestjs/typeorm';
-import { Connection, ConnectionOptions } from 'typeorm';
 import {
     Command,
     Handler,
     CliArgument,
 } from '../management/management.decorators';
-import {
-    createMigration,
-    generateMigration,
-    runMigrations,
-} from './typeorm.utils';
-import { MetadataStorageService } from './metadata-storage.service';
-import { DEFAULT_CONNECTION_NAME } from './database.constants';
+import { TypeormCommandExecutorService } from './typeorm-command-executor.service';
+import { DEFAULT_DATA_SOURCE_NAME } from './database.constants';
 
 @Command({ name: 'migrations' })
 export class MigrationsCommand {
     constructor(
-        private readonly moduleRef: ModuleRef,
-        private readonly metadataStorage: MetadataStorageService,
+        private readonly commandsExecutor: TypeormCommandExecutorService,
     ) {}
 
     @Handler({ shortcut: 'create' })
@@ -27,36 +18,22 @@ export class MigrationsCommand {
         migrationName: string,
 
         @CliArgument({
-            name: 'connection',
+            name: 'dataSource',
             optional: true,
-            defaultValue: DEFAULT_CONNECTION_NAME,
+            defaultValue: DEFAULT_DATA_SOURCE_NAME,
         })
-        connectionName?: string,
+        dataSource?: string,
 
         @CliArgument({
             name: 'destination',
             optional: true,
         })
         destination: string = 'src/migrations',
-
-        @CliArgument({
-            name: 'useTypescript',
-            optional: true,
-            defaultValue: false,
-        })
-        useTypescript?: boolean,
     ) {
-        const connection = this.getConnectionByName(connectionName);
-        const commandOptions = {
-            useTypescript,
-            connectionOptions: this.overrideConnectionOptions(connection),
-        };
-
-        await createMigration(
-            connection,
+        await this.commandsExecutor.createMigration(
             migrationName,
             destination,
-            commandOptions,
+            dataSource
         );
     }
 
@@ -70,89 +47,72 @@ export class MigrationsCommand {
         migrationName: string,
 
         @CliArgument({
-            name: 'connection',
+            name: 'dataSource',
             optional: true,
-            defaultValue: DEFAULT_CONNECTION_NAME,
+            defaultValue: DEFAULT_DATA_SOURCE_NAME,
         })
-        connectionName?: string,
+        dataSource?: string,
 
         @CliArgument({
             name: 'destination',
             optional: true,
         })
         destination: string = 'src/migrations',
-
-        @CliArgument({
-            name: 'useTypescript',
-            optional: true,
-            defaultValue: false,
-        })
-        useTypescript?: boolean,
     ) {
-        const connection = this.getConnectionByName(connectionName);
-        const commandOptions = {
-            useTypescript,
-            connectionOptions: this.overrideConnectionOptions(connection),
-        };
-
-        await generateMigration(
-            connection,
+        await this.commandsExecutor.generateMigration(
             migrationName,
             destination,
-            commandOptions,
+            dataSource
         );
     }
 
     @Handler({ shortcut: 'run' })
     async runMigrations(
         @CliArgument({
-            name: 'connection',
+            name: 'dataSource',
             optional: true,
-            defaultValue: DEFAULT_CONNECTION_NAME,
+            defaultValue: DEFAULT_DATA_SOURCE_NAME,
         })
-        connection?: string,
+        dataSource?: string,
+
+        @CliArgument({
+            name: 'fake',
+            optional: true,
+            defaultValue: false,
+        })
+        fake?: boolean,
     ) {
-        await runMigrations(this.getConnectionByName(connection));
+        await this.commandsExecutor.runMigrations(dataSource, fake);
     }
 
-    private getConnectionByName(name: string) {
-        const connection = this.moduleRef.get(getConnectionToken(name) as string, { strict: false });
+    @Handler({ shortcut: 'revert' })
+    async revertMigration(
+        @CliArgument({
+            name: 'dataSource',
+            optional: true,
+            defaultValue: DEFAULT_DATA_SOURCE_NAME,
+        })
+        dataSource?: string,
 
-        if (connection) {
-            return connection;
-        }
-
-        throw new Error(`${name} connection does not exist`);
+        @CliArgument({
+            name: 'fake',
+            optional: true,
+            defaultValue: false,
+        })
+        fake?: boolean,
+    ) {
+        await this.commandsExecutor.revertMigration(dataSource, fake);
     }
 
-    private overrideConnectionOptions(connection: Connection): ConnectionOptions {
-        const metadata = this.metadataStorage.getMetadataByConnection(connection);
-
-        if (!metadata) {
-            return connection.options;
-        }
-
-        let entities = connection.options.entities || [];
-        let migrations = connection.options.migrations || [];
-
-        for (const item of metadata) {
-            if (item.type === 'entities' && item.cli) {
-                if (Array.isArray(item.cli)) {
-                    entities = entities.concat(item.cli);
-                } else {
-                    entities.push(item.cli);
-                }
-            }
-
-            if (item.type === 'migrations' && item.cli) {
-                if (Array.isArray(item.cli)) {
-                    migrations = migrations.concat(item.cli);
-                } else {
-                    migrations.push(item.cli);
-                }
-            }
-        }
-
-        return { ...connection.options, entities, migrations };
+    @Handler({ shortcut: 'show' })
+    async showMigrations(
+        @CliArgument({
+            name: 'dataSource',
+            optional: true,
+            defaultValue: DEFAULT_DATA_SOURCE_NAME,
+        })
+        dataSource?: string
+    ) {
+        await this.commandsExecutor.showMigrations(dataSource);
     }
 }

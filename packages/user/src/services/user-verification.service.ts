@@ -1,5 +1,9 @@
 import { Repository } from 'typeorm';
-import { InjectRepository, DomainService } from '@nestjs-boilerplate/core';
+import {
+    InjectRepository,
+    DomainService,
+    isDefined
+} from '@nestjs-boilerplate/core';
 import { User } from '../entities/user.entity';
 import { UsersQuery } from '../queries/users.query';
 
@@ -17,7 +21,7 @@ export class UserVerificationService {
 
     async isEmailActive(email: string): Promise<boolean> {
         const query = new UsersQuery({ email, isActive: true }).toFindOptions();
-        return await this.userRepository.findOne(query) !== undefined;
+        return isDefined(await this.userRepository.findOne(query));
     }
 
     async isUsernameUnique(username: string): Promise<boolean> {
@@ -27,6 +31,6 @@ export class UserVerificationService {
 
     async isUsernameExists(username: string): Promise<boolean> {
         const query = new UsersQuery({ username }).toFindOptions();
-        return await this.userRepository.findOne(query) !== undefined;
+        return isDefined(await this.userRepository.findOne(query));
     }
 }

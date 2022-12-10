@@ -3,14 +3,14 @@
 To get started, you can scaffold the project with the [Nest CLI](https://docs.nestjs.com/cli/overview).
 
 ```shell
-$ npm i -g @nestjs/cli@7
+$ npm i -g @nestjs/cli
 $ nest new project-name
 ```
 
 Then install NestJS Boilerplate core package and required peer dependencies.
 
 ```shell
-$ npm i --save @nestjs-boilerplate/core @nestjs/config @nestjs/typeorm@7 typeorm class-validator class-transformer
+$ npm i --save @nestjs-boilerplate/core @nestjs/config @nestjs/typeorm typeorm class-validator class-transformer
 ```
 
 Now you can integrate NestJS Boilerplate into the project. Let's create a first entity.

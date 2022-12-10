@@ -10,21 +10,21 @@
     "build": "rm -rf dist && ../../node_modules/.bin/tsc -p tsconfig.json"
   },
   "dependencies": {
-    "bcrypt": "^5.0.1",
+    "bcrypt": "^5.1.0",
     "prompt-sync": "^4.2.0",
-    "uuid": "^8.3.2"
+    "uuid": "^9.0.0"
+  },
+  "peerDependencies": {
+    "@nestjs-boilerplate/core": "^0.2.0",
+    "@nestjs/common": "^9.0.0",
+    "@nestjs/jwt": "^9.0.0",
+    "class-transformer": "~0.5.1",
+    "class-validator": "~0.13.2",
+    "typeorm": "^0.3.0"
   },
   "devDependencies": {
     "@nestjs-boilerplate/core": "^0.2.0",
     "@nestjs-boilerplate/testing": "^0.2.0"
-  },
-  "peerDependencies": {
-    "@nestjs-boilerplate/core": "^0.2.0",
-    "@nestjs/common": "^7.6.18",
-    "@nestjs/jwt": "^8.0.0",
-    "class-transformer": "~0.4.0",
-    "class-validator": "~0.13.1",
-    "typeorm": "^0.2.38"
   },
   "repository": {
     "type": "git",
