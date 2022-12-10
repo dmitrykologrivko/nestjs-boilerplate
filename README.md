@@ -29,6 +29,10 @@ applications.
 
 Check out a simple [example](/packages/example).
 
+## Changelog
+
+Check out [changelog](CHANGELOG.md)
+
 ## Keep in touch
 
 Dmitry Kologrivko - dmitrykologrivko@gmail.com

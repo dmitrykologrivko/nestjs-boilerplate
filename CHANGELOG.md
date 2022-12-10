@@ -1,3 +1,8 @@
+## 0.3.1
+
+### Bug fixes
+* Fixed running create-ts-index package cli command
+
 ## 0.3.0
 
 ### Features

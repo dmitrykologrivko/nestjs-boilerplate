@@ -262,7 +262,7 @@ export class TypeormCommandExecutorService {
      * @param path source files folder path
      */
     private async createIndexFile(path: string) {
-        const { stderr } = await exec(`node ./node_modules/create-ts-index/dist/cti.js create -w -b ${path}`);
+        const { stderr } = await exec(`cti create -w -b ${path}`);
 
         if (stderr) {
             Logger.error(stderr);
