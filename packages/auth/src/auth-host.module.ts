@@ -12,7 +12,11 @@ import {
     JwtModuleOptions,
     JwtModuleAsyncOptions,
 } from '@nestjs/jwt';
-import { PropertyConfigService, SECRET_KEY_PROPERTY } from '@nestjs-boilerplate/core';
+import {
+    ConfigModule,
+    PropertyConfigService,
+    SECRET_KEY_PROPERTY
+} from '@nestjs-boilerplate/core';
 import { AUTH_JWT_EXPIRES_IN_PROPERTY } from './constants/auth.properties';
 import { BaseRevokedTokensService } from './services/base-revoked-tokens.service';
 
@@ -32,7 +36,7 @@ const defaultPassportOptionsProvider = {
 
 const defaultJwtOptionsProvider = {
     provide: AUTH_JWT_OPTIONS_TOKEN,
-    imports: [PropertyConfigService],
+    imports: [ConfigModule],
     useFactory: (config: PropertyConfigService) => {
         const moduleOptions: JwtModuleOptions = {};
 

@@ -1,12 +1,12 @@
-import { Connection, QueryRunner } from 'typeorm';
+import { DataSource, QueryRunner } from 'typeorm';
 import { Result, err } from '../utils/monads/result';
 import { TransactionRollbackException } from './transaction-rollback.exception';
 
 export async function transaction<T, E>(
-    connection: Connection,
+    dataSource: DataSource,
     fn: (queryRunner: QueryRunner) => Promise<Result<T, E>>,
 ): Promise<Result<T, E | TransactionRollbackException>> {
-    const queryRunner = connection.createQueryRunner();
+    const queryRunner = dataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();

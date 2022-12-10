@@ -1,7 +1,5 @@
-import { Connection, ConnectionOptions } from 'typeorm';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
-export type DatabaseConnection = Connection | ConnectionOptions | string;
 export type DatabaseModuleOptions = TypeOrmModuleOptions;
 
 export interface Metadata {
@@ -22,8 +20,8 @@ export interface Metadata {
     cli?: string[] | string;
 
     /**
-     * Database connection
+     * Data source
      */
-    connection?: DatabaseConnection;
+    dataSource?: string;
 
 }

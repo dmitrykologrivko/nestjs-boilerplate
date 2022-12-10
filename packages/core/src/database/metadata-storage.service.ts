@@ -1,29 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseConnection, Metadata } from './database.interfaces';
-import { DEFAULT_CONNECTION_NAME } from './database.constants';
+import { Metadata } from './database.interfaces';
+import { DEFAULT_DATA_SOURCE_NAME } from './database.constants';
 
 @Injectable()
 export class MetadataStorageService {
 
     private static readonly storage = new Map<string, Metadata[]>();
 
-    static getEntitiesMetadataByConnection(connection: DatabaseConnection) {
-        return this.getMetadataByConnection(connection)
+    static getEntitiesMetadataByDataSource(dataSource: string) {
+        return this.getMetadataByDataSource(dataSource)
             .filter(metadata => metadata.type === 'entities');
     }
 
-    static getMigrationsMetadataByConnection(connection: DatabaseConnection) {
-        return this.getMetadataByConnection(connection)
+    static getMigrationsMetadataByDataSource(dataSource: string) {
+        return this.getMetadataByDataSource(dataSource)
             .filter(metadata => metadata.type === 'migrations');
     }
 
-    static getMetadataByConnection(connection: DatabaseConnection) {
-        const token = this.getConnectionToken(connection);
-        return this.storage.get(token);
+    static getMetadataByDataSource(dataSource: string) {
+        return this.storage.get(dataSource);
     }
 
     static addMetadata(metadata: Metadata) {
-        const token = this.getConnectionToken(metadata.connection || DEFAULT_CONNECTION_NAME);
+        const token = metadata.dataSource || DEFAULT_DATA_SOURCE_NAME;
         let collection = this.storage.get(token);
 
         if (!collection) {
@@ -35,19 +34,15 @@ export class MetadataStorageService {
         this.storage.set(token, collection);
     }
 
-    private static getConnectionToken(connection: DatabaseConnection) {
-        return typeof connection === 'string' ? connection : connection.name;
+    getEntitiesMetadataByDataSource(dataSource: string) {
+        return MetadataStorageService.getEntitiesMetadataByDataSource(dataSource);
     }
 
-    getEntitiesMetadataByConnection(connection: DatabaseConnection) {
-        return MetadataStorageService.getEntitiesMetadataByConnection(connection);
+    getMigrationsMetadataByDataSource(dataSource: string) {
+        return MetadataStorageService.getMigrationsMetadataByDataSource(dataSource);
     }
 
-    getMigrationsMetadataByConnection(connection: DatabaseConnection) {
-        return MetadataStorageService.getMigrationsMetadataByConnection(connection);
-    }
-
-    getMetadataByConnection(connection: DatabaseConnection) {
-        return MetadataStorageService.getMetadataByConnection(connection);
+    getMetadataByDataSource(dataSource: string) {
+        return MetadataStorageService.getMetadataByDataSource(dataSource);
     }
 }

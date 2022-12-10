@@ -53,3 +53,11 @@ export function isEmpty(arg: string | any[] | Map<any, any> | Set<any>) {
 export function isNotEmpty(arg: string | any[] | Map<any, any> | Set<any>) {
     return !isEmpty(arg);
 }
+
+/**
+ * Checks if provided argument is defined (!== undefined, !== null).
+ * @param arg
+ */
+export function isDefined(arg: any) {
+    return arg !== undefined && arg !== null;
+}

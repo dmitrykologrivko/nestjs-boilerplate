@@ -144,6 +144,33 @@ import { any } from '@nestjs-boilerplate/core';
 console.log(any([1, false, '']));
 ```
 
+`isEmpty` function checks if provided string, array, map or set is undefined or empty
+
+```typescript
+import { isEmpty } from '@nestjs-boilerplate/core';
+
+// OUTPUT: true
+console.log(isEmpty(''));
+```
+
+`isNotEmpty` function checks if provided string, array, map or set is defined and not empty
+
+```typescript
+import { isEmpty } from '@nestjs-boilerplate/core';
+
+// OUTPUT: true
+console.log(isEmpty('test-string'));
+```
+
+`isDefined` function checks if provided argument is defined (!== undefined, !== null).
+
+```typescript
+import { isDefined } from '@nestjs-boilerplate/core';
+
+// OUTPUT: true
+console.log(isDefined({ foo: 'bar' });
+```
+
 ## Monads
 
 ### Result Monad

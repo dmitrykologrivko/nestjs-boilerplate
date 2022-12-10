@@ -2,20 +2,13 @@ import { Controller, ControllerOptions } from '@nestjs/common';
 import { isEmpty } from '../../utils/precondition.utils';
 
 export interface ApiControllerOptions extends ControllerOptions {
-    useGlobalPrefix?: boolean;
     rootPrefix?: string;
-    version?: number;
+    versionNumber?: number;
     versionPrefix?: string;
     additionalPrefixes?: string[];
 }
 
-export function ApiController(): ClassDecorator;
-
-export function ApiController(prefix: string): ClassDecorator;
-
-export function ApiController(options: ApiControllerOptions): ClassDecorator;
-
-export function ApiController(prefixOrOptions?: string | ApiControllerOptions) {
+export function ApiController(prefixOrOptions: string | ApiControllerOptions) {
     if (!prefixOrOptions) {
         return Controller();
     }
@@ -24,13 +17,11 @@ export function ApiController(prefixOrOptions?: string | ApiControllerOptions) {
         return Controller({ path: `api/${prefixOrOptions}` });
     }
 
-    const rootPrefix = prefixOrOptions.useGlobalPrefix
-        ? ''
-        : `${prefixOrOptions.rootPrefix || 'api'}/`;
+    const rootPrefix = `${prefixOrOptions.rootPrefix || 'api'}/`;
 
-    const versionPrefix = !prefixOrOptions.version
+    const versionPrefix = !prefixOrOptions.versionNumber
         ? ''
-        : `${prefixOrOptions.versionPrefix ? `${prefixOrOptions.versionPrefix}${prefixOrOptions.version}` : `v${prefixOrOptions.version}`}/`;
+        : `${prefixOrOptions.versionPrefix ? `${prefixOrOptions.versionPrefix}${prefixOrOptions.versionNumber}` : `v${prefixOrOptions.versionNumber}`}/`;
 
     const additionalPrefixes = isEmpty(prefixOrOptions.additionalPrefixes)
         ? ''

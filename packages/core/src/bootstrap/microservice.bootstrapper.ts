@@ -14,6 +14,6 @@ export class MicroserviceBootstrapper<T extends NestMicroserviceOptions = NestMi
     }
 
     protected async onStart(container: INestMicroservice): Promise<void | INestMicroservice> {
-        return await container.listenAsync();
+        return await container.listen();
     }
 }

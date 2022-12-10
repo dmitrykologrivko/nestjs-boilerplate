@@ -170,7 +170,14 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
                     { groups: [CrudOperations.CREATE] },
                 );
 
-                return preSaveHook(this.repository.create(input.payload), this.options.entityCls, queryRunner)
+                const newEntity = this.repository.create(
+                    ClassTransformer.toClassObject(
+                        this.options.entityCls,
+                        { ...input.payload, id: null },
+                    ),
+                );
+
+                return preSaveHook(newEntity, this.options.entityCls, queryRunner)
                     .then(proceed(() => this.performCreateEntity(input, queryRunner)))
                     .then(map(async entity => {
                         if (!this.options.returnShallow) {
@@ -259,7 +266,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         input: CI,
         queryRunner: QueryRunner,
     ): Promise<Result<E, CE>> {
-        const entity = await this.repository.create(
+        const entity = this.repository.create(
             ClassTransformer.toClassObject(
                 this.options.entityCls,
                { ...input.payload, id: null },

@@ -23,7 +23,7 @@ import { UsersCommand } from './commands/users.command';
 import userConfig from './user.config';
 
 const jwtAsyncOptions = {
-    imports: [PropertyConfigService],
+    imports: [ConfigModule],
     useFactory: (config: PropertyConfigService) => {
         const moduleOptions: JwtModuleOptions = {};
 
