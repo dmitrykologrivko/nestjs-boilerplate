@@ -1,7 +1,7 @@
 {
   "name": "@nestjs-boilerplate/example",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "",
   "author": "Dmitry Kologrivko",
   "license": "MIT",
@@ -12,14 +12,14 @@
     "start": "node dist/main"
   },
   "peerDependencies": {
-    "@nestjs-boilerplate/core": "^0.2.0",
+    "@nestjs-boilerplate/core": "^0.3.0",
     "@nestjs/common": "^9.0.0",
     "class-transformer": "~0.5.1",
     "class-validator": "~0.13.2",
     "typeorm": "^0.3.0"
   },
   "devDependencies": {
-    "@nestjs-boilerplate/core": "^0.2.0"
+    "@nestjs-boilerplate/core": "^0.3.0"
   },
   "repository": {
     "type": "git",

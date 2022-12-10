@@ -1,6 +1,6 @@
 {
   "name": "@nestjs-boilerplate/testing",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "",
   "author": "Dmitry Kologrivko",
   "license": "MIT",
@@ -10,13 +10,13 @@
     "build": "rm -rf dist && ../../node_modules/.bin/tsc -p tsconfig.json"
   },
   "peerDependencies": {
-    "@nestjs-boilerplate/core": "^0.2.0",
+    "@nestjs-boilerplate/core": "^0.3.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/testing": "^9.0.0"
   },
   "devDependencies": {
-    "@nestjs-boilerplate/core": "^0.2.0"
+    "@nestjs-boilerplate/core": "^0.3.0"
   },
   "repository": {
     "type": "git",
