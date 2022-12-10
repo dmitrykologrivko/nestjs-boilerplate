@@ -10,11 +10,11 @@
     "build": "rm -rf dist && ../../node_modules/.bin/tsc -p tsconfig.json"
   },
   "dependencies": {
-    "create-ts-index": "^1.13.6",
-    "minimist": "^1.2.5",
-    "nodemailer": "^6.7.0",
+    "create-ts-index": "^1.14.0",
+    "minimist": "^1.2.7",
+    "nodemailer": "^6.8.0",
     "nunjucks": "^3.2.3",
-    "sqlite3": "^5.0.2"
+    "sqlite3": "^5.1.2"
   },
   "peerDependencies": {
     "@nestjs/common": "^9.0.0",
@@ -32,9 +32,9 @@
     }
   },
   "devDependencies": {
-    "@types/nodemailer": "^6.4.4",
-    "@types/nunjucks": "^3.2.0",
-    "ts-node": "^10.3.0",
+    "@types/nodemailer": "^6.4.6",
+    "@types/nunjucks": "^3.2.1",
+    "ts-node": "^10.9.1",
     "typeorm": "^0.3.11"
   },
   "repository": {
