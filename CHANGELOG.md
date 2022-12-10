@@ -7,8 +7,8 @@
 
 ### BREAKING CHANGES
 
-* Upgraded Nest to v9
-* Upgraded TypeORM to v0.3
+* Upgraded support Nest to v9
+* Upgraded support TypeORM to v0.3
 * Renamed `connection` to `dataSource` in `DatabaseModule.withEntities` and `DatabaseModule.withMigrations` 
 method options
 * Renamed argument `connection` to `dataSource` in migrations cli command
