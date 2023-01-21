@@ -162,6 +162,11 @@ export abstract class BaseCrudController<D extends BaseEntityDto,
     }
 
     protected mapDestroyInput(req: Request): DI {
-        return extractDestroyQuery(req) as DI;
+        return {
+            ...extractDestroyQuery(req),
+            extra: {
+                user: req.user,
+            }
+        } as unknown as DI;
     }
 }
