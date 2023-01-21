@@ -207,12 +207,16 @@ export class Result<T, E, R extends ResultType = ResultType> implements Monad<T>
         );
     }
 
-    static ok<T, E>(value: T): Result<T, E> {
+    static ok<T = never, E = never>(value: T): Result<T, E> {
         return new Result<T, E, ResultType.OK>(ResultType.OK, value);
     }
 
-    static err<T, E>(value: E): Result<T, E> {
+    static err<T = never, E = never>(value: E): Result<T, E> {
         return new Result<T, E, ResultType.ERR>(ResultType.ERR, value);
+    }
+
+    static from<T>(value: T): Result<T, never> {
+        return ok(value);
     }
 
     static map<T, E, U>(fn: (value: T) => Promise<U>) {
@@ -329,6 +333,7 @@ export const {
     mergeAsync,
     ok,
     err,
+    from,
     map,
     mapErr,
     proceed,
