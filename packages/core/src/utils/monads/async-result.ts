@@ -6,6 +6,9 @@ import {
     fallback,
 } from './result';
 
+/**
+ * @deprecated Use Result monad class methods instead
+ */
 export class AsyncResult<T, E> {
     private constructor(
         private readonly _promise: Promise<Result<T, E>>,
