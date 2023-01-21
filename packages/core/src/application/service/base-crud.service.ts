@@ -1,4 +1,4 @@
-import { Repository, SelectQueryBuilder, QueryRunner } from 'typeorm';
+import { Repository, DataSource, SelectQueryBuilder, QueryRunner } from 'typeorm';
 import { transaction } from '../../database/database.utils';
 import { TransactionRollbackException } from '../../database/transaction-rollback.exception';
 import { Constructor } from '../../utils/type.utils';
@@ -96,14 +96,16 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
     // Destroy entity exceptions
     DE = any> {
 
+    protected readonly repository: Repository<E>
     protected readonly alias: string;
 
     protected constructor(
-        protected readonly repository: Repository<E>,
+        protected readonly dataSource: DataSource,
         protected readonly options: CrudServiceOptions<E, LO, RO, CP, CO, UP, UO>,
         protected readonly entityEventsManager?: EntityEventsManager<E, QueryRunner>,
     ) {
-        this.alias = repository.metadata.name;
+        this.repository = dataSource.getRepository(options.entityCls);
+        this.alias = this.repository.metadata.name;
     }
 
     async list(input: LI): ListResult<PC> {
@@ -130,7 +132,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
                 return ok({ results: this.mapListOutput(await queryBuilder.getMany(), input) } as PC);
             }));
 
-        return transaction(this.repository.manager.connection, handler);
+        return transaction(this.dataSource, handler);
     }
 
     async retrieve(input: RI): RetrieveResult<RO> {
@@ -141,7 +143,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
             .then(proceed(entity => checkEntityPermissions<RI, E>(input, entity, this.getReadEntityPermissions())))
             .then(map(async entity => this.mapRetrieveOutput(entity, input)));
 
-        return transaction(this.repository.manager.connection, handler);
+        return transaction(this.dataSource, handler);
     }
 
     async create(input: CI): CreateResult<CO, CE> {
@@ -187,7 +189,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
                     }));
             }));
 
-        return transaction(this.repository.manager.connection, handler)
+        return transaction(this.dataSource, handler)
             .then(proceed(async entity => {
                 return (await postSaveHook(entity, this.options.entityCls))
                     .map(() => this.mapCreateOutput(entity, input));
@@ -233,7 +235,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
                     }))
             }));
 
-        return transaction(this.repository.manager.connection, handler)
+        return transaction(this.dataSource, handler)
             .then(proceed(async entity => {
                 return (await postSaveHook(entity, this.options.entityCls))
                     .map(() => this.mapUpdateOutput(entity, input));
@@ -258,7 +260,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
                     .then(proceed(() => this.performDestroyEntity(input, entity, queryRunner)));
             }));
 
-        return transaction(this.repository.manager.connection, handler)
+        return transaction(this.dataSource, handler)
             .then(proceed(entity => postDestroyHook(entity, this.options.entityCls)));
     }
 
@@ -269,7 +271,11 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         const entity = this.repository.create(
             ClassTransformer.toClassObject(
                 this.options.entityCls,
-               { ...input.payload, id: null },
+               {
+                   ...input.payload,
+                   ...(await this.getExtraCreateFields(input, queryRunner)),
+                   id: null,
+               },
             ),
         );
         return ok(await queryRunner.manager.save(entity));
@@ -284,7 +290,11 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         const updatedEntity = await queryRunner.manager.save(
             ClassTransformer.toClassObject(
                 this.options.entityCls,
-                { ...input.payload, id: entity.id },
+                {
+                    ...input.payload,
+                    ...(await this.getExtraUpdateFields(input, entity, queryRunner)),
+                    id: entity.id,
+                },
             ),
         );
         return ok(this.repository.merge(entity, updatedEntity));
@@ -369,6 +379,21 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
 
     protected getDestroyEntityPermissions(): BaseEntityPermission[] {
         return this.getEntityPermissions();
+    }
+
+    protected async getExtraCreateFields(
+        input: CI,
+        queryRunner: QueryRunner,
+    ): Promise<Partial<E>> {
+        return {};
+    }
+
+    protected async getExtraUpdateFields(
+        input: UI,
+        entity: E,
+        queryRunner: QueryRunner,
+    ): Promise<Partial<E>> {
+        return {};
     }
 
     protected mapListOutput(
