@@ -223,22 +223,34 @@ async function login(username: string, password: string): Promise<Result<User, L
 
 #### ok
 
-Returns `Result` with type `ResultType.OK` and contains success result value.
+Returns `Result` with type `ResultType.OK` and contains value with success result type.
 
 ```typescript
 import { Result, ok } from '@nestjs-boilerplate/core';
 
-const value: Result<string, unknown> = ok('success');
+const value1: Result<string, Error> = ok<string, Error>('success');
+const value2: Result<string, never> = ok('success');
 ```
 
 #### err
 
-Returns `Result` with type `ResultType.ERR` and contains exception result value.
+Returns `Result` with type `ResultType.ERR` and contains value with exception result type.
 
 ```typescript
 import { Result, err } from '@nestjs-boilerplate/core';
 
-const value: Result<unknown, Error> = err(new Err());
+const value1: Result<string, Error> = err<string, Error>(new Err());
+const value2: Result<never, Error> = err(new Err());
+```
+
+#### from
+
+Returns `Result` with type `ResultType.OK` and contains value only with success result type.
+
+```typescript
+import { Result, from } from '@nestjs-boilerplate/core';
+
+const value: Result<string, never> = from('success');
 ```
 
 #### isOk

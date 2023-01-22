@@ -59,7 +59,7 @@ export class NoteService {
     ) {}
     
     async getNotes(input: GetNotesInput): Result<GetNotesOutput, PermissionDeniedException> {
-        return await checkPermissions<GetNotesInput>(input, [new IsAdminUserPermission()])
+        return checkPermissions<GetNotesInput>(input, [new IsAdminUserPermission()])
             .then(proceed(this.noteRepository.getNotes()))
             .then(proceed(notes => GetNotesOutput.fromEntities(notes)));
     }
@@ -123,8 +123,8 @@ export class NoteService {
     ) {}
     
     async getNote(input: GetNoteInput): Result<GetNoteOutput, PermissionDeniedException> {
-        return await checkEntityPermissions<GetNoteInput, Note>(input, [new IsOwnerEntityPermission<Note>()])
-            .then(proceed(this.noteRepository.getNote(input.id)))
+        return this.noteRepository.getNote(input.id)
+            .then(note => checkEntityPermissions<GetNoteInput, Note>(input, note, [new IsOwnerEntityPermission<Note>()]))
             .then(proceed(note => GetNoteOutput.fromEntity(note)));
     }
 }

@@ -15,7 +15,7 @@ In the following example, we implemented an application service to perform some 
 between two accounts.
 
 ```typescript
-import { Connection, QueryRunner } from 'typeorm';
+import { DataSource, QueryRunner } from 'typeorm';
 import {
     ApplicationService,
     Result,
@@ -36,7 +36,7 @@ import { TransferMoneyOutput } from './transfer-money.input';
 @ApplicationService()
 export class MoneyService {
     constructor(
-        private readonly connection: Connection,
+        private readonly dataSource: DataSource,
         private readonly moneyTransferService: MoneyTransferService,
     ) {}
     
@@ -70,7 +70,7 @@ export class MoneyService {
                 });
             }));
         
-        return unitOfWork(this.connection, handler);
+        return unitOfWork(this.dataSource, handler);
     }
 }
 ```
@@ -99,7 +99,7 @@ are transactional by default. ([Unit of Work](./unit-of-work.md))
 In the following example, we implemented a simple CRUD service to operate on notes.
 
 ```typescript
-import { Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 import {
     ApplicationService,
     BaseCrudService,
@@ -111,11 +111,10 @@ import { NoteDto } from './note.dto';
 @ApplicationService()
 export class NoteService extends BaseCrudService<Note, NoteDto> {
     constructor(
-        @InjectRepository(Note)
-        private noteRepository: Repository<Note>,
+        protected dataSource: DataSource,
     ) {
         super(
-            noteRepository,
+            dataSource,
             {
                 entityCls: Note,
                 listOutputCls: NoteDto,
@@ -216,7 +215,7 @@ The following generic arguments using for input and output DTOs per CRUD operati
 ##### List operation
 
 You can extend `ListInput` class to provide your own implementation of input DTO for the list operation.
-The default output list item is Entity DTO class but you can customize this by providing another DTO class that 
+The default output list item is Entity DTO class, but you can customize this by providing another DTO class that 
 extends `BaseEntityDto` class. If you use pagination you can provide a paginated container class that 
 will wrap a list of output items.
 
@@ -228,10 +227,10 @@ Do not forget to provide class type of output DTO in CRUD service options as `li
 ##### Retrieve operation
 
 You can extend `RetrieveInput` class to provide your own implementation of input DTO for the retrieve operation.
-The default retrieve output is Entity DTO class but you can customize this by providing another DTO class that 
+The default retrieve output is Entity DTO class, but you can customize this by providing another DTO class that 
 extends `BaseEntityDto` class.
 
-Mapping Entity -> Entity DTO happens automatically by using `ClassTransformer` util but you can override 
+Mapping Entity -> Entity DTO happens automatically by using `ClassTransformer` util, but you can override 
 `mapRetrieveOutput` method to have custom mapping logic.
 
 Do not forget to provide class type of output DTO in CRUD service options as `retrieveOutputCls` parameter.
@@ -239,22 +238,28 @@ Do not forget to provide class type of output DTO in CRUD service options as `re
 ##### Create operation
 
 You can extend `CreateInput` class to provide your own implementation of input DTO for the create operation.
-The default create output is Entity DTO class but you can customize this by providing another DTO class that extends 
+The default create output is Entity DTO class, but you can customize this by providing another DTO class that extends 
 `BaseEntityDto` class.
 
-Mapping Entity -> Entity DTO happens automatically by using `ClassTransformer` util but you can override 
+Mapping Entity DTO -> Entity happens automatically by using `ClassTransformer` util, but you can override
+`mapCreateInput` method to have custom mapping logic.
+
+Mapping Entity -> Entity DTO happens automatically by using `ClassTransformer` util, but you can override 
 `mapCreateOutput` method to have custom mapping logic.
 
 Do not forget to provide class type of output DTO in CRUD service options as `createOutputCls` parameter and input 
-payload class type as `createPayloadCls` parametr.
+payload class type as `createPayloadCls` parameter.
 
 ##### Update operation
 
 You can extend `UpdateInput` class to provide your own implementation of input DTO for the update operation.
-The default update output is Entity DTO class but you can customize this by providing another DTO class that extends 
+The default update output is Entity DTO class, but you can customize this by providing another DTO class that extends 
 `BaseEntityDto` class.
 
-Mapping Entity -> Entity DTO happens automatically by using `ClassTransformer` util but you can override 
+Mapping Entity DTO -> Entity happens automatically by using `ClassTransformer` util, but you can override
+`mapUpdateInput` method to have custom mapping logic.
+
+Mapping Entity -> Entity DTO happens automatically by using `ClassTransformer` util, but you can override 
 `mapUpdateOutput` method to have custom mapping logic.
 
 Do not forget to provide class type of output DTO in CRUD service options as `updateOutputCls` parameter 

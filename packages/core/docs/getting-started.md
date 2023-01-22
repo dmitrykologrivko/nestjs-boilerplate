@@ -51,20 +51,19 @@ export class NoteDto extends BaseEntityDto {
 Create a simple CRUD service for the entity.
 
 ```typescript
-import { Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { BaseCrudService, InjectRepository } from '@nestjs-boilerplate/core';
+import { BaseCrudService } from '@nestjs-boilerplate/core';
 import { Note } from './note.entity';
 import { NoteDto } from './note.dto';
 
 @Injectable()
 export class NoteService extends BaseCrudService<Note, NoteDto> {
     constructor(
-        @InjectRepository(Note)
-        private noteRepository: Repository<Note>,
+        protected dataSource: DataSource,
     ) {
         super(
-            noteRepository,
+            dataSource,
             {
                 entityCls: Note,
                 listOutputCls: NoteDto,

@@ -202,6 +202,11 @@ export class NoteController extends CrudController<NoteDto> {
 }
 ```
 
+**Note:** this class can be used only with Express (Nest makes use the Express HTTP framework by default),
+but if you want to use another Node HTTP framework you need to create your own CRUD controller to map its request
+object to the internal NestJS Boilerplate request representation. (See Customize CRUD controller section 
+to get more information)
+
 ### Customize CRUD controller
 #### Base CRUD controller
 
@@ -275,13 +280,13 @@ In fact, generic arguments duplicate the arguments of the CRUD service that the 
 
 #### Mapping request
 
-To maintain universality and library agnostic, the HTTP request is converted from library-specific requests 
-(Express, Fastify, etc.) to a common `Request` class. Default is Express. You can customize this by overriding 
+To maintain universality and library agnostic, the HTTP request must be converted from library-specific requests 
+(Express, Fastify, etc.) to a common `Request` class. You have to implement mapping by overriding abstract 
 `mapRequest` method.
 
 #### Mapping input
 
-Your request automatically maps to the relevant input DTOs but you can customize this by overriding one of the 
+Your request automatically maps to the relevant input DTOs, but you can customize this by overriding one of the 
 following methods:
 `mapListInput` maps list input from request object.\
 `mapRetrieveInput` maps retrieve input from request object.\
