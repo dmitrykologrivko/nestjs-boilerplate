@@ -269,14 +269,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         queryRunner: QueryRunner,
     ): Promise<Result<E, CE>> {
         const entity = this.repository.create(
-            ClassTransformer.toClassObject(
-                this.options.entityCls,
-               {
-                   ...input.payload,
-                   ...(await this.getExtraCreateFields(input, queryRunner)),
-                   id: null,
-               },
-            ),
+            await this.mapCreateInput(input, queryRunner),
         );
         return ok(await queryRunner.manager.save(entity));
     }
@@ -288,14 +281,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
     ): Promise<Result<E, UE>> {
         // Typeorm always doing partial update by excluding undefiled fields from input
         const updatedEntity = await queryRunner.manager.save(
-            ClassTransformer.toClassObject(
-                this.options.entityCls,
-                {
-                    ...input.payload,
-                    ...(await this.getExtraUpdateFields(input, entity, queryRunner)),
-                    id: entity.id,
-                },
-            ),
+            await this.mapUpdateInput(input, entity, queryRunner),
         );
         return ok(this.repository.merge(entity, updatedEntity));
     }
@@ -381,21 +367,6 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         return this.getEntityPermissions();
     }
 
-    protected async getExtraCreateFields(
-        input: CI,
-        queryRunner: QueryRunner,
-    ): Promise<Partial<E>> {
-        return {};
-    }
-
-    protected async getExtraUpdateFields(
-        input: UI,
-        entity: E,
-        queryRunner: QueryRunner,
-    ): Promise<Partial<E>> {
-        return {};
-    }
-
     protected mapListOutput(
         entities: E[],
         input?: LI,
@@ -418,6 +389,19 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         );
     }
 
+    protected async mapCreateInput(
+        input: CI,
+        queryRunner: QueryRunner,
+    ): Promise<E> {
+        return ClassTransformer.toClassObject(
+            this.options.entityCls,
+            {
+                ...input.payload,
+                id: null,
+            },
+        );
+    }
+
     protected mapCreateOutput(
         entity: E,
         input?: CI,
@@ -426,6 +410,20 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
             this.options.createOutputCls,
             entity,
             { groups: [CrudOperations.READ] },
+        );
+    }
+
+    protected async mapUpdateInput(
+        input: UI,
+        entity: E,
+        queryRunner: QueryRunner,
+    ): Promise<E> {
+        return ClassTransformer.toClassObject(
+            this.options.entityCls,
+            {
+                ...input.payload,
+                id: entity.id,
+            },
         );
     }
 
