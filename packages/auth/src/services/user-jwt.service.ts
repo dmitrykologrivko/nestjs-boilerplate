@@ -65,7 +65,7 @@ export class UserJwtService {
     async validatePayload(
         payload: Payload,
     ): Promise<Result<User, EntityNotFoundException | AccessTokenInvalidException>> {
-        let result = Result.ok(null);
+        let result = ok<any, AccessTokenInvalidException>(null);
 
         if (this.revokedTokensService) {
             result = (await this.revokedTokensService.isTokenRevoked(payload.jti))

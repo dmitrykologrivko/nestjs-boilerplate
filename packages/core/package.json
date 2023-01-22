@@ -12,9 +12,9 @@
   "dependencies": {
     "create-ts-index": "^1.14.0",
     "minimist": "^1.2.7",
-    "nodemailer": "^6.8.0",
+    "nodemailer": "^6.9.0",
     "nunjucks": "^3.2.3",
-    "sqlite3": "^5.1.2"
+    "sqlite3": "^5.1.4"
   },
   "peerDependencies": {
     "@nestjs/common": "^9.0.0",
@@ -22,7 +22,7 @@
     "@nestjs/core": "^9.0.0",
     "@nestjs/typeorm": "^9.0.0",
     "class-transformer": "~0.5.1",
-    "class-validator": "~0.13.2",
+    "class-validator": "~0.14.0",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.3.0"
   },
