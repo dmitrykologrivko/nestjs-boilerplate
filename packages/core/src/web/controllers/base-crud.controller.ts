@@ -1,4 +1,14 @@
-import { UseFilters } from '@nestjs/common';
+import {
+    Get,
+    Post,
+    Put,
+    Patch,
+    Delete,
+    Req,
+    HttpCode,
+    HttpStatus,
+    UseFilters,
+} from '@nestjs/common';
 import { ValidationExceptionsFilter } from '../filters/validation-exceptions.filter';
 import { PermissionDeniedExceptionFilter } from '../filters/permission-denied-exception.filter';
 import { EntityNotFoundExceptionFilter } from '../filters/entity-not-found-exception.filter';
@@ -12,7 +22,6 @@ import { DestroyInput } from '../../application/dto/destroy.input';
 import { BaseDto } from '../../application/dto/base.dto';
 import { BaseEntityDto } from '../../application/dto/base-entity.dto';
 import { Request } from '../request/request';
-import { fromExpressRequest } from '../request/request.utils';
 import {
     extractListQuery,
     extractRetrieveQuery,
@@ -26,7 +35,7 @@ import {
 )
 export abstract class BaseCrudController<D extends BaseEntityDto,
     // Generic HTTP Request (Express, Fastify, etc.)
-    R = any,
+    R,
     // List
     LI extends ListInput = ListInput,
     LO extends BaseEntityDto = D,
@@ -49,7 +58,8 @@ export abstract class BaseCrudController<D extends BaseEntityDto,
         protected readonly service: BaseCrudService<any, D, LI, LO, PC, RI, RO, CP, CI, CO, UP, UI, UO, DI>,
     ) {}
 
-    async list(req: R): Promise<PC> {
+    @Get()
+    async list(@Req() req: R): Promise<PC> {
         const request = this.mapRequest(req);
         const result = await this.service.list(this.mapListInput(request));
 
@@ -60,7 +70,8 @@ export abstract class BaseCrudController<D extends BaseEntityDto,
         return result.unwrap();
     }
 
-    async retrieve(req: R): Promise<RO> {
+    @Get(':id')
+    async retrieve(@Req() req: R): Promise<RO> {
         const request = this.mapRequest(req);
         const result = await this.service.retrieve(this.mapRetrieveInput(request));
 
@@ -71,7 +82,8 @@ export abstract class BaseCrudController<D extends BaseEntityDto,
         return result.unwrap();
     }
 
-    async create(req: R): Promise<CO> {
+    @Post()
+    async create(@Req() req: R): Promise<CO> {
         const request = this.mapRequest(req);
         const result = await this.service.create(this.mapCreateInput(request));
 
@@ -82,7 +94,8 @@ export abstract class BaseCrudController<D extends BaseEntityDto,
         return result.unwrap();
     }
 
-    async replace(req: R): Promise<UO> {
+    @Put(':id')
+    async replace(@Req() req: R): Promise<UO> {
         const request = this.mapRequest(req);
         const result = await this.service.update(this.mapUpdateInput(request, false));
 
@@ -93,7 +106,8 @@ export abstract class BaseCrudController<D extends BaseEntityDto,
         return result.unwrap();
     }
 
-    async partialUpdate(req: R): Promise<UO> {
+    @Patch(':id')
+    async partialUpdate(@Req() req: R): Promise<UO> {
         const request = this.mapRequest(req);
         const result = await this.service.update(this.mapUpdateInput(request, true));
 
@@ -104,7 +118,9 @@ export abstract class BaseCrudController<D extends BaseEntityDto,
         return result.unwrap();
     }
 
-    async destroy(req: R): Promise<void> {
+    @Delete(':id')
+    @HttpCode(HttpStatus.NO_CONTENT)
+    async destroy(@Req() req: R): Promise<void> {
         const request = this.mapRequest(req);
         const result = await this.service.destroy(this.mapDestroyInput(request));
 
@@ -115,9 +131,7 @@ export abstract class BaseCrudController<D extends BaseEntityDto,
         return result.unwrap();
     }
 
-    protected mapRequest(req: R): Request {
-        return fromExpressRequest(req);
-    }
+    protected abstract mapRequest(req: R): Request;
 
     protected mapListInput(req: Request): LI {
         return {
