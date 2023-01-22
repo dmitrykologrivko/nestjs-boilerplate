@@ -1,8 +1,7 @@
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { DataSource, SelectQueryBuilder } from 'typeorm';
 import {
     ApplicationService,
     BaseCrudService,
-    InjectRepository,
     PagePagination,
     ListInput,
 } from '@nestjs-boilerplate/core';
@@ -12,11 +11,10 @@ import { NoteDto } from './note.dto';
 @ApplicationService()
 export class NoteService extends BaseCrudService<Note, NoteDto> {
     constructor(
-        @InjectRepository(Note)
-        private noteRepository: Repository<Note>,
+        protected dataSource: DataSource,
     ) {
         super(
-            noteRepository,
+            dataSource,
             {
                 entityCls: Note,
                 listOutputCls: NoteDto,

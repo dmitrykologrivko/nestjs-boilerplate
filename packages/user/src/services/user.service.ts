@@ -1,4 +1,4 @@
-import { Connection, QueryRunner, Repository } from 'typeorm';
+import { DataSource, QueryRunner, Repository } from 'typeorm';
 import { Logger } from '@nestjs/common';
 import {
     PropertyConfigService,
@@ -59,7 +59,7 @@ type ResetPasswordResult = Promise<Result<void, ValidationContainerException | V
 @ApplicationService()
 export class UserService {
     constructor(
-        private readonly connection: Connection,
+        private readonly dataSource: DataSource,
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
         private readonly passwordService: UserPasswordService,
@@ -122,7 +122,7 @@ export class UserService {
                     }));
             }));
 
-        return transaction(this.connection, handler);
+        return transaction(this.dataSource, handler);
     }
 
     /**
@@ -152,7 +152,7 @@ export class UserService {
                 }));
             }));
 
-        return transaction(this.connection, handler);
+        return transaction(this.dataSource, handler);
     }
 
     /**
@@ -218,6 +218,6 @@ export class UserService {
                 }));
             }));
 
-        return transaction(this.connection, handler);
+        return transaction(this.dataSource, handler);
     }
 }
