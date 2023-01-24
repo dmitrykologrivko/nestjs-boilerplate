@@ -1,4 +1,6 @@
 import { Repository, DataSource, SelectQueryBuilder, QueryRunner } from 'typeorm';
+import { ValidatorOptions } from 'class-validator';
+import { ClassTransformOptions } from 'class-transformer';
 import { transaction } from '../../database/database.utils';
 import { TransactionRollbackException } from '../../database/transaction-rollback.exception';
 import { Constructor } from '../../utils/type.utils';
@@ -161,7 +163,10 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
                 ClassValidator.validate(
                     this.options.createPayloadCls,
                     input.payload,
-                    { groups: [CrudOperations.CREATE] },
+                    {
+                        ...this.getValidatorOptions(),
+                        groups: [CrudOperations.CREATE],
+                    },
                 )
             ))
             .then(proceed(async () => {
@@ -169,13 +174,17 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
                 input.payload = ClassTransformer.toClassObject(
                     this.options.createPayloadCls,
                     input.payload,
-                    { groups: [CrudOperations.CREATE] },
+                    {
+                        ...this.getClassTransformOptions(),
+                        groups: [CrudOperations.CREATE],
+                    },
                 );
 
                 const newEntity = this.repository.create(
                     ClassTransformer.toClassObject(
                         this.options.entityCls,
                         { ...input.payload, id: null },
+                        this.getClassTransformOptions(),
                     ),
                 );
 
@@ -214,7 +223,10 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
                 (await ClassValidator.validate(
                     this.options.updatePayloadCls,
                     input.payload,
-                    { groups },
+                    {
+                        ...this.getValidatorOptions(),
+                        groups,
+                    },
                 )).map(() => entity),
             ))
             .then(proceed(async entity => {
@@ -222,7 +234,10 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
                 input.payload = ClassTransformer.toClassObject(
                     this.options.updatePayloadCls,
                     input.payload,
-                    { groups },
+                    {
+                        ...this.getClassTransformOptions(),
+                        groups,
+                    },
                 );
 
                 return preSaveHook(entity, this.options.entityCls, queryRunner)
@@ -367,6 +382,14 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         return this.getEntityPermissions();
     }
 
+    protected getValidatorOptions(): ValidatorOptions {
+        return {};
+    }
+
+    protected getClassTransformOptions(): ClassTransformOptions {
+        return {};
+    }
+
     protected mapListOutput(
         entities: E[],
         input?: LI,
@@ -374,7 +397,10 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         return ClassTransformer.toClassObjects(
             this.options.listOutputCls,
             entities,
-            { groups: [CrudOperations.READ] },
+            {
+                ...this.getClassTransformOptions(),
+                groups: [CrudOperations.READ]
+            },
         );
     }
 
@@ -385,7 +411,10 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         return ClassTransformer.toClassObject(
             this.options.retrieveOutputCls,
             entity,
-            { groups: [CrudOperations.READ] },
+            {
+                ...this.getClassTransformOptions(),
+                groups: [CrudOperations.READ],
+            },
         );
     }
 
@@ -399,6 +428,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
                 ...input.payload,
                 id: null,
             },
+            this.getClassTransformOptions(),
         );
     }
 
@@ -409,7 +439,10 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         return ClassTransformer.toClassObject(
             this.options.createOutputCls,
             entity,
-            { groups: [CrudOperations.READ] },
+            {
+                ...this.getClassTransformOptions(),
+                groups: [CrudOperations.READ],
+            },
         );
     }
 
@@ -424,6 +457,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
                 ...input.payload,
                 id: entity.id,
             },
+            this.getClassTransformOptions(),
         );
     }
 
@@ -434,7 +468,10 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         return ClassTransformer.toClassObject(
             this.options.updateOutputCls,
             entity,
-            { groups: [CrudOperations.READ] },
+            {
+                ...this.getClassTransformOptions(),
+                groups: [CrudOperations.READ],
+            },
         );
     }
 }
