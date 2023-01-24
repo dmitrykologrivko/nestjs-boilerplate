@@ -283,3 +283,13 @@ You can provide your own custom database query to get a list of objects or retri
 
 Method `getQuery` defines common query.\
 Method `getObject` defines query to retrieve an object.
+
+#### Overriding validator options
+
+For input DTOs validation happens by using `ClassValidator` util. You can override `getValidatorOptions` method
+to provide custom validator options.
+
+#### Overriding class transformer options
+
+For output DTOs class transformation happens by using `ClassTransformer` util. You can override `getClassTransformOptions` 
+method to provide custom class transformer options.

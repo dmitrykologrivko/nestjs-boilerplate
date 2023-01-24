@@ -34,7 +34,7 @@ vendor, etc.) `ApiController` decorator will be helpful.
 ### ListFilter
 
 `ListFilter` decorator parses `ListQuery` object from request. `ListQuery` object implements the following interfaces: 
-`OrderingQuery`, `SearchQuery`, `WhereQuery`, `PagePaginationQuery`, `LimitOffsetPaginationQuery`.
+`Queryable`, `OrderingQuery`, `SearchQuery`, `WhereQuery`, `PagePaginationQuery`, `LimitOffsetPaginationQuery`.
 See [filters](./filters.md) and [pagination](./pagination.md) sections.
 
 ```typescript
