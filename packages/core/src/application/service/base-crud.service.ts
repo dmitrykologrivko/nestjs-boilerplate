@@ -56,9 +56,9 @@ export enum InputType {
     REGULAR_INPUT = 'regular_input',
 }
 
-export interface InputWrapper<LI, RI, CI, UI, DI> {
+export interface InputWrapper {
     type: InputType;
-    input: LI | RI | CI | UI | DI | BaseInput;
+    input: BaseInput;
 }
 
 type ListResult<PC> = Promise<Result<PC, PermissionDeniedException | TransactionRollbackException>>;
@@ -314,7 +314,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
     protected async getObject(
         id: Identifiable,
         queryRunner: QueryRunner,
-        wrapper?: InputWrapper<LI, RI, CI, UI, DI>,
+        wrapper?: InputWrapper,
     ): Promise<Result<E, EntityNotFoundException>> {
         const entity = await this.getQuery(queryRunner, wrapper)
             .andWhere(`${this.alias}.id = :id`, { 'id': id.id })
@@ -329,7 +329,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
 
     protected getQuery(
         queryRunner: QueryRunner,
-        wrapper?: InputWrapper<LI, RI, CI, UI, DI>,
+        wrapper?: InputWrapper,
     ): SelectQueryBuilder<E> {
         return this.repository.createQueryBuilder(this.alias, queryRunner);
     }
