@@ -19,9 +19,10 @@ import { Identifiable } from '../../domain/entities/identifiable.interface';
 import { EntityNotFoundException } from '../../domain/entities/entity-not-found.exception';
 import { EntityEventsManager } from '../../domain/events/entity-events.manager';
 import { EventsFailedException } from '../../domain/events/events-failed.exception';
+import { CrudOperations } from '../constants/crud-operations.enum';
 import { BaseDto } from '../dto/base.dto';
 import { BaseEntityDto } from '../dto/base-entity.dto';
-import { CrudOperations } from '../constants/crud-operations.enum';
+import { BaseInput } from '../dto/base.input';
 import { ListInput } from '../dto/list.input';
 import { RetrieveInput } from '../dto/retrieve.input';
 import { CreateInput } from '../dto/create.input';
@@ -52,11 +53,12 @@ export enum InputType {
     CREATE_INPUT = 'create_input',
     UPDATE_INPUT = 'update_input',
     DESTROY_INPUT = 'destroy_input',
+    REGULAR_INPUT = 'regular_input',
 }
 
 export interface InputWrapper<LI, RI, CI, UI, DI> {
     type: InputType;
-    input: LI | RI | CI | UI | DI;
+    input: LI | RI | CI | UI | DI | BaseInput;
 }
 
 type ListResult<PC> = Promise<Result<PC, PermissionDeniedException | TransactionRollbackException>>;
