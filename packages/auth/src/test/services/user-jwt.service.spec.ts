@@ -14,7 +14,7 @@ describe('UserJwtService', () => {
     const JTI = 'ff008c0f71d295';
     const IAT = 1633982876051;
     const EXP = 1633982876055;
-    const USERNAME_QUERY = { where: { _username: USERNAME, _isActive: true } };
+    const USERNAME_QUERY = { where: { username: USERNAME, isActive: true } };
     const SECRET_KEY = 'ff008d0e71d294';
 
     let service: UserJwtService;

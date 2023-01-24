@@ -20,7 +20,7 @@ export class ActiveUsersQuery extends UsersQuery {
     toFindOptions(): FindManyOptions<User> {
         const query: Record<string, any> = super.toFindOptions();
 
-        query.where._isActive = true;
+        query.where.isActive = true;
 
         return query;
     }

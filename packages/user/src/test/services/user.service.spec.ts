@@ -38,7 +38,7 @@ import { UserRecoveredPasswordEvent } from '../../events/user-recovered-password
 import { UserFactory } from '../user.factory';
 
 describe('UserService', () => {
-    const USERNAME_QUERY = { where: { _username: UserFactory.DEFAULT_USERNAME, _isActive: true } };
+    const USERNAME_QUERY = { where: { username: UserFactory.DEFAULT_USERNAME, isActive: true } };
     const RESET_PASSWORD_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsImtleSI6ImQ2ZWNiYTE5ZDM3NjBiZDVj' +
         'NWMwYWQ2MDJmYTYxMjExZWQwNWQxM2M4MmU3ZDM2ZmU5N2JjZDczNjYxYTAyMGUiLCJpYXQiOjE1OTA0MTcwNDYsImV4cCI6M' +
         'TU5MDUwMzQ0Nn0.v8JtgKvH3fk3OEfeBjhtpW_WnJnmvkZF99I0sQ-eV9E';
@@ -383,7 +383,7 @@ describe('UserService', () => {
                 .toStrictEqual({
                     where: {
                         id: user.id,
-                        _isActive: true,
+                        isActive: true,
                     },
                 });
             expect(entityManager.save.mock.calls[0][0])
@@ -579,7 +579,7 @@ describe('UserService', () => {
 
             expect(userVerificationService.isEmailActive.mock.calls[0][0]).toBe(forgotPasswordInput.email);
             expect(userRepository.findOne.mock.calls[0][0]).toStrictEqual({
-                where: { _email: forgotPasswordInput.email, _isActive: true },
+                where: { email: forgotPasswordInput.email, isActive: true },
             });
             expect(userPasswordService.generateResetPasswordToken.mock.calls[0][0]).toBe(user);
             expect(templateService.render.mock.calls[0][0]).toBe(AUTH_CONFIG.password.resetMailTemplate);

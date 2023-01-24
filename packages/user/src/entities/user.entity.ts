@@ -26,64 +26,56 @@ export const LAST_NAME_MAX_LENGTH = 150;
 export class User extends BaseTypeormEntity {
 
     @Column({
-        name: 'username',
         length: USERNAME_MAX_LENGTH,
         unique: true,
     })
-    protected _username: string;
+    username: string;
 
     @Column({
-        name: 'password',
         length: PASSWORD_MAX_LENGTH,
     })
-    protected _password: string;
+    password: string;
 
     @Column({
-        name: 'email',
         length: EMAIL_MAX_LENGTH,
         unique: true,
     })
-    protected _email: string;
+    email: string;
 
     @Column({
-        name: 'firstName',
         length: FIRST_NAME_MAX_LENGTH,
     })
-    protected _firstName: string;
+    firstName: string;
 
     @Column({
-        name: 'lastName',
         length: LAST_NAME_MAX_LENGTH,
     })
-    protected _lastName: string;
+    lastName: string;
 
     @Column({
-        name: 'isActive',
         default: true,
     })
-    protected _isActive: boolean;
+    isActive: boolean;
 
     @Column({
-        name: 'isAdmin',
         default: false,
     })
-    protected _isAdmin: boolean;
+    isAdmin: boolean;
 
     @Column({
-        name: 'isSuperuser',
         default: false,
     })
-    protected _isSuperuser: boolean;
+    isSuperuser: boolean;
 
     @ManyToMany(type => Group)
     @JoinTable()
-    protected _groups: Group[];
+    groups: Group[];
 
     @ManyToMany(type => Permission)
     @JoinTable()
-    protected _permissions: Permission[];
+    permissions: Permission[];
 
-    protected constructor(
+    constructor(
         username: string,
         email: string,
         firstName: string,
@@ -93,14 +85,13 @@ export class User extends BaseTypeormEntity {
         isSuperuser: boolean = false,
     ) {
         super();
-
-        this._username = username;
-        this._email = email;
-        this._firstName = firstName;
-        this._lastName = lastName;
-        this._isActive = isActive;
-        this._isAdmin = isAdmin;
-        this._isSuperuser = isSuperuser;
+        this.username = username;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.isActive = isActive;
+        this.isAdmin = isAdmin;
+        this.isSuperuser = isSuperuser;
     }
 
     /**
@@ -154,46 +145,6 @@ export class User extends BaseTypeormEntity {
         return ok(user);
     }
 
-    get username(): string {
-        return this._username;
-    }
-
-    get password(): string {
-        return this._password;
-    }
-
-    get email(): string {
-        return this._email;
-    }
-
-    get firstName(): string {
-        return this._firstName;
-    }
-
-    get lastName(): string {
-        return this._lastName;
-    }
-
-    get isActive(): boolean {
-        return this._isActive;
-    }
-
-    get isAdmin(): boolean {
-        return this._isAdmin;
-    }
-
-    get isSuperuser(): boolean {
-        return this._isSuperuser;
-    }
-
-    get groups(): Group[] {
-        return this._groups;
-    }
-
-    get permissions(): Permission[] {
-        return this._permissions;
-    }
-
     /**
      * Changes current username
      * @param username new username
@@ -203,7 +154,7 @@ export class User extends BaseTypeormEntity {
         const validateResult = User.validateUsername(username);
 
         return validateResult.map(() => {
-            this._username = username;
+            this.username = username;
         });
     }
 
@@ -216,7 +167,7 @@ export class User extends BaseTypeormEntity {
         const validateResult = User.validateEmail(email);
 
         return validateResult.map(() => {
-            this._email = email;
+            this.email = email;
         });
     }
 
@@ -233,8 +184,8 @@ export class User extends BaseTypeormEntity {
         ]);
 
         return validateResult.map(() => {
-            this._firstName = firstName;
-            this._lastName = lastName;
+            this.firstName = firstName;
+            this.lastName = lastName;
         });
     }
 
@@ -242,42 +193,42 @@ export class User extends BaseTypeormEntity {
      * Activates current user
      */
     activateUser() {
-        this._isActive = true;
+        this.isActive = true;
     }
 
     /**
      * Deactivates current user
      */
     deactivateUser() {
-        this._isActive = false;
+        this.isActive = false;
     }
 
     /**
      * Sets current user as an admin user
      */
     setAdminAccess() {
-        this._isAdmin = true;
+        this.isAdmin = true;
     }
 
     /**
      * Sets current user as not admin user
      */
     denyAdminAccess() {
-        this._isAdmin = false;
+        this.isAdmin = false;
     }
 
     /**
      * Sets current user as a superuser
      */
     setSuperuserAccess() {
-        this._isSuperuser = true;
+        this.isSuperuser = true;
     }
 
     /**
      * Sets current user as not superuser
      */
     denySuperuserAccess() {
-        this._isSuperuser = false;
+        this.isSuperuser = false;
     }
 
     /**
@@ -285,7 +236,7 @@ export class User extends BaseTypeormEntity {
      * @returns {string}
      */
     getFullName() {
-        return `${this._firstName} ${this._lastName}`;
+        return `${this.firstName} ${this.lastName}`;
     }
 
     /**
@@ -293,7 +244,7 @@ export class User extends BaseTypeormEntity {
      * @returns {string}
      */
     getShortName() {
-        return this._firstName;
+        return this.firstName;
     }
 
     /**
@@ -305,7 +256,7 @@ export class User extends BaseTypeormEntity {
     async setPassword(password: string, saltRounds: number): Promise<ValidationResult> {
         return User.validatePassword(password)
             .proceedAsync(async () => {
-                this._password = await bcrypt.hash(password, saltRounds);
+                this.password = await bcrypt.hash(password, saltRounds);
                 return ok(null);
             });
     }
@@ -315,7 +266,7 @@ export class User extends BaseTypeormEntity {
      * @param password Plain password
      */
     async comparePassword(password: string) {
-        return await bcrypt.compare(password, this._password);
+        return await bcrypt.compare(password, this.password);
     }
 
     /**
@@ -326,7 +277,7 @@ export class User extends BaseTypeormEntity {
      */
     hasPermission(codename: string) {
         // Active superusers users have all permissions
-        if (this._isActive && this._isSuperuser) {
+        if (this.isActive && this.isSuperuser) {
             return true;
         }
 
@@ -334,8 +285,8 @@ export class User extends BaseTypeormEntity {
             return true;
         }
 
-        if (this._groups) {
-            for (const group of this._groups) {
+        if (this.groups) {
+            for (const group of this.groups) {
                 if (group.hasPermission(codename)) {
                     return true;
                 }
@@ -351,11 +302,11 @@ export class User extends BaseTypeormEntity {
      */
     addUserPermission(permission: Permission) {
         if (!this.findUserPermission(permission.codename)) {
-            if (!this._permissions) {
-                this._permissions = [];
+            if (!this.permissions) {
+                this.permissions = [];
             }
 
-            this._permissions.push(permission);
+            this.permissions.push(permission);
         }
     }
 
@@ -364,11 +315,11 @@ export class User extends BaseTypeormEntity {
      * @param codename {string} Permission codename
      */
     removeUserPermission(codename: string) {
-        if (!this._permissions) {
+        if (!this.permissions) {
             return;
         }
 
-        this._permissions = this._permissions.filter(permission => permission.codename !== codename);
+        this.permissions = this.permissions.filter(permission => permission.codename !== codename);
     }
 
     /**
@@ -377,11 +328,11 @@ export class User extends BaseTypeormEntity {
      */
     addToGroup(group: Group) {
         if (!this.findGroup(group)) {
-            if (!this._groups) {
-                this._groups = [];
+            if (!this.groups) {
+                this.groups = [];
             }
 
-            this._groups.push(group);
+            this.groups.push(group);
         }
     }
 
@@ -390,11 +341,11 @@ export class User extends BaseTypeormEntity {
      * @param group {Group}
      */
     removeFromGroup(group: Group) {
-        if (!this._groups) {
+        if (!this.groups) {
             return;
         }
 
-        this._groups = this._groups.filter(currentGroup => currentGroup.id !== group.id);
+        this.groups = this.groups.filter(currentGroup => currentGroup.id !== group.id);
     }
 
     private static validateUsername(username: string) {
@@ -434,18 +385,18 @@ export class User extends BaseTypeormEntity {
     }
 
     private findUserPermission(codename: string) {
-        if (!this._permissions) {
+        if (!this.permissions) {
             return null;
         }
 
-        return this._permissions.find(permission => permission.codename === codename);
+        return this.permissions.find(permission => permission.codename === codename);
     }
 
     private findGroup(group: Group) {
-        if (!this._groups) {
+        if (!this.groups) {
             return null;
         }
 
-        return this._groups.find(currentGroup => currentGroup.id === group.id);
+        return this.groups.find(currentGroup => currentGroup.id === group.id);
     }
 }

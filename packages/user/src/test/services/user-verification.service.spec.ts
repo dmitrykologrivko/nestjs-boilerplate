@@ -9,9 +9,9 @@ describe('UserVerificationService', () => {
     const EMAIL = 'test@test.com';
     const USERNAME = UserFactory.DEFAULT_USERNAME;
     const PASSWORD = UserFactory.DEFAULT_PASSWORD;
-    const EMAIL_QUERY = { where: { _email: EMAIL } };
-    const EMAIL_ACTIVE_QUERY = { where: { _email: EMAIL, _isActive: true } };
-    const USERNAME_QUERY = { where: { _username: USERNAME } };
+    const EMAIL_QUERY = { where: { email: EMAIL } };
+    const EMAIL_ACTIVE_QUERY = { where: { email: EMAIL, isActive: true } };
+    const USERNAME_QUERY = { where: { username: USERNAME } };
 
     let service: UserVerificationService;
     let userRepository: MockProxy<Repository<User>>;

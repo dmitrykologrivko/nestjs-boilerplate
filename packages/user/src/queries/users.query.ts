@@ -23,25 +23,25 @@ export class UsersQuery implements BaseFindQuery<User> {
             query.where.id = this.meta.id;
         }
         if (this.meta.username) {
-            query.where._username = this.meta.username;
+            query.where.username = this.meta.username;
         }
         if (this.meta.email) {
-            query.where._email = this.meta.email;
+            query.where.email = this.meta.email;
         }
         if (this.meta.firstName) {
-            query.where._firstName = this.meta.firstName;
+            query.where.firstName = this.meta.firstName;
         }
         if (this.meta.lastName) {
-            query.where._lastName = this.meta.lastName;
+            query.where.lastName = this.meta.lastName;
         }
         if (this.meta.isAdmin) {
-            query.where._isAdmin = this.meta.isAdmin;
+            query.where.isAdmin = this.meta.isAdmin;
         }
         if (this.meta.isSuperuser) {
-            query.where._isSuperuser = this.meta.isSuperuser;
+            query.where.isSuperuser = this.meta.isSuperuser;
         }
         if (this.meta.isActive) {
-            query.where._isActive = this.meta.isActive;
+            query.where.isActive = this.meta.isActive;
         }
 
         return query;

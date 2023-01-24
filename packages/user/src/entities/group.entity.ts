@@ -14,18 +14,17 @@ export const GROUP_NAME_MAX_LENGTH = 150;
 export class Group extends BaseTypeormEntity {
 
     @Column({
-        name: 'name',
         length: GROUP_NAME_MAX_LENGTH,
     })
-    private readonly _name: string;
+    name: string;
 
     @ManyToMany(type => Permission)
     @JoinTable()
-    private _permissions: Permission[];
+    permissions: Permission[];
 
-    private constructor(name: string) {
+    constructor(name: string) {
         super();
-        this._name = name;
+        this.name = name;
     }
 
     /**
@@ -41,21 +40,13 @@ export class Group extends BaseTypeormEntity {
         return validateResult.map(() => new Group(name));
     }
 
-    get name(): string {
-        return this._name;
-    }
-
-    get permissions(): Permission[] {
-        return this._permissions;
-    }
-
     /**
      * Checks if group has permission
      * @param codename Permission codename
      * @return true if group has permission else false
      */
     hasPermission(codename: string) {
-        return this._permissions && !!this._permissions.find(permission => permission.codename === codename);
+        return this.permissions && !!this.permissions.find(permission => permission.codename === codename);
     }
 
     /**
@@ -64,11 +55,11 @@ export class Group extends BaseTypeormEntity {
      */
     setPermission(permission: Permission) {
         if (!this.hasPermission(permission.codename)) {
-            if (!this._permissions) {
-                this._permissions = [];
+            if (!this.permissions) {
+                this.permissions = [];
             }
 
-            this._permissions.push(permission);
+            this.permissions.push(permission);
         }
     }
 
@@ -77,11 +68,11 @@ export class Group extends BaseTypeormEntity {
      * @param codename permission codename
      */
     removePermission(codename: string) {
-        if (!this._permissions) {
+        if (!this.permissions) {
             return;
         }
 
-        this._permissions = this._permissions.filter(permission => permission.codename !== codename);
+        this.permissions = this.permissions.filter(permission => permission.codename !== codename);
     }
 
     private static validateName(name: string) {

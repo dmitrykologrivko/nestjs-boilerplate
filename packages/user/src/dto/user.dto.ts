@@ -7,25 +7,25 @@ export class UserDto extends BaseEntityDto {
     @Expose()
     id: number;
 
-    @Expose({ name: '_username' })
+    @Expose()
     username: string;
 
-    @Expose({ name: '_email' })
+    @Expose()
     email: string;
 
-    @Expose({ name: '_firstName' })
+    @Expose()
     firstName: string;
 
-    @Expose({ name: '_lastName' })
+    @Expose()
     lastName: string;
 
-    @Expose({ name: '_isActive' })
+    @Expose()
     isActive: boolean;
 
-    @Expose({ name: '_isAdmin' })
+    @Expose()
     isAdmin: boolean;
 
-    @Expose({ name: '_isSuperuser' })
+    @Expose()
     isSuperuser: boolean;
 
 }

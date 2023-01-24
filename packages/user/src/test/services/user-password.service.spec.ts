@@ -14,8 +14,8 @@ describe('UserPasswordService', () => {
     const ID = 1;
     const USERNAME = UserFactory.DEFAULT_USERNAME;
     const PASSWORD = UserFactory.DEFAULT_PASSWORD;
-    const USERNAME_QUERY = { where: { _username: USERNAME, _isActive: true } };
-    const USER_ID_QUERY = { where: { id: ID, _isActive: true } };
+    const USERNAME_QUERY = { where: { username: USERNAME, isActive: true } };
+    const USER_ID_QUERY = { where: { id: ID, isActive: true } };
     const SECRET_KEY = 'ff008d0e71d294';
 
     let service: UserPasswordService;

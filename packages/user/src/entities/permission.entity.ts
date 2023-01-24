@@ -14,22 +14,20 @@ export const CODENAME_MAX_LENGTH = 100;
 export class Permission extends BaseTypeormEntity {
 
     @Column({
-        name: 'name',
         length: PERMISSION_NAME_MAX_LENGTH,
     })
-    private readonly _name: string;
+    name: string;
 
     @Column({
-        name: 'codename',
         length: CODENAME_MAX_LENGTH,
         unique: true,
     })
-    private readonly _codename: string;
+    codename: string;
 
-    private constructor(name: string, codename: string) {
+    constructor(name: string, codename: string) {
         super();
-        this._name = name;
-        this._codename = codename;
+        this.name = name;
+        this.codename = codename;
     }
 
     /**
@@ -48,14 +46,6 @@ export class Permission extends BaseTypeormEntity {
         ]);
 
         return validateResult.map(() => new Permission(name, codename));
-    }
-
-    get name(): string {
-        return this._name;
-    }
-
-    get codename(): string {
-        return this._codename;
     }
 
     private static validateName(name: string) {
