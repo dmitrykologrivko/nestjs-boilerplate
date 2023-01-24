@@ -53,7 +53,7 @@ export enum InputType {
     CREATE_INPUT = 'create_input',
     UPDATE_INPUT = 'update_input',
     DESTROY_INPUT = 'destroy_input',
-    REGULAR_INPUT = 'regular_input',
+    GENERIC_INPUT = 'generic_input',
 }
 
 export interface InputWrapper {
@@ -313,7 +313,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
 
     protected async getObject(
         id: Identifiable,
-        queryRunner: QueryRunner,
+        queryRunner?: QueryRunner,
         wrapper?: InputWrapper,
     ): Promise<Result<E, EntityNotFoundException>> {
         const entity = await this.getQuery(queryRunner, wrapper)
@@ -328,7 +328,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
     }
 
     protected getQuery(
-        queryRunner: QueryRunner,
+        queryRunner?: QueryRunner,
         wrapper?: InputWrapper,
     ): SelectQueryBuilder<E> {
         return this.repository.createQueryBuilder(this.alias, queryRunner);
