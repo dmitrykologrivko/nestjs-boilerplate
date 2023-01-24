@@ -14,7 +14,7 @@ export function ReadOnly(options?: ExposeOptions) {
     const groups = [
         ...options?.groups || [],
         CrudOperations.READ,
-    ].filter(group => !restrictedOperations.includes(group))
+    ].filter(group => !restrictedOperations.includes(group));
 
     return applyDecorators(
         SkipValidation({ always: true }),
