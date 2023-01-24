@@ -8,6 +8,7 @@ export * from './retrieve.input';
 export * from './create.input';
 export * from './update.input';
 export * from './destroy.input';
+export * from './queryable.interface';
 export * from './list-query.interface';
 export * from './retrieve-query.interface';
 export * from './destroy-query.interface';

@@ -28,7 +28,7 @@ export class ClassValidator {
         let validatableObject = object;
 
         if (!(validatableObject instanceof cls)) {
-            validatableObject = plainToInstance(cls, object, { groups: validatorOptions.groups });
+            validatableObject = plainToInstance(cls, object, { groups: validatorOptions?.groups });
         }
 
         const errors = await validate(validatableObject, validatorOptions);

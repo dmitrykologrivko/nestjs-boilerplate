@@ -101,7 +101,11 @@ export function extractLimitOffsetPaginationQuery(request: Request): LimitOffset
 }
 
 export function extractListQuery(request: Request, fieldSeparator = '__'): ListQuery {
+    const { query, params } = request;
+
     return {
+        query,
+        params,
         ...extractOrderingQuery(request, fieldSeparator),
         ...extractSearchQuery(request),
         ...extractWhereQuery(request, fieldSeparator),
