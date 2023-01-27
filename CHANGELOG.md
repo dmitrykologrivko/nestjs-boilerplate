@@ -1,3 +1,24 @@
+## 0.6.0
+
+### Features
+* Added `Authorizable` interface to provide authorized user to input
+* `ListInput`, `RetriveInput`, `CreateInput`, `UpdateInput`, `DestroyInput` now implementing `Authorizable` interface
+
+### BREAKING CHANGES
+* Removed redundant `RetrieveQuery`, `DestroyQuery` interfaces, `RetrieveFilter`, `DestroyFilter` decorators and
+`extractRetrieveQuery`, `extractDestroyQuery` functions
+* Approach revised and removed `extra` field from `BaseInput`, `UserRecoveredPasswordEvent` classes,
+replaced `extra` field in `UserChangedPasswordEvent` class to `token`
+* `BasePayloadInput` class replaced with `Payloadable` interface
+* `CreateInput` and `UpdateInput` classes replaced extending from `BasePayloadInput` class to implementing
+`Payloadable` interface
+* `mapListOutput`, `mapRetrieveOutput`, `mapCreateOutput`, `mapUpdateOutput` functions in `BaseCrudService` class marked 
+as async functions
+* `mapListOutput`, `mapRetrieveOutput`, `mapCreateOutput`, `mapUpdateOutput` functions now accepts raw entity object
+
+### DEPRECATIONS
+* `FilterChain` class is marked as deprecated
+
 ## 0.5.0
 
 ### Features

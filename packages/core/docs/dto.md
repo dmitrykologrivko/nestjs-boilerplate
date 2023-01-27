@@ -75,8 +75,8 @@ Thus contains **id**, **created**, **updated** properties.
 
 ## Base Input
 
-NestJS Boilerplate defines `BaseInput` class which extends `BaseDto` class and contains **extra** property intended for 
-adding arguments dynamically. You can extend your input DTOs from this class.
+NestJS Boilerplate defines `BaseInput` class which extends `BaseDto` class in turn, this way you can segregate DTOs 
+for your application services.
 
-Also, you can use `BasePayloadInput` which extends `BaseInput` class and contains **payload** property. You can use this 
-class to provide the payload object in the input along with other input arguments.
+Also, you can use `Payloadable` interface to provide the payload object in the input DTOs along with other
+input arguments.

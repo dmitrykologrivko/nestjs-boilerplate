@@ -93,8 +93,8 @@ Note that this application service method is performed as an **indivisible opera
 
 NestJS Boilerplate contains application service class which implements basic CRUD operations on entity.
 `BaseCrudService` class is generic base class for CRUD operations. This class is extendable, you can override 
-functionality or apply new methods. Allowed operations such as: List, Retrieve, Create, Update, Destroy 
-are transactional by default. ([Unit of Work](./unit-of-work.md))
+functionality or apply new methods. Modification operations such as: Create, Update, Destroy are transactional
+by default. ([Unit of Work](./unit-of-work.md))
 
 In the following example, we implemented a simple CRUD service to operate on notes.
 
