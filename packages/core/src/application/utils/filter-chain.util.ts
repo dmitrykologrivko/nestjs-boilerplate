@@ -3,9 +3,6 @@ import { BaseFilter } from '../filters/base.filter';
 import { BasePagination } from '../pagination/base.pagination';
 import { BasePaginatedContainer } from '../pagination/base-paginated-container.interface';
 
-/**
- * @deprecated
- */
 export class FilterChain<E, P extends BasePaginatedContainer<E> = BasePaginatedContainer<E>> {
     protected queryBuilder: SelectQueryBuilder<E>;
 

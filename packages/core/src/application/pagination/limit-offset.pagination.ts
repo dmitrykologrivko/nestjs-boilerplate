@@ -39,10 +39,7 @@ export class LimitOffsetPagination<E> extends BasePagination<E, PaginatedContain
     }
 
     async toPaginatedContainer(): Promise<PaginatedContainer<E>> {
-        const queryBuilder = this.paginate();
-
-        const results = await queryBuilder.getRawMany();
-        const count = await queryBuilder.getCount();
+        const [results, count] = await this.paginate().getManyAndCount();
 
         let next = replaceUrlQueryParam(this.query.path, LIMIT_QUERY_KEY, this.limit);
 

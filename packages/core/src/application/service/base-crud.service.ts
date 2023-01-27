@@ -132,10 +132,8 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
                     } as PC);
                 }
 
-                const entities = await queryBuilder.getRawMany();
-                return ok({
-                    results: await this.mapListOutput(entities, input)
-                } as PC);
+                const entities = await queryBuilder.getMany();
+                return ok({ results: await this.mapListOutput(entities, input) } as PC);
             }));
     }
 
@@ -316,7 +314,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
     ): Promise<Result<E, EntityNotFoundException>> {
         const entity = await this.getQuery(queryRunner, wrapper)
             .andWhere(`${this.alias}.id = :id`, { 'id': id.id })
-            .getRawOne();
+            .getOne();
 
         if (entity) {
             return ok(entity);
@@ -329,8 +327,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         queryRunner?: QueryRunner,
         wrapper?: InputWrapper,
     ): SelectQueryBuilder<E> {
-        return this.repository.createQueryBuilder(this.alias, queryRunner)
-            .select(`${this.alias}.*`);
+        return this.repository.createQueryBuilder(this.alias, queryRunner);
     }
 
     protected getFilters(
@@ -392,7 +389,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
     }
 
     protected async mapListOutput(
-        entities: object[],
+        entities: E[],
         input?: LI,
     ): Promise<LO[]> {
         return ClassTransformer.toClassObjects(
@@ -406,7 +403,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
     }
 
     protected async mapRetrieveOutput(
-        entity: object,
+        entity: E,
         input?: RI,
     ): Promise<RO> {
         return ClassTransformer.toClassObject(
@@ -434,7 +431,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
     }
 
     protected async mapCreateOutput(
-        entity: object,
+        entity: E,
         input?: CI,
     ): Promise<CO> {
         return ClassTransformer.toClassObject(
@@ -463,7 +460,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
     }
 
     protected async mapUpdateOutput(
-        entity: object,
+        entity: E,
         input?: UI,
     ): Promise<UO> {
         return ClassTransformer.toClassObject(

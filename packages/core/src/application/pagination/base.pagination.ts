@@ -21,7 +21,7 @@ export abstract class BasePagination<E, P extends BasePaginatedContainer<E>> {
 
     async toPaginatedContainer(): Promise<P> {
         return {
-            results: await this.paginate().getRawMany(),
+            results: await this.paginate().getMany(),
         } as P;
     };
 }
