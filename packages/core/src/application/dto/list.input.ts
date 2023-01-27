@@ -1,7 +1,12 @@
+import { Identifiable } from '../../domain/entities/identifiable.interface';
 import { BaseInput } from './base.input';
 import { ListQuery } from './list-query.interface';
+import { Authorizable } from './authorizable.interface';
 
-export class ListInput extends BaseInput implements ListQuery {
+export class ListInput<T extends Identifiable<any> = any>
+    extends BaseInput
+    implements ListQuery, Omit<Authorizable<T>, 'user'> {
+
     query: Record<string, any>;
     params: Record<string, any>;
     limit: number;
@@ -11,4 +16,5 @@ export class ListInput extends BaseInput implements ListQuery {
     search: string;
     sortBy: string[];
     where: [string, string][];
+    user?: T;
 }

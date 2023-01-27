@@ -49,9 +49,7 @@ export class AuthPasswordController {
             userId: user.id,
             currentPassword: input.currentPassword,
             newPassword: input.newPassword,
-            extra: {
-                jwt: token,
-            },
+            token,
         });
 
         if (result.isErr()) {

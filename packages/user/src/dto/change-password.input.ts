@@ -15,4 +15,6 @@ export class ChangePasswordInput extends BaseInput {
     @ValidatePassword()
     newPassword: string;
 
+    token?: string;
+
 }

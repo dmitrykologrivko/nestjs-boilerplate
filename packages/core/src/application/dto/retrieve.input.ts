@@ -1,6 +1,11 @@
+import { Identifiable } from '../../domain/entities/identifiable.interface';
 import { BaseInput } from './base.input';
-import { RetrieveQuery } from './retrieve-query.interface';
+import { Authorizable } from './authorizable.interface';
 
-export class RetrieveInput<T = number> extends BaseInput implements RetrieveQuery<T> {
+export class RetrieveInput<T = number, E extends Identifiable<any> = any>
+    extends BaseInput
+    implements Identifiable<T>, Omit<Authorizable<E>, 'user'> {
+
     id: T;
+    user?: E;
 }

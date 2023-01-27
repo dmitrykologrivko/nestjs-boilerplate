@@ -6,7 +6,6 @@ export class UserRecoveredPasswordEvent extends BaseEvent {
 
     constructor(
         public readonly userId: number,
-        public readonly extra?: Record<string, any>,
     ) {
         super(UserRecoveredPasswordEvent.NAME);
     }

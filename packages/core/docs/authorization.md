@@ -15,15 +15,16 @@ NestJS Boilerplate defines `BasePermission` class. This class allows implementin
 Let's implement permission that checks if the current user is admin.
 
 ```typescript
-import { BasePermission, BaseInput } from '@nestjs-boilerplate/core';
+import { BasePermission, BaseInput, Authorizable } from '@nestjs-boilerplate/core';
+import { UserDto } from './user-dto';
 
-export class IsAdminUserPermission extends BasePermission {
+export class IsAdminUserPermission extends BasePermission<BaseInput & Authorizable<UserDto>> {
     constructor() {
         super('Current user is not admin user');
     }
 
-    async hasPermission(input: BaseInput): Promise<boolean> {
-        return input.extra?.user?.isAdmin;
+    async hasPermission(input: BaseInput & Authorizable<UserDto>): Promise<boolean> {
+        return input.user.isAdmin;
     }
 }
 ```
@@ -77,19 +78,26 @@ import {
     BaseEntityPermission,
     BaseInput,
     BaseEntity,
+    Authorizable,
 } from '@nestjs-boilerplate/core';
+import { UserDto } from './user-dto';
 
 export interface Ownable {
     getOwnerId(): number;
 }
 
-export class IsOwnerEntityPermission<E extends BaseEntity & Ownable> extends BaseEntityPermission<BaseInput, E> {
+export class IsOwnerEntityPermission<E extends BaseEntity & Ownable>
+    extends BaseEntityPermission<BaseInput & Authorizable<UserDto>, E> {
+
     constructor() {
         super('Current user is not owner of the entity');
     }
 
-    async hasEntityPermission(input: BaseInput, entity: E): Promise<boolean> {
-        return input.extra?.user?.id === entity.getOwnerId();
+    async hasEntityPermission(
+        input: BaseInput & Authorizable<UserDto>,
+        entity: E,
+    ): Promise<boolean> {
+        return input.user.id === entity.getOwnerId();
     }
 }
 ```
@@ -97,9 +105,6 @@ export class IsOwnerEntityPermission<E extends BaseEntity & Ownable> extends Bas
 In your application service use `checkEntityPermissions` function from `@nestjs-boilerplate/core` package and 
 provide a list of instances entity permissions. If one of the provided permissions will return false then result with
 `PermissionDeniedException` exception will be returned.
-
-**Note:** Instance of authenticated user must be provided in extra params of the input object. Input object must be
-inherited from `BaseInput` class.
 
 ```typescript
 import { Repository } from 'typeorm';

@@ -4,8 +4,6 @@ import { WhereQuery, QUERY_NAME_CONDITION_REGEX } from '../../application/filter
 import { PagePaginationQuery } from '../../application/pagination/page.pagination';
 import { LimitOffsetPaginationQuery } from '../../application/pagination/limit-offset.pagination';
 import { ListQuery } from '../../application/dto/list-query.interface';
-import { RetrieveQuery } from '../../application/dto/retrieve-query.interface';
-import { DestroyQuery } from '../../application/dto/destroy-query.interface';
 import { Request } from '../request/request';
 
 export function extractSearchQuery(request: Request): SearchQuery {
@@ -112,14 +110,4 @@ export function extractListQuery(request: Request, fieldSeparator = '__'): ListQ
         ...extractPagePaginationQuery(request),
         ...extractLimitOffsetPaginationQuery(request),
     }
-}
-
-export function extractRetrieveQuery(request: Request): RetrieveQuery {
-    const { params } = request;
-    return { id: params.id };
-}
-
-export function extractDestroyQuery(request: Request): DestroyQuery {
-    const { params } = request;
-    return { id: params.id };
 }

@@ -113,7 +113,7 @@ export class UserService {
                     .then(proceed(async () => {
                         await queryRunner.manager.save(user);
 
-                        const event = new UserChangedPasswordEvent(user.id, input.extra);
+                        const event = new UserChangedPasswordEvent(user.id, input.token);
                         return (await this.eventBus.publish(event))
                             .proceed(() => {
                                 Logger.log(`Password has been changed for ${user.username}`);
@@ -143,7 +143,7 @@ export class UserService {
                 ).then(proceed(async () => {
                     await queryRunner.manager.save(user);
 
-                    const event = new UserChangedPasswordEvent(user.id, input.extra);
+                    const event = new UserChangedPasswordEvent(user.id);
                     return (await this.eventBus.publish(event))
                         .proceed(() => {
                             Logger.log(`Password has been changed for ${user.username}`);
@@ -209,7 +209,7 @@ export class UserService {
                 ).then(proceed(async () => {
                     await queryRunner.manager.save(user);
 
-                    const event = new UserRecoveredPasswordEvent(user.id, input.extra);
+                    const event = new UserRecoveredPasswordEvent(user.id);
                     return (await this.eventBus.publish(event))
                         .proceed(() => {
                             Logger.log(`Password has been recovered for ${user.username}`);

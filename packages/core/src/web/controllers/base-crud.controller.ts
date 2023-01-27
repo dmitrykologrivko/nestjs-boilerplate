@@ -22,11 +22,7 @@ import { DestroyInput } from '../../application/dto/destroy.input';
 import { BaseDto } from '../../application/dto/base.dto';
 import { BaseEntityDto } from '../../application/dto/base-entity.dto';
 import { Request } from '../request/request';
-import {
-    extractListQuery,
-    extractRetrieveQuery,
-    extractDestroyQuery,
-} from '../utils/query.utils';
+import { extractListQuery } from '../utils/query.utils';
 
 @UseFilters(
     ValidationExceptionsFilter,
@@ -136,18 +132,14 @@ export abstract class BaseCrudController<D extends BaseEntityDto,
     protected mapListInput(req: Request): LI {
         return {
             ...extractListQuery(req),
-            extra: {
-                user: req.user,
-            },
+            user: req.user,
         } as unknown as LI;
     }
 
     protected mapRetrieveInput(req: Request): RI {
         return {
-            ...extractRetrieveQuery(req),
-            extra: {
-                user: req.user,
-            },
+            id: req.params.id,
+            user: req.user,
         } as unknown as RI;
     }
 
@@ -156,9 +148,7 @@ export abstract class BaseCrudController<D extends BaseEntityDto,
             payload: {
                 ...req.body,
             },
-            extra: {
-                user: req.user,
-            },
+            user: req.user,
         } as unknown as CI;
     }
 
@@ -169,18 +159,14 @@ export abstract class BaseCrudController<D extends BaseEntityDto,
                 id: req.params.id,
             },
             partial,
-            extra: {
-                user: req.user,
-            },
+            user: req.user,
         } as unknown as UI;
     }
 
     protected mapDestroyInput(req: Request): DI {
         return {
-            ...extractDestroyQuery(req),
-            extra: {
-                user: req.user,
-            }
+            id: req.params.id,
+            user: req.user,
         } as unknown as DI;
     }
 }

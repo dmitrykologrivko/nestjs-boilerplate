@@ -29,7 +29,7 @@ export class UserChangedPasswordEventHandler extends BaseEventHandler<UserChange
     }
 
     async handle(event: UserChangedPasswordEvent, unitOfWork: QueryRunner): Promise<Result<void, EventFailedException>> {
-        const jwt: string = event?.extra?.jwt;
+        const jwt: string = event.token;
         const canRevoke = this.config.get(AUTH_JWT_REVOKE_AFTER_CHANGED_PASSWORD_PROPERTY);
 
         if (!jwt || !canRevoke) {

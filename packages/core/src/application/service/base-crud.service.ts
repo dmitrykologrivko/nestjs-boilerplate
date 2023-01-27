@@ -53,11 +53,10 @@ export enum InputType {
     CREATE_INPUT = 'create_input',
     UPDATE_INPUT = 'update_input',
     DESTROY_INPUT = 'destroy_input',
-    GENERIC_INPUT = 'generic_input',
 }
 
 export interface InputWrapper {
-    type: InputType;
+    type: string;
     input: BaseInput;
 }
 
