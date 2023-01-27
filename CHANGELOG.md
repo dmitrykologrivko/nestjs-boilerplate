@@ -1,3 +1,9 @@
+## 0.7.0
+
+### Features
+* `mapListOutput`, `mapRetrieveOutput`, `mapCreateOutput`, `mapUpdateOutput` functions in `BaseCrudService` class
+now can work with provided queryRunner
+
 ## 0.6.0
 
 ### Features
@@ -14,7 +20,6 @@ replaced `extra` field in `UserChangedPasswordEvent` class to `token`
 `Payloadable` interface
 * `mapListOutput`, `mapRetrieveOutput`, `mapCreateOutput`, `mapUpdateOutput` functions in `BaseCrudService` class marked 
 as async functions
-* `mapListOutput`, `mapRetrieveOutput`, `mapCreateOutput`, `mapUpdateOutput` functions now accepts raw entity object
 
 ### DEPRECATIONS
 * `FilterChain` class is marked as deprecated
