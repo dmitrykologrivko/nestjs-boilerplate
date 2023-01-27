@@ -114,9 +114,9 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
     async list(input: LI): ListResult<PC> {
         const wrapper = { type: InputType.LIST_INPUT, input };
 
-        const handler = (queryRunner: QueryRunner) => checkPermissions<LI>(input, this.getReadPermissions())
+        return checkPermissions<LI>(input, this.getReadPermissions())
             .then(proceed(async (): Promise<Result<PC, PermissionDeniedException>> => {
-                const queryBuilder = this.getQuery(queryRunner, wrapper);
+                const queryBuilder = this.getQuery(null, wrapper);
 
                 // Apply filters
                 this.getFilters(input, queryBuilder).forEach(filter => filter.filter());
@@ -128,25 +128,22 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
                     const container = await pagination.toPaginatedContainer();
                     return ok({
                         ...container,
-                        results: this.mapListOutput(container.results, input)
+                        results: await this.mapListOutput(container.results, input)
                     } as PC);
                 }
 
-                return ok({ results: this.mapListOutput(await queryBuilder.getMany(), input) } as PC);
+                const entities = await queryBuilder.getMany();
+                return ok({ results: await this.mapListOutput(entities, input) } as PC);
             }));
-
-        return transaction(this.dataSource, handler);
     }
 
     async retrieve(input: RI): RetrieveResult<RO> {
         const wrapper = { type: InputType.RETRIEVE_INPUT, input };
 
-        const handler = (queryRunner: QueryRunner) => checkPermissions<RI>(input, this.getReadPermissions())
-            .then(proceed(() => this.getObject({ id: input.id }, queryRunner, wrapper)))
+        return checkPermissions<RI>(input, this.getReadPermissions())
+            .then(proceed(() => this.getObject({ id: input.id }, null, wrapper)))
             .then(proceed(entity => checkEntityPermissions<RI, E>(input, entity, this.getReadEntityPermissions())))
             .then(map(async entity => this.mapRetrieveOutput(entity, input)));
-
-        return transaction(this.dataSource, handler);
     }
 
     async create(input: CI): CreateResult<CO, CE> {
@@ -201,8 +198,8 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
 
         return transaction(this.dataSource, handler)
             .then(proceed(async entity => {
-                return (await postSaveHook(entity, this.options.entityCls))
-                    .map(() => this.mapCreateOutput(entity, input));
+                return postSaveHook(entity, this.options.entityCls)
+                    .then(map(() => this.mapCreateOutput(entity, input)));
             }));
     }
 
@@ -253,8 +250,8 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
 
         return transaction(this.dataSource, handler)
             .then(proceed(async entity => {
-                return (await postSaveHook(entity, this.options.entityCls))
-                    .map(() => this.mapUpdateOutput(entity, input));
+                return postSaveHook(entity, this.options.entityCls)
+                    .then(map(() => this.mapUpdateOutput(entity, input)));
             }));
     }
 
@@ -391,10 +388,10 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         return {};
     }
 
-    protected mapListOutput(
+    protected async mapListOutput(
         entities: E[],
         input?: LI,
-    ): LO[] {
+    ): Promise<LO[]> {
         return ClassTransformer.toClassObjects(
             this.options.listOutputCls,
             entities,
@@ -405,10 +402,10 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         );
     }
 
-    protected mapRetrieveOutput(
+    protected async mapRetrieveOutput(
         entity: E,
         input?: RI,
-    ): RO {
+    ): Promise<RO> {
         return ClassTransformer.toClassObject(
             this.options.retrieveOutputCls,
             entity,
@@ -433,10 +430,10 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         );
     }
 
-    protected mapCreateOutput(
+    protected async mapCreateOutput(
         entity: E,
         input?: CI,
-    ): CO {
+    ): Promise<CO> {
         return ClassTransformer.toClassObject(
             this.options.createOutputCls,
             entity,
@@ -462,10 +459,10 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         );
     }
 
-    protected mapUpdateOutput(
+    protected async mapUpdateOutput(
         entity: E,
         input?: UI,
-    ): UO {
+    ): Promise<UO> {
         return ClassTransformer.toClassObject(
             this.options.updateOutputCls,
             entity,
