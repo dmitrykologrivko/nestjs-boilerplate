@@ -1,15 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
-import {
-    InjectRepository,
-    DomainService,
-    Result,
-    ok,
-    err,
-    proceed,
-    EntityNotFoundException,
-} from '@nestjs-boilerplate/core';
+import { InjectRepository, DomainService, EntityNotFoundException } from '@nestjs-boilerplate/core';
 import { User, ActiveUsersQuery, CredentialsInvalidException } from '@nestjs-boilerplate/user';
 import { BaseRevokedTokensService } from './base-revoked-tokens.service';
 import { AccessTokenInvalidException } from '../exceptions/access-token-invalid.exception';
@@ -32,85 +24,102 @@ export class UserJwtService {
         private readonly revokedTokensService?: BaseRevokedTokensService,
     ) {}
 
-    async generateAccessToken(
-        username: string,
-        password: string,
-    ): Promise<Result<string, EntityNotFoundException | CredentialsInvalidException>> {
-        return this.findUser(username)
-            .then(proceed(async (user: User): Promise<Result<User, CredentialsInvalidException>> => {
-                if ((await user.comparePassword(password))) {
-                    return ok(user);
-                } else {
-                    return err(new CredentialsInvalidException());
-                }
-            }))
-            .then(proceed(async user => {
-                const token = await this.jwtService.signAsync({
-                    username: user.username,
-                    sub: user.id,
-                    jti: uuidv4(),
-                });
+    /**
+     * Generate a new access token for the user
+     * @param username
+     * @param password
+     * @throws EntityNotFoundException
+     * @throws CredentialsInvalidException
+     */
+    async generateAccessToken(username: string, password: string): Promise<string> {
+        const user = await this.findUser(username);
 
-                return ok(token);
-            }));
+        const isPasswordMatch = await user.comparePassword(password);
+        if (!isPasswordMatch) {
+            throw new CredentialsInvalidException();
+        }
+
+        return this.jwtService.signAsync({
+            username: user.username,
+            sub: user.id,
+            jti: uuidv4(),
+        });
     }
 
-    async validateAccessToken(
-        token: string,
-    ): Promise<Result<User, EntityNotFoundException | AccessTokenInvalidException>> {
-        return this.verifyJwt(token)
-            .then(proceed(payload => this.validatePayload(payload)));
+    /**
+     * Generate a new access token for the user
+     * @param token
+     * @throws EntityNotFoundException
+     * @throws AccessTokenInvalidException
+     */
+    async validateAccessToken(token: string): Promise<User> {
+        const payload = await this.verifyJwt(token);
+        return this.validatePayload(payload);
     }
 
-    async validatePayload(
-        payload: Payload,
-    ): Promise<Result<User, EntityNotFoundException | AccessTokenInvalidException>> {
-        let result = ok<any, AccessTokenInvalidException>(null);
-
+    /**
+     * Validate the payload of the JWT token
+     * @param payload
+     * @throws EntityNotFoundException
+     * @throws AccessTokenInvalidException
+     */
+    async validatePayload(payload: Payload): Promise<User> {
         if (this.revokedTokensService) {
-            result = (await this.revokedTokensService.isTokenRevoked(payload.jti))
-                .proceed(isTokenRevoked => isTokenRevoked ? err(new AccessTokenInvalidException()) : ok(null));
+            const isTokenRevoked = await this.revokedTokensService.isTokenRevoked(payload.jti);
+            if (isTokenRevoked) {
+                throw new AccessTokenInvalidException();
+            }
         }
 
-        return result.proceedAsync(() => this.findUser(payload.username));
+        return this.findUser(payload.username);
     }
 
-    async revokeAccessToken(
-        token: string,
-    ): Promise<Result<void, EntityNotFoundException | AccessTokenInvalidException | RevokedTokensServiceNotConfiguredException>> {
-        return this.verifyJwt(token)
-            .then(proceed(async payload => {
-                return (await this.validatePayload(payload))
-                    .map((): Payload => payload);
-            }))
-            .then(proceed(async payload => {
-                if (!this.revokedTokensService) {
-                    return err(new RevokedTokensServiceNotConfiguredException());
-                }
-                return this.revokedTokensService.revokeToken(payload.jti, payload.exp);
-            }));
+    /**
+     * Revoke the access token
+     * @param token
+     * @throws EntityNotFoundException
+     * @throws AccessTokenInvalidException
+     * @throws RevokedTokensServiceNotConfiguredException
+     */
+    async revokeAccessToken(token: string): Promise<void> {
+        const payload = await this.verifyJwt(token);
+        await this.validatePayload(payload);
+
+        if (!this.revokedTokensService) {
+            throw new RevokedTokensServiceNotConfiguredException();
+        }
+
+        await this.revokedTokensService.revokeToken(payload.jti, payload.exp);
     }
 
-    async verifyJwt(
-        token: string,
-    ): Promise<Result<Payload, AccessTokenInvalidException>> {
+    /**
+     * Verify the JWT token
+     * @param token
+     * @throws AccessTokenInvalidException
+     */
+    async verifyJwt(token: string): Promise<Payload> {
         try {
-            const payload = await this.jwtService.verifyAsync(token);
-            return ok(payload);
+            return await this.jwtService.verifyAsync(token);
         } catch (e) {
-            return err(new AccessTokenInvalidException());
+            throw new AccessTokenInvalidException();
         }
     }
 
-    private async findUser(
-        username: string,
-    ): Promise<Result<User, EntityNotFoundException>> {
+    /**
+     * Find user by username
+     * @param username
+     * @private
+     * @throws EntityNotFoundException
+     */
+    private async findUser(username: string): Promise<User> {
         const user = await this.userRepository.findOne(
             new ActiveUsersQuery({ username }).toFindOptions(),
         );
 
-        return user
-            ? ok(user)
-            : err(new EntityNotFoundException());
+        if (!user) {
+            throw new EntityNotFoundException();
+        }
+
+        return user;
     }
 }

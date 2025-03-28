@@ -4,10 +4,6 @@ import {
     BaseEventHandler,
     EventFailedException,
     PropertyConfigService,
-    Result,
-    ok,
-    err,
-    proceed,
 } from '@nestjs-boilerplate/core';
 import { UserChangedPasswordEvent } from '@nestjs-boilerplate/user';
 import { AUTH_JWT_REVOKE_AFTER_CHANGED_PASSWORD_PROPERTY } from '../constants/auth.properties';
@@ -28,20 +24,23 @@ export class UserChangedPasswordEventHandler extends BaseEventHandler<UserChange
         return [UserChangedPasswordEvent.NAME];
     }
 
-    async handle(event: UserChangedPasswordEvent, unitOfWork: QueryRunner): Promise<Result<void, EventFailedException>> {
+    async handle(event: UserChangedPasswordEvent, _: QueryRunner): Promise<void> {
         const jwt: string = event.token;
         const canRevoke = this.config.get(AUTH_JWT_REVOKE_AFTER_CHANGED_PASSWORD_PROPERTY);
 
         if (!jwt || !canRevoke) {
-            return ok(null);
+            return null;
         }
 
         if (canRevoke && !this.revokedTokensService) {
-            return err(new EventFailedException('Revoked tokens service is not setup!'));
+            throw new EventFailedException('Revoked tokens service is not setup!');
         }
 
-        return (await this.userJwtService.verifyJwt(jwt)
-            .then(proceed(async payload => this.revokedTokensService.revokeToken(payload.jti, payload.exp))))
-            .mapErr(() => new EventFailedException('Could not revoke provided JWT'));
+        try {
+            const payload = await this.userJwtService.verifyJwt(jwt);
+            await this.revokedTokensService.revokeToken(payload.jti, payload.exp);
+        } catch (_) {
+            throw new EventFailedException('Could not revoke provided JWT');
+        }
     }
 }

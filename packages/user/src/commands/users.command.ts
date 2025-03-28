@@ -66,21 +66,21 @@ export class UsersCommand {
             lastName = prompt('Last name: ');
         }
 
-        const result = await this.userService.createUser({
-            username,
-            password,
-            email,
-            firstName,
-            lastName,
-            isActive: true,
-            isAdmin: true,
-            isSuperuser: true,
-        });
+        try {
+            const result = await this.userService.createUser({
+                username,
+                password,
+                email,
+                firstName,
+                lastName,
+                isActive: true,
+                isAdmin: true,
+                isSuperuser: true,
+            });
 
-        if (result.isOk()) {
             Logger.log(`Superuser "${username}" has been created`);
-        } else {
-            const message = result.unwrapErr()
+        } catch (e) {
+            const message = (e as ValidationContainerException)
                 .validationExceptions
                 .map(exception => exception.toString())
                 .join('');
@@ -110,18 +110,17 @@ export class UsersCommand {
             password = prompt.hide('Password: ');
         }
 
-        const result = await this.userService.forceChangePassword({
-            username,
-            newPassword: password,
-        });
-
-        if (result.isErr()) {
-            const error = result.unwrapErr();
-            const message = error instanceof ValidationContainerException
-                ? error.validationExceptions
+        try {
+            const result = await this.userService.forceChangePassword({
+                username,
+                newPassword: password,
+            });
+        } catch (e) {
+            const message = e instanceof ValidationContainerException
+                ? e.validationExceptions
                     .map(exception => exception.toString())
                     .join('')
-                : error.toString();
+                : e.toString();
 
             Logger.error(message);
         }

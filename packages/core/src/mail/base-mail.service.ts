@@ -1,4 +1,3 @@
-import { Result, ok, err } from '../utils/monads';
 import { PropertyConfigService } from '../config/property-config.service';
 import { Mail, MailOptions } from './mail.interfaces';
 import { MAIL_PROPERTY } from './mail.properties';
@@ -20,7 +19,12 @@ export abstract class BaseMailService<T extends Mail = Mail, V = any> {
 
     protected abstract onSendMail(mail: T, connection: V): Promise<void>;
 
-    async sendMail(mail: T | T[]): Promise<Result<void, SendMailFailedException>> {
+    /**
+     * Send mail function
+     * @param mail Mail object or array of Mail objects
+     * @throws SendMailFailedException
+     */
+    async sendMail(mail: T | T[]): Promise<void> {
         try {
             const mass = Array.isArray(mail);
 
@@ -35,9 +39,9 @@ export abstract class BaseMailService<T extends Mail = Mail, V = any> {
             }
 
             await this.onCloseConnection(connection, mass);
-            return ok(null);
+            return null;
         } catch (e) {
-            return err(new SendMailFailedException(e.stackTrace));
+            throw new SendMailFailedException(e.stackTrace);
         }
     }
 

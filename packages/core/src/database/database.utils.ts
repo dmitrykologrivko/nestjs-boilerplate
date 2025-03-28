@@ -1,11 +1,16 @@
 import { DataSource, QueryRunner } from 'typeorm';
-import { Result, err } from '../utils/monads/result';
 import { TransactionRollbackException } from './transaction-rollback.exception';
 
-export async function transaction<T, E>(
+/**
+ * A utility function to run a transaction with a query runner.
+ * @param dataSource Typeorm data source
+ * @param fn The function to run inside the transaction
+ * @throws TransactionRollbackException
+ */
+export async function transaction<T>(
     dataSource: DataSource,
-    fn: (queryRunner: QueryRunner) => Promise<Result<T, E>>,
-): Promise<Result<T, E | TransactionRollbackException>> {
+    fn: (queryRunner: QueryRunner) => Promise<T>,
+): Promise<T> {
     const queryRunner = dataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -13,17 +18,11 @@ export async function transaction<T, E>(
 
     try {
         const result = await fn(queryRunner);
-
-        if (result.isErr()) {
-            await queryRunner.rollbackTransaction();
-            return result;
-        }
-
         await queryRunner.commitTransaction();
         return result;
     } catch (e) {
         await queryRunner.rollbackTransaction();
-        return err(new TransactionRollbackException(e.stack));
+        throw new TransactionRollbackException(e.stack);
     } finally {
         await queryRunner.release();
     }

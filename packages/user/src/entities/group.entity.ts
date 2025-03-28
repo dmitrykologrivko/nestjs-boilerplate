@@ -1,11 +1,5 @@
 import { Column, ManyToMany, JoinTable } from 'typeorm';
-import {
-    Entity,
-    BaseTypeormEntity,
-    Validate,
-    ValidationContainerException,
-    Result
-} from '@nestjs-boilerplate/core';
+import { Entity, BaseTypeormEntity, Validate } from '@nestjs-boilerplate/core';
 import { Permission } from './permission.entity';
 
 export const GROUP_NAME_MAX_LENGTH = 150;
@@ -30,14 +24,15 @@ export class Group extends BaseTypeormEntity {
     /**
      * Creates new permission instance
      * @param name permission name
-     * @return group creation result
+     * @throws ValidationContainerException
+     * @return group instance
      */
-    static create(name: string): Result<Group, ValidationContainerException> {
-        const validateResult = Validate.withResults([
+    static create(name: string): Group {
+        Validate.withResults([
             Group.validateName(name),
         ]);
 
-        return validateResult.map(() => new Group(name));
+        return new Group(name);
     }
 
     /**

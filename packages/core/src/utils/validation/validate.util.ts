@@ -1,4 +1,3 @@
-import { Result, ok, err } from '../monads/result';
 import {
     isDefined,
     isEmpty,
@@ -31,8 +30,7 @@ import {
 import { ValidationException } from './validation.exception';
 import { ValidationContainerException } from './validation-container.exception';
 
-export type ValidationResult = Result<void, ValidationException>;
-export type ValidationContainerResult = Result<void, ValidationContainerException>;
+export type ValidationResult = void | ValidationException;
 
 /**
  * Validation util for single properties
@@ -59,50 +57,24 @@ export class Validate {
     }
 
     /**
-     * Merges separated validation results into single validation result
-     * Can be used for bulk validation
-     * @param results array of separated validation results
-     * @return single validation result
-     */
-    static withResults(results: ValidationResult[]): ValidationContainerResult {
-        const errorResults = results.filter(result => result.isErr());
-
-        if (errorResults.length > 0) {
-            return err(
-                new ValidationContainerException(errorResults.map(result => result.unwrapErr())),
-            );
-        }
-
-        return ok(null);
-    }
-
-    /**
      * Asserts if validation results are ok else throws ValidationContainerException
      * @param results array of separated validation results
      * @throws ValidationContainerException
      */
-    static assertResults(results: ValidationResult[]) {
-        const result = Validate.withResults(results);
-
-        if (result.isErr()) {
-            throw result.unwrapErr();
+    static withResults(results: ValidationResult[]): void {
+        const errorResults = results.filter(result => result instanceof ValidationException);
+        if (errorResults.length > 0) {
+            throw new ValidationContainerException(errorResults as ValidationException[]);
         }
     }
 
     /**
-     * Wraps construction of class object and return Result
-     * Allows to catch thrown validation exceptions
-     * @param fn function that returns new instance of class object
+     * Asserts if validation result is ok else throws ValidationContainerException
+     * @param result result of validation
+     * @throws ValidationContainerException
      */
-    static wrapConstruction<T>(fn: () => T): Result<T, ValidationContainerException> {
-        try {
-            return ok(fn());
-        } catch (e) {
-            if (e instanceof ValidationException) {
-                return err(new ValidationContainerException([e]));
-            }
-            return err(e);
-        }
+    static withResult(result: ValidationResult): void {
+        return Validate.withResults([result]);
     }
 
     /**
@@ -564,22 +536,11 @@ export class Validate {
     }
 
     /**
-     * Returns validation result
+     * If validation is ok, returns undefined, else returns ValidationException
      */
     isValid(): ValidationResult {
         if (this.exception) {
-            return err(this.exception);
-        }
-        return ok(null);
-    }
-
-    /**
-     * Asserts if validation is ok else throws ValidationException
-     * @throws ValidationException
-     */
-    assertValid() {
-        if (this.exception) {
-            throw this.exception;
+            return this.exception;
         }
     }
 

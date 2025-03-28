@@ -12,7 +12,7 @@ export class EventsFailedException {
         this.exceptions.push(exception);
     }
 
-    lenght() {
+    length() {
         return this.exceptions.length;
     }
 }

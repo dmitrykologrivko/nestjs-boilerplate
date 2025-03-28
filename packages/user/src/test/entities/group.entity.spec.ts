@@ -14,14 +14,13 @@ describe('GroupEntity', () => {
         readPermission = Permission.create(
             'Read Permission',
             'read',
-        ).unwrap();
-
+        );
         writePermission = Permission.create(
             'Write Permission',
             'write',
-        ).unwrap();
+        );
 
-        group = Group.create('Managers Group').unwrap();
+        group = Group.create('Managers Group');
         group.setPermission(readPermission);
         group.setPermission(writePermission);
     });
@@ -41,7 +40,7 @@ describe('GroupEntity', () => {
             const deletePermission = Permission.create(
                 'Delete Permission',
                 'delete',
-            ).unwrap();
+            );
 
             expectInitialPermissions();
 

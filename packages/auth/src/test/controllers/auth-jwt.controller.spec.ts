@@ -1,5 +1,5 @@
 import { MockProxy, mock } from 'jest-mock-extended';
-import { ValidationException, ok, err } from '@nestjs-boilerplate/core';
+import { ValidationException } from '@nestjs-boilerplate/core';
 import {
     JWT_TOKEN_VALID_CONSTRAINT,
     USERNAME_ACTIVE_CONSTRAINT,
@@ -29,13 +29,13 @@ describe('AuthJwtController', () => {
 
     describe('#login()', () => {
         it('when login unsuccessful should throw error', async () => {
-            jwtAuthService.login.mockReturnValue(Promise.resolve(err(
+            jwtAuthService.login.mockReturnValue(Promise.reject(
                 new ValidationException(
                     'username',
                     jwtLoginInput.username,
                     { [USERNAME_ACTIVE_CONSTRAINT.key]: USERNAME_ACTIVE_CONSTRAINT.message },
                 ),
-            )));
+            ));
 
             await expect(
                 controller.login(jwtLoginInput),
@@ -45,7 +45,7 @@ describe('AuthJwtController', () => {
         });
 
         it('when login successful should return access token', async () => {
-            jwtAuthService.login.mockReturnValue(Promise.resolve(ok(loginResponse)));
+            jwtAuthService.login.mockReturnValue(Promise.resolve(loginResponse));
 
             const result = await controller.login(jwtLoginInput);
 
@@ -56,13 +56,13 @@ describe('AuthJwtController', () => {
 
     describe('#logout()', () => {
         it('when logout unsuccessful should throw error', async () => {
-            jwtAuthService.logout.mockReturnValue(Promise.resolve(err(
+            jwtAuthService.logout.mockReturnValue(Promise.reject(
                 new ValidationException(
                     'token',
                     accessToken,
                     { [JWT_TOKEN_VALID_CONSTRAINT.key]: JWT_TOKEN_VALID_CONSTRAINT.message },
                 ),
-            )));
+            ));
 
             await expect(
                 controller.logout(accessToken),
@@ -72,7 +72,7 @@ describe('AuthJwtController', () => {
         });
 
         it('when logout successful should return empty response', async () => {
-            jwtAuthService.logout.mockReturnValue(Promise.resolve(ok(logoutResponse)));
+            jwtAuthService.logout.mockReturnValue(Promise.resolve(logoutResponse));
 
             const result = await controller.logout(accessToken);
 

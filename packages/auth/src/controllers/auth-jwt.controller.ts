@@ -26,24 +26,12 @@ export class AuthJwtController {
 
     @Post('login')
     async login(@Body() input: JwtLoginInput) {
-        const result = await this.authService.login(input);
-
-        if (result.isErr()) {
-            throw result.unwrapErr();
-        }
-
-        return result.unwrap();
+        return this.authService.login(input);
     }
 
     @UseGuards(JwtAuthGuard)
     @Post('logout')
     async logout(@BearerToken() token) {
-        const result = await this.authService.logout({ token });
-
-        if (result.isErr()) {
-            throw result.unwrapErr();
-        }
-
-        return result.unwrap();
+        return this.authService.logout({ token });
     }
 }
