@@ -26,7 +26,7 @@
     "@nestjs-boilerplate/core": "^0.7.0",
     "@nestjs-boilerplate/testing": "^0.7.0",
     "@nestjs-boilerplate/user": "^0.7.0",
-    "@nestjs/testing": "^9.2.1"
+    "@nestjs/testing": "^11.0.12"
   },
   "repository": {
     "type": "git",
