@@ -88,29 +88,26 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
     async list(input: LI): Promise<PC> {
         const wrapper = { type: InputType.LIST_INPUT, input };
 
-        const handler = (queryRunner: QueryRunner) => checkPermissions<LI>(input, this.getReadPermissions())
-            .then(async () => {
-                const queryBuilder = this.getQuery(queryRunner, wrapper);
+        await checkPermissions<LI>(input, this.getReadPermissions());
 
-                // Apply filters
-                this.getFilters(input, queryBuilder).forEach(filter => filter.filter());
+        const queryBuilder = this.getQuery(this.repository.queryRunner, wrapper);
 
-                // Apply pagination
-                const pagination = this.getPagination(input, queryBuilder);
+        // Apply filters
+        this.getFilters(input, queryBuilder).forEach(filter => filter.filter());
 
-                if (pagination) {
-                    const container = await pagination.toPaginatedContainer();
-                    return {
-                        ...container,
-                        results: await this.mapListOutput(container.results, input, queryRunner),
-                    } as PC;
-                }
+        // Apply pagination
+        const pagination = this.getPagination(input, queryBuilder);
 
-                const entities = await queryBuilder.getMany();
-                return { results: await this.mapListOutput(entities, input, queryRunner) } as PC;
-            })
+        if (pagination) {
+            const container = await pagination.toPaginatedContainer();
+            return {
+                ...container,
+                results: await this.mapListOutput(container.results, input, this.repository.queryRunner),
+            } as PC;
+        }
 
-        return transaction(this.dataSource, handler);
+        const entities = await queryBuilder.getMany();
+        return { results: await this.mapListOutput(entities, input, this.repository.queryRunner) } as PC;
     }
 
     /**
@@ -122,12 +119,13 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
     async retrieve(input: RI): Promise<RO> {
         const wrapper = { type: InputType.RETRIEVE_INPUT, input };
 
-        const handler = (queryRunner: QueryRunner) => checkPermissions<RI>(input, this.getReadPermissions())
-            .then(() => this.getObject({ id: input.id }, null, wrapper))
-            .then(entity => checkEntityPermissions<RI, E>(input, entity, this.getReadEntityPermissions()))
-            .then(async entity => this.mapRetrieveOutput(entity, input, queryRunner));
+        await checkPermissions<RI>(input, this.getReadPermissions());
 
-        return transaction(this.dataSource, handler);
+        const entity = await this.getObject({ id: input.id }, null, wrapper);
+
+        await checkEntityPermissions<RI, E>(input, entity, this.getReadEntityPermissions());
+
+        return this.mapRetrieveOutput(entity, input, this.repository.queryRunner);
     }
 
     /**
@@ -143,53 +141,54 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         const preSaveHook: (...args: any[]) => Promise<void> = this.entityEventsManager
             ? this.entityEventsManager.onCreatingEntity.bind(this.entityEventsManager)
             : (...args: any[]) => Promise.resolve(null);
+
         const postSaveHook: (...args: any[]) => Promise<void> = this.entityEventsManager
             ? this.entityEventsManager.onCreatedEntity.bind(this.entityEventsManager)
             : (...args: any[]) => Promise.resolve(null);
 
-        const handler = (queryRunner: QueryRunner) => checkPermissions<CI>(input, this.getCreatePermissions())
-            .then(() =>
-                ClassValidator.validate(
-                    this.options.createPayloadCls,
-                    input.payload,
-                    {
-                        ...this.getValidatorOptions(),
-                        groups: [CrudOperations.CREATE],
-                    },
-                )
-            )
-            .then(async () => {
-                // Transform input to omit fields not related for create operation
-                input.payload = ClassTransformer.toClassObject(
-                    this.options.createPayloadCls,
-                    input.payload,
-                    {
-                        ...this.getClassTransformOptions(),
-                        groups: [CrudOperations.CREATE],
-                    },
-                );
+        const handler = async (queryRunner: QueryRunner) => {
+            await checkPermissions<CI>(input, this.getCreatePermissions());
 
-                const newEntity = this.repository.create(
-                    ClassTransformer.toClassObject(
-                        this.options.entityCls,
-                        { ...input.payload, id: null },
-                        this.getClassTransformOptions(),
-                    ),
-                );
+            await ClassValidator.validate(
+                this.options.createPayloadCls,
+                input.payload,
+                {
+                    ...this.getValidatorOptions(),
+                    groups: [CrudOperations.CREATE],
+                },
+            );
 
-                return preSaveHook(newEntity, this.options.entityCls, queryRunner)
-                    .then(() => this.performCreateEntity(input, queryRunner))
-                    .then(async entity => {
-                        if (!this.options.returnShallow) {
-                            entity = await this.getObject({ id: entity.id }, queryRunner, wrapper);
-                        }
+            // Transform input to omit fields not related for create operation
+            input.payload = ClassTransformer.toClassObject(
+                this.options.createPayloadCls,
+                input.payload,
+                {
+                    ...this.getClassTransformOptions(),
+                    groups: [CrudOperations.CREATE],
+                },
+            );
 
-                        return {
-                            entity,
-                            output: await this.mapCreateOutput(entity, input, queryRunner),
-                        };
-                    });
-            });
+            const newEntity = this.repository.create(
+                ClassTransformer.toClassObject(
+                    this.options.entityCls,
+                    { ...input.payload, id: null },
+                    this.getClassTransformOptions(),
+                ),
+            );
+
+            await preSaveHook(newEntity, this.options.entityCls, queryRunner);
+
+            let entity = await this.performCreateEntity(input, queryRunner);
+
+            if (!this.options.returnShallow) {
+                entity = await this.getObject({ id: entity.id }, queryRunner, wrapper);
+            }
+
+            return {
+                entity,
+                output: await this.mapCreateOutput(entity, input, queryRunner),
+            };
+        };
 
         return transaction(this.dataSource, handler)
             .then(async ({ entity, output }) => {
@@ -213,48 +212,50 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         const preSaveHook: (...args: any[]) => Promise<void> = this.entityEventsManager
             ? this.entityEventsManager.onUpdatingEntity.bind(this.entityEventsManager)
             : (...args: any[]) => Promise.resolve(null);
+
         const postSaveHook: (...args: any[]) => Promise<void> = this.entityEventsManager
             ? this.entityEventsManager.onUpdatedEntity.bind(this.entityEventsManager)
             : (...args: any[]) => Promise.resolve(null);
 
-        const handler = (queryRunner: QueryRunner) => checkPermissions<UI>(input, this.getUpdatePermissions())
-            .then(() => this.getObject({ id: input.payload.id }, queryRunner, wrapper))
-            .then(entity => checkEntityPermissions<UI, E>(input, entity, this.getUpdateEntityPermissions()))
-            .then(async entity => {
-                await ClassValidator.validate(
-                    this.options.updatePayloadCls,
-                    input.payload,
-                    {
-                        ...this.getValidatorOptions(),
-                        groups,
-                    },
-                );
-                return entity;
-            })
-            .then(async entity => {
-                // Transform input to omit fields not related for update operation
-                input.payload = ClassTransformer.toClassObject(
-                    this.options.updatePayloadCls,
-                    input.payload,
-                    {
-                        ...this.getClassTransformOptions(),
-                        groups,
-                    },
-                );
+        const handler = async (queryRunner: QueryRunner) => {
+            await checkPermissions<UI>(input, this.getUpdatePermissions());
 
-                return preSaveHook(entity, this.options.entityCls, queryRunner)
-                    .then(() => this.performUpdateEntity(input, entity, queryRunner))
-                    .then(async () => {
-                        if (!this.options.returnShallow) {
-                            entity = await this.getObject({ id: entity.id }, queryRunner, wrapper);
-                        }
+            let entity = await this.getObject({ id: input.payload.id }, queryRunner, wrapper);
 
-                        return {
-                            entity,
-                            output: await this.mapUpdateOutput(entity, input),
-                        };
-                    });
-            });
+            await checkEntityPermissions<UI, E>(input, entity, this.getUpdateEntityPermissions());
+
+            await ClassValidator.validate(
+                this.options.updatePayloadCls,
+                input.payload,
+                {
+                    ...this.getValidatorOptions(),
+                    groups,
+                },
+            );
+
+            // Transform input to omit fields not related for update operation
+            input.payload = ClassTransformer.toClassObject(
+                this.options.updatePayloadCls,
+                input.payload,
+                {
+                    ...this.getClassTransformOptions(),
+                    groups,
+                },
+            );
+
+            await preSaveHook(entity, this.options.entityCls, queryRunner);
+
+            entity = await this.performUpdateEntity(input, entity, queryRunner);
+
+            if (!this.options.returnShallow) {
+                entity = await this.getObject({ id: entity.id }, queryRunner, wrapper);
+            }
+
+            return {
+                entity,
+                output: await this.mapUpdateOutput(entity, input),
+            };
+        };
 
         return transaction(this.dataSource, handler)
             .then(async ({ entity, output }) => {
@@ -276,17 +277,22 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         const preDestroyHook: (...args: any[]) => Promise<void> = this.entityEventsManager
             ? this.entityEventsManager.onUpdatingEntity.bind(this.entityEventsManager)
             : (...args: any[]) => Promise.resolve(null);
+
         const postDestroyHook: (...args: any[]) => Promise<void> = this.entityEventsManager
             ? this.entityEventsManager.onUpdatedEntity.bind(this.entityEventsManager)
             : (...args: any[]) => Promise.resolve(null);
 
-        const handler = (queryRunner: QueryRunner) => checkPermissions<DI>(input, this.getDestroyPermissions())
-            .then(() => this.getObject({ id: input.id }, queryRunner, wrapper))
-            .then(entity => checkEntityPermissions<DI, E>(input, entity, this.getDestroyEntityPermissions()))
-            .then(entity => (
-                preDestroyHook(entity, this.options.entityCls, queryRunner)
-                    .then(() => this.performDestroyEntity(input, entity, queryRunner))
-            ));
+        const handler = async (queryRunner: QueryRunner) => {
+            await checkPermissions<DI>(input, this.getDestroyPermissions());
+
+            const entity = await this.getObject({ id: input.id }, queryRunner, wrapper);
+
+            await checkEntityPermissions<DI, E>(input, entity, this.getDestroyEntityPermissions());
+
+            await preDestroyHook(entity, this.options.entityCls, queryRunner);
+
+            return this.performDestroyEntity(input, entity, queryRunner);
+        };
 
         return transaction(this.dataSource, handler)
             .then(entity => postDestroyHook(entity, this.options.entityCls));
