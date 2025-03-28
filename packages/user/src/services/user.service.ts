@@ -73,7 +73,6 @@ export class UserService {
      * @throws ValidationContainerException
      * @throws ValidationException
      * @throws EventsFailedException
-     * @throws TransactionRollbackException
      */
     async changePassword(input: ChangePasswordInput): Promise<void> {
         const handler = async (queryRunner: QueryRunner) => {
@@ -104,7 +103,6 @@ export class UserService {
      * @throws ValidationContainerException
      * @throws ValidationException
      * @throws EventsFailedException
-     * @throws TransactionRollbackException
      */
     async forceChangePassword(input: ForceChangePasswordInput): Promise<void> {
         const handler = async (queryRunner: QueryRunner) => {
@@ -177,7 +175,6 @@ export class UserService {
      * @throws ValidationException
      * @throws ResetPasswordTokenInvalidException
      * @throws EventsFailedException
-     * @throws TransactionRollbackException
      */
     async resetPassword(input: ResetPasswordInput): Promise<void> {
         const handler = async (queryRunner: QueryRunner) => {

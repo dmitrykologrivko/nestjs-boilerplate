@@ -84,7 +84,6 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
      * List entities
      * @param input ListInput object
      * @throws PermissionDeniedException
-     * @throws TransactionRollbackException
      */
     async list(input: LI): Promise<PC> {
         const wrapper = { type: InputType.LIST_INPUT, input };
@@ -119,7 +118,6 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
      * @param input RetrieveInput object
      * @throws PermissionDeniedException
      * @throws EntityNotFoundException
-     * @throws TransactionRollbackException
      */
     async retrieve(input: RI): Promise<RO> {
         const wrapper = { type: InputType.RETRIEVE_INPUT, input };
@@ -138,7 +136,6 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
      * @throws PermissionDeniedException
      * @throws ValidationContainerException
      * @throws EventsFailedException
-     * @throws TransactionRollbackException
      */
     async create(input: CI): Promise<CO> {
         const wrapper = { type: InputType.CREATE_INPUT, input };
@@ -208,7 +205,6 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
      * @throws EntityNotFoundException
      * @throws ValidationContainerException
      * @throws EventsFailedException
-     * @throws TransactionRollbackException
      */
     async update(input: UI): Promise<UO> {
         const wrapper = { type: InputType.UPDATE_INPUT, input };
@@ -273,7 +269,6 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
      * @throws PermissionDeniedException
      * @throws EntityNotFoundException
      * @throws EventsFailedException
-     * @throws TransactionRollbackException
      */
     async destroy(input: DI): Promise<void> {
         const wrapper = { type: InputType.DESTROY_INPUT, input };

@@ -1,11 +1,10 @@
 import { DataSource, QueryRunner } from 'typeorm';
-import { TransactionRollbackException } from './transaction-rollback.exception';
 
 /**
  * A utility function to run a transaction with a query runner.
  * @param dataSource Typeorm data source
  * @param fn The function to run inside the transaction
- * @throws TransactionRollbackException
+ * @throws Will throw an error if the transaction fails
  */
 export async function transaction<T>(
     dataSource: DataSource,
@@ -22,7 +21,7 @@ export async function transaction<T>(
         return result;
     } catch (e) {
         await queryRunner.rollbackTransaction();
-        throw new TransactionRollbackException(e.stack);
+        throw e;
     } finally {
         await queryRunner.release();
     }
