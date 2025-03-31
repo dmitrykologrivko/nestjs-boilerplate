@@ -74,6 +74,6 @@ export class Group extends BaseTypeormEntity {
         return Validate.withProperty('name', name)
             .isNotEmpty()
             .maxLength(GROUP_NAME_MAX_LENGTH)
-            .isValid();
+            .getValidationResult();
     }
 }

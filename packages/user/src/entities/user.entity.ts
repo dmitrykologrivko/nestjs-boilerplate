@@ -333,7 +333,7 @@ export class User extends BaseTypeormEntity {
         return Validate.withProperty('username', username)
             .isNotEmpty()
             .maxLength(USERNAME_MAX_LENGTH)
-            .isValid();
+            .getValidationResult();
     }
 
     private static validatePassword(password: string) {
@@ -341,28 +341,28 @@ export class User extends BaseTypeormEntity {
             .isNotEmpty()
             .minLength(PASSWORD_MIN_LENGTH)
             .maxLength(PASSWORD_MAX_LENGTH)
-            .isValid();
+            .getValidationResult();
     }
 
     private static validateEmail(email: string) {
         return Validate.withProperty('email', email)
             .custom('isEmail', 'is not email', isEmail)
             .maxLength(EMAIL_MAX_LENGTH)
-            .isValid();
+            .getValidationResult();
     }
 
     private static validateFirstName(firstName: string) {
         return Validate.withProperty('firstName', firstName)
             .isNotEmpty()
             .maxLength(FIRST_NAME_MAX_LENGTH)
-            .isValid();
+            .getValidationResult();
     }
 
     private static validateLastName(lastName: string) {
         return Validate.withProperty('lastName', lastName)
             .isNotEmpty()
             .maxLength(LAST_NAME_MAX_LENGTH)
-            .isValid();
+            .getValidationResult();
     }
 
     private findUserPermission(codename: string) {

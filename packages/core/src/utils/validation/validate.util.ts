@@ -538,10 +538,17 @@ export class Validate {
     /**
      * If validation is ok, returns undefined, else returns ValidationException
      */
-    isValid(): ValidationResult {
+    getValidationResult(): ValidationResult {
         if (this.exception) {
             return this.exception;
         }
+    }
+
+    /**
+     * If validation is ok, returns true, else return false accordingly
+     */
+    isValid(): boolean {
+        return !!this.exception;
     }
 
     private shouldSkip() {

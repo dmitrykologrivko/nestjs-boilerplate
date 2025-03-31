@@ -47,13 +47,13 @@ export class Permission extends BaseTypeormEntity {
         return Validate.withProperty('name', name)
             .isNotEmpty()
             .maxLength(PERMISSION_NAME_MAX_LENGTH)
-            .isValid();
+            .getValidationResult();
     }
 
     private static validateCodename(codename: string) {
         return Validate.withProperty('codename', codename)
             .isNotEmpty()
             .maxLength(CODENAME_MAX_LENGTH)
-            .isValid();
+            .getValidationResult();
     }
 }
