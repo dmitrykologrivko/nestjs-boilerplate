@@ -21,8 +21,8 @@ a new instance of the user entity.
 ```typescript
 import { User } from '@nestjs-boilerplate/user';
 
-async createUser() {
-    const result = await User.create(
+async function createUser() {
+    const user = await User.create(
         'john_smith',
         '12345678',
         'test@test.com',
@@ -33,11 +33,7 @@ async createUser() {
         false,
     );
 
-    if (result.isOk()) {
-        console.log(result.unwrap());
-    } else {
-        console.log(result.unwrapErr());
-    }
+    console.log(user);
 }
 ```
 
@@ -78,20 +74,16 @@ of the permission entity.
 ```typescript
 import { Permission } from '@nestjs-boilerplate/user';
 
-const result = Permission.create('Create Posts', 'create_posts');
+const permission = Permission.create('Create Posts', 'create_posts');
 
-if (result.isOk()) {
-    console.log(result.unwrap());
-} else {
-    console.log(result.unwrapErr());
-}
+console.log(permission);
 ```
 
 ## Group
 
 Group entity describes a group of permissions.
 
-`Name` contains human readable name of the group, e.g. Admins
+`Name` contains human-readable name of the group, e.g. Admins
 `Permissions` contains a list of permissions
 
 To create a new instance of group use the static method `create`. It will validate input and create a new instance 
@@ -100,14 +92,11 @@ of the group entity.
 ```typescript
 import { Group } from '@nestjs-boilerplate/user';
 
-const result = Permission.create('Create Posts', 'create_posts')
-    .proceed(permission => Group.create('Admins', [permission]));
+const permission = Permission.create('Create Posts', 'create_posts')
+const group = Group.create('Admins', [permission]);
 
-if (result.isOk()) {
-    console.log(result.unwrap());
-} else {
-    console.log(result.unwrapErr());
-}
+console.log(permission);
+console.log(group);
 ```
 
 Check out the list of available methods of Group entity:

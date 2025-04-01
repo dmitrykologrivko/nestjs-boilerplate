@@ -33,17 +33,11 @@ export class AuthPasswordController {
         @AuthorizedUser() user,
         @Body() input: ChangePasswordRequest,
     ) {
-        const result = await this.userService.changePassword({
+        return this.userService.changePassword({
             userId: user.id,
             currentPassword: input.currentPassword,
             newPassword: input.newPassword,
         });
-
-        if (result.isErr()) {
-            throw result.unwrapErr();
-        }
-
-        return result.unwrap();
     }
 }
 ```
@@ -76,13 +70,7 @@ export class AuthJwtController {
     @UseGuards(JwtAuthGuard)
     @Post('logout')
     async logout(@BearerToken() token) {
-        const result = await this.authService.logout({ token });
-
-        if (result.isErr()) {
-            throw result.unwrapErr();
-        }
-
-        return result.unwrap();
+        return this.authService.logout({ token });
     }
 }
 ```

@@ -152,10 +152,9 @@ describe('UserDto', () => {
     });
 
     describe('validate user dto', () => {
-        it('should return success validation result', async () => {
+        it('should pass success validation', async () => {
             const dto = new UserDto('johnsmith', 'John', 'Smith');
-            const result = await ClassValidator.valide(UserDto, dto);
-            expect(result.isOk()).toBeTruthy();
+            await expect(ClassValidator.valide(UserDto, dto)).resolves.not.toThrow();
         });
     });
 });

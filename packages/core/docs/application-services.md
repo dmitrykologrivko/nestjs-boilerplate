@@ -15,61 +15,54 @@ In the following example, we implemented an application service to perform some 
 between two accounts.
 
 ```typescript
-import { DataSource, QueryRunner } from 'typeorm';
+import {DataSource, QueryRunner} from 'typeorm';
 import {
     ApplicationService,
-    Result,
-    ok,
-    err,
-    proceed,
     ClassValidator,
     ValidationContainerException,
     transaction as unitOfWork,
 } from '@nestjs-boilerplate/core';
-import { MoneyTransferService } from './money-transfer.service';
-import { Account } from './account.entity';
-import { Transaction } from './transaction.entity';
-import { TransactionFailedException } from './transaction-failed.exception';
-import { TransferMoneyInput } from './transfer-money.input';
-import { TransferMoneyOutput } from './transfer-money.input';
+import {MoneyTransferService} from './money-transfer.service';
+import {Account} from './account.entity';
+import {Transaction} from './transaction.entity';
+import {TransactionFailedException} from './transaction-failed.exception';
+import {TransferMoneyInput} from './transfer-money.input';
+import {TransferMoneyOutput} from './transfer-money.input';
+import {transaction} from "./database.utils";
 
 @ApplicationService()
 export class MoneyService {
     constructor(
         private readonly dataSource: DataSource,
         private readonly moneyTransferService: MoneyTransferService,
-    ) {}
-    
+    ) {
+    }
+
     async transferMoney(
         input: TransferMoneyInput,
-    ): Promise<Result<TransferMoneyOutput, ValidationContainerException | TransactionFailedException>> {
-        const handler = (queryRunner: QueryRunner) => ClassValidator.validate(TransferMoneyInput, input)
-            .then(proceed(async () => {
-                const accountRepository = queryRunner.manager.getRepository(Account);
-                const transactionRepository = queryRunner.manager.getRepository(Transaction);
+    ): Promise<TransferMoneyOutput> {
+        const handler = async (queryRunner: QueryRunner) => {
+            await ClassValidator.validate(TransferMoneyInput, input);
 
-                const fromAccount = await accountRepository.findOne({ id: input.fromAccountId });
-                const toAccount = await accountRepository.findOne({ id: input.toAccountId });
+            const accountRepository = queryRunner.manager.getRepository(Account);
+            const transactionRepository = queryRunner.manager.getRepository(Transaction);
 
-                if (!(fromAccount && toAccount)) {
-                    return err(new TransactionFailedException());
-                }
+            const fromAccount = await accountRepository.findOne({id: input.fromAccountId});
+            const toAccount = await accountRepository.findOne({id: input.toAccountId});
 
-                return this.moneyTransferService.transferMoney(
-                    fromAccount,
-                    toAccount,
-                    input.amount,
-                ).proceedAsync(async transaction => {
-                    await accountRepository.save(fromAccount);
-                    await accountRepository.save(toAccount);
-                    transaction = await transactionRepository.save(transaction);
+            if (!(fromAccount && toAccount)) {
+                throw new TransactionFailedException();
+            }
 
-                    return ok(
-                        TransferMoneyOutput.fromEntity(transaction),
-                    );
-                });
-            }));
-        
+            const transaction = this.moneyTransferService.transferMoney(fromAccount, toAccount, input.amount);
+
+            await accountRepository.save(fromAccount);
+            await accountRepository.save(toAccount);
+            transaction = await transactionRepository.save(transaction);
+
+            return TransferMoneyOutput.fromEntity(transaction);
+        };
+
         return unitOfWork(this.dataSource, handler);
     }
 }
