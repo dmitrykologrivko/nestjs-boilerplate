@@ -57,74 +57,38 @@ export abstract class BaseCrudController<D extends BaseEntityDto,
     @Get()
     async list(@Req() req: R): Promise<PC> {
         const request = this.mapRequest(req);
-        const result = await this.service.list(this.mapListInput(request));
-
-        if (result.isErr()) {
-            throw result.unwrapErr();
-        }
-
-        return result.unwrap();
+        return this.service.list(this.mapListInput(request));
     }
 
     @Get(':id')
     async retrieve(@Req() req: R): Promise<RO> {
         const request = this.mapRequest(req);
-        const result = await this.service.retrieve(this.mapRetrieveInput(request));
-
-        if (result.isErr()) {
-            throw result.unwrapErr();
-        }
-
-        return result.unwrap();
+        return this.service.retrieve(this.mapRetrieveInput(request));
     }
 
     @Post()
     async create(@Req() req: R): Promise<CO> {
         const request = this.mapRequest(req);
-        const result = await this.service.create(this.mapCreateInput(request));
-
-        if (result.isErr()) {
-            throw result.unwrapErr();
-        }
-
-        return result.unwrap();
+        return this.service.create(this.mapCreateInput(request));
     }
 
     @Put(':id')
     async replace(@Req() req: R): Promise<UO> {
         const request = this.mapRequest(req);
-        const result = await this.service.update(this.mapUpdateInput(request, false));
-
-        if (result.isErr()) {
-            throw result.unwrapErr();
-        }
-
-        return result.unwrap();
+        return this.service.update(this.mapUpdateInput(request, false));
     }
 
     @Patch(':id')
     async partialUpdate(@Req() req: R): Promise<UO> {
         const request = this.mapRequest(req);
-        const result = await this.service.update(this.mapUpdateInput(request, true));
-
-        if (result.isErr()) {
-            throw result.unwrapErr();
-        }
-
-        return result.unwrap();
+        return this.service.update(this.mapUpdateInput(request, true));
     }
 
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
     async destroy(@Req() req: R): Promise<void> {
         const request = this.mapRequest(req);
-        const result = await this.service.destroy(this.mapDestroyInput(request));
-
-        if (result.isErr()) {
-            throw result.unwrapErr();
-        }
-
-        return result.unwrap();
+        return this.service.destroy(this.mapDestroyInput(request));
     }
 
     protected abstract mapRequest(req: R): Request;

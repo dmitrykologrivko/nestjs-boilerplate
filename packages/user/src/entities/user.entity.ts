@@ -1,17 +1,7 @@
 import * as bcrypt from 'bcrypt';
 import { Column, JoinTable, ManyToMany } from 'typeorm';
 import { isEmail } from 'class-validator';
-import {
-    Entity,
-    BaseTypeormEntity,
-    Validate,
-    ValidationResult,
-    ValidationContainerResult,
-    ValidationContainerException,
-    Result,
-    ok,
-    err,
-} from '@nestjs-boilerplate/core';
+import { Entity, BaseTypeormEntity, Validate } from '@nestjs-boilerplate/core';
 import { Permission } from './permission.entity';
 import { Group } from './group.entity';
 
@@ -105,7 +95,8 @@ export class User extends BaseTypeormEntity {
      * @param isAdmin flag to indicate if user is admin
      * @param isSuperuser flag to indicate if user is superuser
      * @param saltRounds salt rounds used for hashing password. default is 10.
-     * @return user creation result
+     * @throws ValidationContainerException
+     * @return user instance
      */
     static async create(
         username: string,
@@ -117,18 +108,14 @@ export class User extends BaseTypeormEntity {
         isAdmin: boolean = false,
         isSuperuser: boolean = false,
         saltRounds: number = 10,
-    ): Promise<Result<User, ValidationContainerException>> {
-        const validateResult = Validate.withResults([
+    ): Promise<User> {
+        Validate.withResults([
             User.validateUsername(username),
             User.validatePassword(password),
             User.validateEmail(email),
             User.validateFirstName(firstName),
             User.validateLastName(lastName),
         ]);
-
-        if (validateResult.isErr()) {
-            return err(validateResult.unwrapErr());
-        }
 
         const user = new User(
             username,
@@ -142,51 +129,46 @@ export class User extends BaseTypeormEntity {
 
         await user.setPassword(password, saltRounds);
 
-        return ok(user);
+        return user;
     }
 
     /**
      * Changes current username
      * @param username new username
-     * @return changing username result
      */
-    changeUsername(username: string): ValidationResult {
-        const validateResult = User.validateUsername(username);
+    changeUsername(username: string): void {
+        Validate.withResult(
+            User.validateUsername(username),
+        );
 
-        return validateResult.map(() => {
-            this.username = username;
-        });
+        this.username = username;
     }
 
     /**
      * Changes current email
      * @param email new email
-     * @return changing email result
      */
-    changeEmail(email: string): ValidationResult {
-        const validateResult = User.validateEmail(email);
+    changeEmail(email: string): void {
+        Validate.withResult(
+            User.validateEmail(email),
+        );
 
-        return validateResult.map(() => {
-            this.email = email;
-        });
+        this.email = email;
     }
 
     /**
      * Changes current first and last name
      * @param firstName new first name
      * @param lastName new last name
-     * @return changing name result
      */
-    changeName(firstName: string, lastName: string): ValidationContainerResult {
-        const validateResult = Validate.withResults([
+    changeName(firstName: string, lastName: string): void {
+        Validate.withResults([
             User.validateFirstName(firstName),
             User.validateLastName(lastName),
         ]);
 
-        return validateResult.map(() => {
-            this.firstName = firstName;
-            this.lastName = lastName;
-        });
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
     /**
@@ -251,21 +233,20 @@ export class User extends BaseTypeormEntity {
      * Sets password hash from plain password
      * @param password Plain password
      * @param saltRounds Salt Rounds
-     * @return changing password result
      */
-    async setPassword(password: string, saltRounds: number): Promise<ValidationResult> {
-        return User.validatePassword(password)
-            .proceedAsync(async () => {
-                this.password = await bcrypt.hash(password, saltRounds);
-                return ok(null);
-            });
+    async setPassword(password: string, saltRounds: number): Promise<void> {
+        Validate.withResult(
+            User.validatePassword(password),
+        );
+
+        this.password = await bcrypt.hash(password, saltRounds);
     }
 
     /**
      * Compares plain password with existing user`s password hash
      * @param password Plain password
      */
-    async comparePassword(password: string) {
+    async comparePassword(password: string): Promise<boolean> {
         return await bcrypt.compare(password, this.password);
     }
 
@@ -352,7 +333,7 @@ export class User extends BaseTypeormEntity {
         return Validate.withProperty('username', username)
             .isNotEmpty()
             .maxLength(USERNAME_MAX_LENGTH)
-            .isValid();
+            .getValidationResult();
     }
 
     private static validatePassword(password: string) {
@@ -360,28 +341,28 @@ export class User extends BaseTypeormEntity {
             .isNotEmpty()
             .minLength(PASSWORD_MIN_LENGTH)
             .maxLength(PASSWORD_MAX_LENGTH)
-            .isValid();
+            .getValidationResult();
     }
 
     private static validateEmail(email: string) {
         return Validate.withProperty('email', email)
             .custom('isEmail', 'is not email', isEmail)
             .maxLength(EMAIL_MAX_LENGTH)
-            .isValid();
+            .getValidationResult();
     }
 
     private static validateFirstName(firstName: string) {
         return Validate.withProperty('firstName', firstName)
             .isNotEmpty()
             .maxLength(FIRST_NAME_MAX_LENGTH)
-            .isValid();
+            .getValidationResult();
     }
 
     private static validateLastName(lastName: string) {
         return Validate.withProperty('lastName', lastName)
             .isNotEmpty()
             .maxLength(LAST_NAME_MAX_LENGTH)
-            .isValid();
+            .getValidationResult();
     }
 
     private findUserPermission(codename: string) {

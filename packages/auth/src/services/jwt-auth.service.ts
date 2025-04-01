@@ -3,12 +3,8 @@ import {
     InjectRepository,
     ApplicationService,
     PropertyConfigService,
-    Result,
-    ok,
-    proceed,
     ClassValidator,
     ClassTransformer,
-    ValidationContainerException,
     NonFieldValidationException,
 } from '@nestjs-boilerplate/core';
 import { User, CREDENTIALS_VALID_CONSTRAINT } from '@nestjs-boilerplate/user';
@@ -24,14 +20,6 @@ import { ValidatePayloadOutput } from '../dto/validate-payload.output';
 import { AccessTokenInvalidException } from '../exceptions/access-token-invalid.exception';
 import { RevokedTokensServiceNotConfiguredException } from '../exceptions/revoked-tokens-service-not-configured.exception';
 
-type ValidatePayloadResult = Promise<Result<ValidatePayloadOutput, AccessTokenInvalidException>>;
-
-type LoginResult = Promise<Result<JwtLoginOutput, ValidationContainerException | NonFieldValidationException>>;
-
-type LogoutResult = Promise<Result<JwtLogoutOutput, ValidationContainerException
-    | AccessTokenInvalidException
-    | RevokedTokensServiceNotConfiguredException>>;
-
 @ApplicationService()
 export class JwtAuthService extends BaseAuthService {
     constructor(
@@ -43,39 +31,63 @@ export class JwtAuthService extends BaseAuthService {
         super(userRepository);
     }
 
-    async validatePayload(input: ValidatePayloadInput): ValidatePayloadResult {
-        return (await this.userJwtService.validatePayload(input.payload))
-            .map(user => ClassTransformer.toClassObject(ValidatePayloadOutput, user))
-            .mapErr(() => new AccessTokenInvalidException());
+    /**
+     * Validate the payload of the JWT token
+     * @param input
+     * @throws AccessTokenInvalidException
+     */
+    async validatePayload(input: ValidatePayloadInput): Promise<ValidatePayloadOutput> {
+        try {
+            const user = await this.userJwtService.validatePayload(input.payload);
+            return ClassTransformer.toClassObject(ValidatePayloadOutput, user);
+        } catch (_) {
+            throw new AccessTokenInvalidException();
+        }
     }
 
-    async login(input: JwtLoginInput): LoginResult {
-        return ClassValidator.validate(JwtLoginInput, input)
-            .then(proceed(async () => {
-                return (await this.userJwtService.generateAccessToken(input.username, input.password))
-                    .map(accessToken => ({ accessToken }))
-                    .mapErr(() => {
-                        return new NonFieldValidationException({
-                            [CREDENTIALS_VALID_CONSTRAINT.key]: CREDENTIALS_VALID_CONSTRAINT.message
-                        });
-                    });
-            }));
+    /**
+     * Generate a new access token for the user
+     * @param input
+     * @throws ValidationContainerException
+     * @throws NonFieldValidationException
+     */
+    async login(input: JwtLoginInput): Promise<JwtLoginOutput> {
+        await ClassValidator.validate(JwtLoginInput, input);
+
+        try {
+            const accessToken = await this.userJwtService.generateAccessToken(input.username, input.password);
+            return {
+                accessToken,
+            };
+        } catch (_) {
+            throw new NonFieldValidationException({
+                [CREDENTIALS_VALID_CONSTRAINT.key]: CREDENTIALS_VALID_CONSTRAINT.message
+            });
+        }
     }
 
-    async logout(input: JwtLogoutInput): LogoutResult {
-        return ClassValidator.validate(JwtLogoutInput, input)
-            .then(proceed(async () => {
-                if (!this.config.get(AUTH_JWT_REVOKE_AFTER_LOGOUT_PROPERTY)) {
-                    return ok(null);
-                }
+    /**
+     * Logout the user by revoking the access token
+     * @param input
+     * @throws ValidationContainerException
+     * @throws AccessTokenInvalidException
+     * @throws RevokedTokensServiceNotConfiguredException
+     */
+    async logout(input: JwtLogoutInput): Promise<JwtLogoutOutput> {
+        await ClassValidator.validate(JwtLogoutInput, input);
 
-                return (await this.userJwtService.revokeAccessToken(input.token))
-                    .map(() => ({}))
-                    .mapErr(error => {
-                        return error instanceof RevokedTokensServiceNotConfiguredException
-                            ? error
-                            : new AccessTokenInvalidException();
-                    });
-            }));
+        if (!this.config.get(AUTH_JWT_REVOKE_AFTER_LOGOUT_PROPERTY)) {
+            return null;
+        }
+
+        try {
+            await this.userJwtService.revokeAccessToken(input.token);
+            return {};
+        } catch (e) {
+            if (e instanceof RevokedTokensServiceNotConfiguredException) {
+                throw e;
+            }
+            throw new AccessTokenInvalidException();
+        }
     }
 }

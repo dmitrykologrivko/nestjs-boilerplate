@@ -45,10 +45,11 @@ describe('UserPasswordService', () => {
         it('when user is not exist should return entity not found error', async () => {
             userRepository.findOne.mockReturnValue(Promise.resolve(null));
 
-            const result = await service.validateCredentials(USERNAME, PASSWORD);
+            await expect(service.validateCredentials(
+                USERNAME,
+                PASSWORD
+            )).rejects.toBeInstanceOf(EntityNotFoundException);
 
-            expect(result.isErr()).toBeTruthy();
-            expect(result.unwrapErr()).toBeInstanceOf(EntityNotFoundException);
             expect(userRepository.findOne.mock.calls[0][0]).toStrictEqual(USERNAME_QUERY);
         });
 
@@ -57,20 +58,18 @@ describe('UserPasswordService', () => {
 
             userRepository.findOne.mockReturnValue(Promise.resolve(user));
 
-            const result = await service.validateCredentials(USERNAME, wrongPassword);
+            await expect(service.validateCredentials(
+                USERNAME,
+                wrongPassword
+            )).rejects.toBeInstanceOf(CredentialsInvalidException);
 
-            expect(result.isErr()).toBeTruthy();
-            expect(result.unwrapErr()).toBeInstanceOf(CredentialsInvalidException);
             expect(userRepository.findOne.mock.calls[0][0]).toStrictEqual(USERNAME_QUERY);
         });
 
         it('when username and password are correct should return user', async () => {
             userRepository.findOne.mockReturnValue(Promise.resolve(user));
 
-            const result = await service.validateCredentials(USERNAME, PASSWORD);
-
-            expect(result.isOk()).toBeTruthy();
-            expect(result.unwrap()).toStrictEqual(user);
+            expect(await service.validateCredentials(USERNAME, PASSWORD)).toStrictEqual(user);
             expect(userRepository.findOne.mock.calls[0][0]).toStrictEqual(USERNAME_QUERY);
         });
     });
@@ -130,10 +129,8 @@ describe('UserPasswordService', () => {
 
     describe('#validateResetPasswordToken()', () => {
         it('when token is not valid should return error', async () => {
-            const result = await service.validateResetPasswordToken('wrong-token');
-
-            expect(result.isErr()).toBeTruthy();
-            expect(result.unwrapErr()).toBeInstanceOf(ResetPasswordTokenInvalidException);
+            await expect(service.validateResetPasswordToken('wrong-token'))
+                .rejects.toBeInstanceOf(ResetPasswordTokenInvalidException);
         });
 
         it('when token verified but user not exist should return error', async () => {
@@ -141,10 +138,8 @@ describe('UserPasswordService', () => {
 
             const token = await jwtService.signAsync({ sub: user.id, key: resetPasswordTokenId });
 
-            const result = await service.validateResetPasswordToken(token);
-
-            expect(result.isErr()).toBeTruthy();
-            expect(result.unwrapErr()).toBeInstanceOf(ResetPasswordTokenInvalidException);
+            await expect(service.validateResetPasswordToken(token))
+                .rejects.toBeInstanceOf(ResetPasswordTokenInvalidException);
 
             expect(userRepository.findOne.mock.calls[0][0]).toStrictEqual(USER_ID_QUERY);
         });
@@ -154,10 +149,8 @@ describe('UserPasswordService', () => {
 
             const token = await jwtService.signAsync({ sub: user.id, key: 'wrong-key' });
 
-            const result = await service.validateResetPasswordToken(token);
-
-            expect(result.isErr()).toBeTruthy();
-            expect(result.unwrapErr()).toBeInstanceOf(ResetPasswordTokenInvalidException);
+            await expect(service.validateResetPasswordToken(token))
+                .rejects.toBeInstanceOf(ResetPasswordTokenInvalidException);
 
             expect(userRepository.findOne.mock.calls[0][0]).toStrictEqual(USER_ID_QUERY);
         });
@@ -167,10 +160,7 @@ describe('UserPasswordService', () => {
 
             const token = await jwtService.signAsync({ sub: user.id, jti: resetPasswordTokenId });
 
-            const result = await service.validateResetPasswordToken(token);
-
-            expect(result.isOk()).toBeTruthy();
-            expect(result.unwrap()).toBe(user);
+            expect(await service.validateResetPasswordToken(token)).toBe(user);
 
             expect(userRepository.findOne.mock.calls[0][0]).toStrictEqual(USER_ID_QUERY);
         });

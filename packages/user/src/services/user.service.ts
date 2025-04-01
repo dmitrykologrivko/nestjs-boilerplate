@@ -6,25 +6,16 @@ import {
     ApplicationService,
     ClassTransformer,
     ClassValidator,
-    ValidationContainerException,
-    ValidationException,
     BaseMailService,
     MAIL_PROPERTY,
-    SendMailFailedException,
     BaseTemplateService,
-    Result,
-    ok,
-    proceed,
     transaction,
     EventBus,
-    TransactionRollbackException,
-    EventsFailedException,
 } from '@nestjs-boilerplate/core';
 import {
     USER_PROPERTY,
     USER_PASSWORD_SALT_ROUNDS_PROPERTY,
 } from '../constants/user.properties';
-import { ResetPasswordTokenInvalidException } from '../exceptions/reset-password-token-invalid.exception';
 import { User } from '../entities/user.entity';
 import { ActiveUsersQuery } from '../queries/active-users.query';
 import { UserPasswordService } from './user-password.service';
@@ -36,25 +27,6 @@ import { ForgotPasswordInput } from '../dto/forgot-password.input';
 import { ResetPasswordInput } from '../dto/reset-password.input';
 import { UserChangedPasswordEvent } from '../events/user-changed-password.event';
 import { UserRecoveredPasswordEvent } from '../events/user-recovered-password.event';
-
-type CreateUserResult = Promise<Result<CreateUserOutput, ValidationContainerException>>;
-
-type ChangePasswordResult = Promise<Result<void, ValidationContainerException
-    | ValidationException
-    | EventsFailedException
-    | TransactionRollbackException>>;
-
-type ForceChangePasswordResult = Promise<Result<void, ValidationContainerException
-    | ValidationException
-    | EventsFailedException
-    | TransactionRollbackException>>;
-
-type ForgotPasswordResult = Promise<Result<void, ValidationContainerException | SendMailFailedException>>;
-
-type ResetPasswordResult = Promise<Result<void, ValidationContainerException | ValidationException
-    | ResetPasswordTokenInvalidException
-    | EventsFailedException
-    | TransactionRollbackException>>;
 
 @ApplicationService()
 export class UserService {
@@ -72,85 +44,86 @@ export class UserService {
     /**
      * Creates a new user entity
      * @param input create user dto
+     * @throws ValidationContainerException
      * @return user dto
      */
-    async createUser(input: CreateUserInput): CreateUserResult {
-        return ClassValidator.validate(CreateUserInput, input)
-            .then(proceed(async () => {
-                return User.create(
-                    input.username,
-                    input.password,
-                    input.email,
-                    input.firstName,
-                    input.lastName,
-                    input.isActive,
-                    input.isAdmin,
-                    input.isSuperuser,
-                    this.config.get(USER_PASSWORD_SALT_ROUNDS_PROPERTY),
-                ).then(proceed(async user => {
-                    user = await this.userRepository.save(user);
-                    return ok(
-                        ClassTransformer.toClassObject(CreateUserOutput, user),
-                    );
-                }));
-            }));
+    async createUser(input: CreateUserInput): Promise<CreateUserOutput> {
+        await ClassValidator.validate(CreateUserInput, input);
+
+        let user = await User.create(
+            input.username,
+            input.password,
+            input.email,
+            input.firstName,
+            input.lastName,
+            input.isActive,
+            input.isAdmin,
+            input.isSuperuser,
+            this.config.get(USER_PASSWORD_SALT_ROUNDS_PROPERTY),
+        );
+
+        user = await this.userRepository.save(user);
+
+        return ClassTransformer.toClassObject(CreateUserOutput, user);
     }
 
     /**
      * Allows changing the user password if provided current password is correct
      * @param input change password dto
+     * @throws ValidationContainerException
+     * @throws ValidationException
+     * @throws EventsFailedException
      */
-    async changePassword(input: ChangePasswordInput): ChangePasswordResult {
-        const handler = (queryRunner: QueryRunner) => ClassValidator.validate(ChangePasswordInput, input)
-            .then(proceed(async () => {
-                const user = await queryRunner.manager.findOne(
-                    User,
-                    new ActiveUsersQuery({ id: input.userId }).toFindOptions(),
-                );
-                const saltRounds = this.config.get(USER_PASSWORD_SALT_ROUNDS_PROPERTY);
+    async changePassword(input: ChangePasswordInput): Promise<void> {
+        const handler = async (queryRunner: QueryRunner) => {
+            await ClassValidator.validate(ChangePasswordInput, input);
 
-                return user.setPassword(input.newPassword, saltRounds)
-                    .then(proceed(async () => {
-                        await queryRunner.manager.save(user);
+            const user = await queryRunner.manager.findOne(
+                User,
+                new ActiveUsersQuery({ id: input.userId }).toFindOptions(),
+            );
+            const saltRounds = this.config.get(USER_PASSWORD_SALT_ROUNDS_PROPERTY);
 
-                        const event = new UserChangedPasswordEvent(user.id, input.token);
-                        return (await this.eventBus.publish(event))
-                            .proceed(() => {
-                                Logger.log(`Password has been changed for ${user.username}`);
-                                return ok(null);
-                            });
-                    }));
-            }));
+            await user.setPassword(input.newPassword, saltRounds);
 
-        return transaction(this.dataSource, handler);
+            await queryRunner.manager.save(user);
+
+            const event = new UserChangedPasswordEvent(user.id, input.token);
+            await this.eventBus.publish(event);
+
+            Logger.log(`Password has been changed for ${user.username}`);
+        };
+
+        await transaction(this.dataSource, handler);
     }
 
     /**
      * Allows force changing the user password
      * @param input force change password dto
+     * @throws ValidationContainerException
+     * @throws ValidationException
+     * @throws EventsFailedException
      */
-    async forceChangePassword(input: ForceChangePasswordInput): ForceChangePasswordResult {
-        const handler = (queryRunner: QueryRunner) => ClassValidator.validate(ForceChangePasswordInput, input)
-            .then(proceed(async () => {
-                const user = await queryRunner.manager.findOne(
-                    User,
-                    new ActiveUsersQuery({ username: input.username }).toFindOptions(),
-                );
+    async forceChangePassword(input: ForceChangePasswordInput): Promise<void> {
+        const handler = async (queryRunner: QueryRunner) => {
+            await ClassValidator.validate(ForceChangePasswordInput, input);
 
-                return user.setPassword(
-                    input.newPassword,
-                    this.config.get(USER_PASSWORD_SALT_ROUNDS_PROPERTY),
-                ).then(proceed(async () => {
-                    await queryRunner.manager.save(user);
+            const user = await queryRunner.manager.findOne(
+                User,
+                new ActiveUsersQuery({ username: input.username }).toFindOptions(),
+            );
 
-                    const event = new UserChangedPasswordEvent(user.id);
-                    return (await this.eventBus.publish(event))
-                        .proceed(() => {
-                            Logger.log(`Password has been changed for ${user.username}`);
-                            return ok(null);
-                        });
-                }));
-            }));
+            await user.setPassword(
+                input.newPassword,
+                this.config.get(USER_PASSWORD_SALT_ROUNDS_PROPERTY),
+            );
+            await queryRunner.manager.save(user);
+
+            const event = new UserChangedPasswordEvent(user.id);
+            await this.eventBus.publish(event);
+
+            Logger.log(`Password has been changed for ${user.username}`);
+        };
 
         return transaction(this.dataSource, handler);
     }
@@ -158,65 +131,69 @@ export class UserService {
     /**
      * Generates reset password token and sends to user email
      * @param input forgot password dto
+     * @throws ValidationContainerException
+     * @throws SendMailFailedException
      */
-    async forgotPassword(input: ForgotPasswordInput): ForgotPasswordResult {
-        return ClassValidator.validate(ForgotPasswordInput, input)
-            .then(proceed(async () => {
-                const user = await this.userRepository.findOne(
-                    new ActiveUsersQuery({ email: input.email }).toFindOptions(),
-                );
-                const token = await this.passwordService.generateResetPasswordToken(user);
+    async forgotPassword(input: ForgotPasswordInput): Promise<void> {
+        await ClassValidator.validate(ForgotPasswordInput, input);
 
-                const mailOptions = this.config.get(MAIL_PROPERTY);
-                const userOptions = this.config.get(USER_PROPERTY);
+        const user = await this.userRepository.findOne(
+            new ActiveUsersQuery({ email: input.email }).toFindOptions(),
+        );
+        const token = await this.passwordService.generateResetPasswordToken(user);
 
-                const html = await this.templateService.render(
-                    userOptions.password.resetMailTemplate,
-                    {
-                        username: user.username,
-                        firstName: user.firstName,
-                        lastName: user.lastName,
-                        host: input.host,
-                        protocol: input.protocol,
-                        token,
-                    },
-                );
+        const mailOptions = this.config.get(MAIL_PROPERTY);
+        const userOptions = this.config.get(USER_PROPERTY);
 
-                return (await this.mailService.sendMail({
-                    subject: userOptions.password.resetMailSubject,
-                    to: [user.email],
-                    from: mailOptions.defaultFrom,
-                    text: '',
-                    html,
-                })).proceed(() => {
-                    Logger.log(`Recover password email has been sent for ${user.username}`);
-                    return ok(null);
-                });
-            }));
+        const html = await this.templateService.render(
+            userOptions.password.resetMailTemplate,
+            {
+                username: user.username,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                host: input.host,
+                protocol: input.protocol,
+                token,
+            },
+        );
+
+        await this.mailService.sendMail({
+            subject: userOptions.password.resetMailSubject,
+            to: [user.email],
+            from: mailOptions.defaultFrom,
+            text: '',
+            html,
+        });
+
+        Logger.log(`Recover password email has been sent for ${user.username}`);
     }
 
     /**
      * Resets user password by reset password token
      * @param input reset password dto
+     * @throws ValidationContainerException
+     * @throws ValidationException
+     * @throws ResetPasswordTokenInvalidException
+     * @throws EventsFailedException
      */
-    async resetPassword(input: ResetPasswordInput): ResetPasswordResult {
-        const handler = (queryRunner: QueryRunner) => ClassValidator.validate(ResetPasswordInput, input)
-            .then(proceed(() => this.passwordService.validateResetPasswordToken(input.resetPasswordToken)))
-            .then(proceed(async user => {
-                return user.setPassword(
-                    input.newPassword,
-                    this.config.get(USER_PASSWORD_SALT_ROUNDS_PROPERTY),
-                ).then(proceed(async () => {
-                    await queryRunner.manager.save(user);
+    async resetPassword(input: ResetPasswordInput): Promise<void> {
+        const handler = async (queryRunner: QueryRunner) => {
+            await ClassValidator.validate(ResetPasswordInput, input);
 
-                    const event = new UserRecoveredPasswordEvent(user.id);
-                    return (await this.eventBus.publish(event))
-                        .proceed(() => {
-                            Logger.log(`Password has been recovered for ${user.username}`);
-                            return ok(null);
-                        });
-                }));
-            }));
+            const user = await this.passwordService.validateResetPasswordToken(input.resetPasswordToken);
+
+            await user.setPassword(
+                input.newPassword,
+                this.config.get(USER_PASSWORD_SALT_ROUNDS_PROPERTY),
+            );
+
+            await queryRunner.manager.save(user);
+
+            const event = new UserRecoveredPasswordEvent(user.id);
+            await this.eventBus.publish(event);
+
+            Logger.log(`Password has been recovered for ${user.username}`);
+        };
 
         return transaction(this.dataSource, handler);
     }

@@ -5,10 +5,6 @@ import {
     PropertyConfigService,
     InjectRepository,
     DomainService,
-    Result,
-    ok,
-    err,
-    proceed,
     EntityNotFoundException,
 } from '@nestjs-boilerplate/core';
 import { USER_PASSWORD_RESET_TIMEOUT_PROPERTY } from '../constants/user.properties';
@@ -26,29 +22,45 @@ export class UserPasswordService {
         private readonly config: PropertyConfigService,
     ) {}
 
+    /**
+     * Validates user credentials.
+     * @param username
+     * @param password
+     * @throws EntityNotFoundException
+     * @throws CredentialsInvalidException
+     */
     async validateCredentials(
         username: string,
         password: string,
-    ): Promise<Result<User, EntityNotFoundException | CredentialsInvalidException>> {
-        return this.findUser(username)
-            .then(proceed(async user => {
-                const isPasswordMatch = await user.comparePassword(password);
-                return isPasswordMatch
-                    ? ok(user)
-                    : err(new CredentialsInvalidException());
-            }));
+    ): Promise<User> {
+        const user = await this.findUser(username);
+
+        const isPasswordMatch = await user.comparePassword(password);
+        if (!isPasswordMatch) {
+            throw new CredentialsInvalidException();
+        }
+
+        return user;
     }
 
+    /**
+     * Validates user credentials.
+     * @param idOrUsername
+     * @param password
+     */
     async comparePassword(
         idOrUsername: number | string,
         password: string,
     ): Promise<boolean> {
-        const result = await this.findUser(idOrUsername);
-        return result.isOk()
-            ? await result.unwrap().comparePassword(password)
-            : false;
+        return this.findUser(idOrUsername)
+            .then(user => user.comparePassword(password))
+            .catch(() => false);
     }
 
+    /**
+     * Generates a JWT token for resetting the password.
+     * @param user
+     */
     async generateResetPasswordToken(user: User) {
         return await this.jwtService.signAsync(
             { sub: user.id, jti: this.getResetPasswordTokenId(user) },
@@ -56,15 +68,20 @@ export class UserPasswordService {
         );
     }
 
+    /**
+     * Validates the reset password token.
+     * @param token
+     * @throws ResetPasswordTokenInvalidException
+     */
     async validateResetPasswordToken(
         token: string,
-    ): Promise<Result<User, ResetPasswordTokenInvalidException>> {
+    ): Promise<User> {
         let payload;
 
         try {
             payload = await this.jwtService.verifyAsync(token);
         } catch (e) {
-            return err(new ResetPasswordTokenInvalidException());
+            throw new ResetPasswordTokenInvalidException();
         }
 
         const user = await this.userRepository.findOne(
@@ -72,14 +89,21 @@ export class UserPasswordService {
         );
 
         if (!user || this.getResetPasswordTokenId(user) !== payload.jti) {
-            return err(new ResetPasswordTokenInvalidException());
+            throw new ResetPasswordTokenInvalidException();
         }
 
-        return ok(user);
+        return user;
     }
 
+    /**
+     * Checks if the reset password token is valid.
+     * @param token
+     * @throws ResetPasswordTokenInvalidException
+     */
     async isResetPasswordTokenValid(token: string): Promise<boolean> {
-        return (await this.validateResetPasswordToken(token)).isOk();
+        return this.validateResetPasswordToken(token)
+            .then(() => true)
+            .catch(() => false);
     }
 
     private getResetPasswordTokenId(user: User) {
@@ -95,7 +119,7 @@ export class UserPasswordService {
 
     private async findUser(
         idOrUsername: number | string,
-    ): Promise<Result<User, EntityNotFoundException>> {
+    ): Promise<User> {
         let query: ActiveUsersQuery;
 
         if (typeof idOrUsername === 'number') {
@@ -108,8 +132,10 @@ export class UserPasswordService {
 
         const user = await this.userRepository.findOne(query.toFindOptions());
 
-        return user
-            ? ok(user)
-            : err(new EntityNotFoundException());
+        if (!user) {
+            throw new EntityNotFoundException();
+        }
+
+        return user;
     }
 }

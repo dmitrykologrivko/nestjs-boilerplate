@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Result, ok, err } from '../../utils/monads/result';
 import { BaseEvent } from './base.event';
 import { BaseEventHandler } from './base-event.handler';
 import { EventFailedException } from './event-failed.exception';
@@ -32,7 +31,13 @@ export class EventBus {
         this.handlers = [];
     }
 
-    async publish<U>(event: BaseEvent, unitOfWork?: U): Promise<Result<void, EventsFailedException>> {
+    /**
+     * Publish an event to all registered handlers
+     * @param event
+     * @param unitOfWork
+     * @throws EventsFailedException
+     */
+    async publish<U>(event: BaseEvent, unitOfWork?: U): Promise<void> {
         const container: EventsFailedException = new EventsFailedException();
 
         for (const handler of this.handlers) {
@@ -40,19 +45,16 @@ export class EventBus {
                 // The EventBus handles all handlers even if any of them return/throw an exception
                 try {
                     const result = await handler.handle(event, unitOfWork);
-                    if (result.isErr()) {
-                        container.add(result.unwrapErr());
-                    }
                 } catch(e) {
                     container.add(new EventFailedException(e));
                 }
             }
         }
 
-        if (container.lenght() > 0) {
-            return err(container);
+        if (container.length() > 0) {
+            throw container;
         }
 
-        return ok(null);
+        return null;
     }
 }

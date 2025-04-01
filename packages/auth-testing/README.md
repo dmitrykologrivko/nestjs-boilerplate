@@ -36,7 +36,7 @@ UserFactory.makeUser()
 
 ## Auth test utils
 
-`AuthTestUtils` class contains a bunch of helpful methods for managing users, JWT tokens. TODO
+`AuthTestUtils` class contains a bunch of helpful methods for managing users, JWT tokens.
 
 | Method                     | Description                                                                             |
 |----------------------------|-----------------------------------------------------------------------------------------|

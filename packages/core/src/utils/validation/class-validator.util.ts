@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { validate, ValidatorOptions, ValidationError } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
 import { Constructor } from '../../utils/type.utils';
-import { Result, ok, err } from '../monads/result';
 import { ValidationException } from './validation.exception';
 import { ValidationContainerException } from './validation-container.exception';
 
@@ -18,13 +17,14 @@ export class ClassValidator {
      * @param cls validatable object`s class construction function
      * @param object validatable object
      * @param validatorOptions "class-validator" library options
+     * @throws ValidationContainerException
      * @return validation result
      */
     static async validate<T extends object>(
         cls: Constructor<T>,
         object: T,
         validatorOptions?: ValidatorOptions,
-    ): Promise<Result<void, ValidationContainerException>> {
+    ): Promise<void> {
         let validatableObject = object;
 
         if (!(validatableObject instanceof cls)) {
@@ -34,12 +34,10 @@ export class ClassValidator {
         const errors = await validate(validatableObject, validatorOptions);
 
         if (errors !== undefined && errors.length !== 0) {
-            return err(
-                new ValidationContainerException(ClassValidator.toValidationExceptions(errors)),
-            );
+            throw new ValidationContainerException(ClassValidator.toValidationExceptions(errors));
         }
 
-        return ok(null);
+        return null;
     }
 
     /**
@@ -47,13 +45,14 @@ export class ClassValidator {
      * @param cls validatable object`s class construction function
      * @param object validatable object
      * @param validatorOptions "class-validator" library options
+     * @throws ValidationContainerException
      * @return validation result
      */
     async validate<T extends object>(
         cls: Constructor<T>,
         object: T,
         validatorOptions?: ValidatorOptions,
-    ): Promise<Result<void, ValidationContainerException>> {
+    ): Promise<void> {
         return ClassValidator.validate(cls, object, validatorOptions);
     }
 

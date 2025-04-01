@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { Result, ok, err, EntityNotFoundException } from '@nestjs-boilerplate/core';
+import { EntityNotFoundException } from '@nestjs-boilerplate/core';
 import { User, ActiveUsersQuery } from '@nestjs-boilerplate/user';
 import { BaseLoginInput } from '../dto/base-login.input';
 import { BaseLoginOutput } from '../dto/base-login.output';
@@ -12,17 +12,31 @@ export abstract class BaseAuthService {
         protected readonly userRepository: Repository<User>,
     ) {}
 
-    abstract login(input: BaseLoginInput): Promise<Result<BaseLoginOutput, any>>;
+    /**
+     * Logs in a user with the given input.
+     * @param input
+     */
+    abstract login(input: BaseLoginInput): Promise<BaseLoginOutput>;
 
-    abstract logout(input: BaseLogoutInput): Promise<Result<BaseLogoutOutput, any>>;
+    /**
+     * Logs out a user with the given input.
+     * @param input
+     */
+    abstract logout(input: BaseLogoutInput): Promise<BaseLogoutOutput>;
 
-    protected async findUser(query: ActiveUsersQuery): Promise<Result<User, EntityNotFoundException>> {
+    /**
+     * Finds a user by the given query.
+     * @param query The query to find the user
+     * @returns The found user
+     * @throws EntityNotFoundException
+     */
+    protected async findUser(query: ActiveUsersQuery): Promise<User> {
         const user = await this.userRepository.findOne(query.toFindOptions());
 
         if (!user) {
-            return err(new EntityNotFoundException());
+            throw new EntityNotFoundException();
         }
 
-        return ok(user);
+        return user;
     }
 }

@@ -45,51 +45,33 @@ export class AuthPasswordController {
     ) {
         Logger.log(`Attempt to change password (IP ${req.ip})`);
 
-        const result = await this.userService.changePassword({
+        return this.userService.changePassword({
             userId: user.id,
             currentPassword: input.currentPassword,
             newPassword: input.newPassword,
             token,
         });
-
-        if (result.isErr()) {
-            throw result.unwrapErr();
-        }
-
-        return result.unwrap();
     }
 
     @Post('forgot')
     async forgotPassword(@Request() req, @Body() input: ForgotPasswordRequest) {
         Logger.log(`Attempt to send recover password email (IP ${req.ip})`);
 
-        const result = await this.userService.forgotPassword({
+        return this.userService.forgotPassword({
             email: input.email,
             host: req.headers.host,
             protocol: req.protocol,
         });
-
-        if (result.isErr()) {
-            throw result.unwrapErr();
-        }
-
-        return result.unwrap();
     }
 
     @Post('reset')
     async resetPassword(@Request() req, @Body() input: ResetPasswordRequest) {
         Logger.log(`Attempt to recover password (IP ${req.ip})`);
 
-        const result = await this.userService.resetPassword({
+        return this.userService.resetPassword({
             resetPasswordToken: input.resetPasswordToken,
             newPassword: input.newPassword,
         });
-
-        if (result.isErr()) {
-            throw result.unwrapErr();
-        }
-
-        return result.unwrap();
     }
 
     @Post('reset/validate')

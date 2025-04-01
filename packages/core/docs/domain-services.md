@@ -14,12 +14,7 @@ NestJS Boilerplate contains `DomainService` decorator to mark your services as d
 it is easy to distinguish them from other types of services.
 
 ```typescript
-import {
-    DomainService,
-    Result,
-    ok,
-    err,
-} from '@nestjs-boilerplate/core';
+import { DomainService } from '@nestjs-boilerplate/core';
 import { Account } from './account.entity';
 import { Transaction } from './transaction.entity';
 import { TransactionFailedException } from './transaction-failed.exception';
@@ -31,17 +26,15 @@ export class MoneyTransferService {
         fromAccount: Account,
         toAccount: Account,
         amount: number,
-    ): Result<Transaction, TransactionFailedException> {
+    ): Transaction {
         if (fromAccount.canDebitAmount(amount)) {
-            err(new TransactionFailedException());
+            throw new TransactionFailedException();
         }
         
         fromAccount.debit(amount);
         toAccount.credit(amount);
         
-        return ok(
-            new Transaction(fromAccount, toAccount, amount),
-        );
+        return new Transaction(fromAccount, toAccount, amount);
     }
 }
 ```

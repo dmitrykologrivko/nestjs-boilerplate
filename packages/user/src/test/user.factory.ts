@@ -6,7 +6,7 @@ export class UserFactory {
     static DEFAULT_PASSWORD = '12345678';
 
     static async makeUser(id: number = 1) {
-        const createUserResult = await User.create(
+        const user = await User.create(
           UserFactory.DEFAULT_USERNAME,
           UserFactory.DEFAULT_PASSWORD,
           'test@test.com',
@@ -16,8 +16,6 @@ export class UserFactory {
           false,
           false,
         );
-
-        const user = createUserResult.unwrap();
 
         user.id = id;
         user.created = new Date();

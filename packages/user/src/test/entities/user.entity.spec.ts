@@ -26,30 +26,27 @@ describe('UserEntity', () => {
         readPermission = Permission.create(
             'Read Permission',
             'read',
-        ).unwrap();
-
+        );
         writePermission = Permission.create(
             'Write Permission',
             'write',
-        ).unwrap();
-
+        );
         deletePermission = Permission.create(
             'Delete Permission',
             'delete',
-        ).unwrap();
+        );
 
-        group = Group.create('Managers Group').unwrap();
+        group = Group.create('Managers Group');
         group.id = 1;
         group.setPermission(readPermission);
 
-        const createUserResult = await User.create(
+        user = await User.create(
             USERNAME,
             PASSWORD,
             EMAIL,
             FIRST_NAME,
             LAST_NAME,
         );
-        user = createUserResult.unwrap();
         user.addToGroup(group);
         user.addUserPermission(writePermission);
     });
@@ -283,7 +280,7 @@ describe('UserEntity', () => {
         it('should add user to new group', () => {
             expectInitialGroups();
 
-            const newGroup = Group.create('Sales Group').unwrap();
+            const newGroup = Group.create('Sales Group');
             newGroup.id = 2;
 
             user.addToGroup(newGroup);
@@ -313,7 +310,7 @@ describe('UserEntity', () => {
         it('when user is not in group should not modify existing groups', () => {
             expectInitialGroups();
 
-            const newGroup = Group.create('Sales Group').unwrap();
+            const newGroup = Group.create('Sales Group');
             newGroup.id = 2;
 
             user.removeFromGroup(newGroup);

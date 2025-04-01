@@ -30,8 +30,8 @@ export class IsAdminUserPermission extends BasePermission<BaseInput & Authorizab
 ```
 
 In your application service use `checkPermissions` function from `@nestjs-boilerplate/core` package and provide a list
-of instances global permissions. If one of the provided permissions will return false then result with
-`PermissionDeniedException` exception will be returned.
+of instances global permissions. If one of the provided permissions will return false then function throws
+`PermissionDeniedException` exception.
 
 **Note:** Instance of authenticated user must be provided in extra params of the input object. Input object must be 
 inherited from `BaseInput` class.
@@ -43,9 +43,6 @@ import {
     InjectRepository,
     BasePermission,
     checkPermissions,
-    PermissionDeniedException,
-    Result,
-    proceed,
 } from '@nestjs-boilerplate/core';
 import { Note } from './note.entity';
 import { GetNotesInput } from './get-notes.input';
@@ -58,11 +55,12 @@ export class NoteService {
         @InjectRepository(Note)
         private readonly noteRepository: Repository<Note>,
     ) {}
-    
-    async getNotes(input: GetNotesInput): Result<GetNotesOutput, PermissionDeniedException> {
-        return checkPermissions<GetNotesInput>(input, [new IsAdminUserPermission()])
-            .then(proceed(this.noteRepository.getNotes()))
-            .then(proceed(notes => GetNotesOutput.fromEntities(notes)));
+
+    async getNotes(input: GetNotesInput): Promise<GetNotesOutput> {
+        await checkPermissions<GetNotesInput>(input, [new IsAdminUserPermission()]);
+
+        const notes = await this.noteRepository.getNotes();
+        return GetNotesOutput.fromEntities(notes);
     }
 }
 ```
@@ -103,8 +101,8 @@ export class IsOwnerEntityPermission<E extends BaseEntity & Ownable>
 ```
 
 In your application service use `checkEntityPermissions` function from `@nestjs-boilerplate/core` package and 
-provide a list of instances entity permissions. If one of the provided permissions will return false then result with
-`PermissionDeniedException` exception will be returned.
+provide a list of instances entity permissions. If one of the provided permissions will return false then function 
+throws `PermissionDeniedException` exception.
 
 ```typescript
 import { Repository } from 'typeorm';
@@ -112,9 +110,6 @@ import {
     ApplicationService,
     BasePermission,
     checkEntityPermissions,
-    PermissionDeniedException,
-    Result,
-    proceed,
 } from '@nestjs-boilerplate/core';
 import { Note } from './note.entity';
 import { GetNoteInput } from './get-note.input';
@@ -127,10 +122,12 @@ export class NoteService {
         private readonly noteRepository: Repository<Note>,
     ) {}
     
-    async getNote(input: GetNoteInput): Result<GetNoteOutput, PermissionDeniedException> {
-        return this.noteRepository.getNote(input.id)
-            .then(note => checkEntityPermissions<GetNoteInput, Note>(input, note, [new IsOwnerEntityPermission<Note>()]))
-            .then(proceed(note => GetNoteOutput.fromEntity(note)));
+    async getNote(input: GetNoteInput): Promise<GetNoteOutput> {
+        const note = await this.noteRepository.getNote(input.id);
+        
+        await checkEntityPermissions<GetNoteInput, Note>(input, note, [new IsOwnerEntityPermission<Note>()]);
+        
+        return GetNoteOutput.fromEntity(note);
     }
 }
 ```

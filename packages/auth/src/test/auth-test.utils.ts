@@ -33,16 +33,14 @@ export class AuthTestUtils {
     }
 
     async generateJwtToken(username: string, password: string) {
-        const result = await this._userJwtService.generateAccessToken(username, password);
-        return result.unwrap();
+        return this._userJwtService.generateAccessToken(username, password);
     }
 
     async revokeJwtToken(token: string) {
         if (!this._revokedTokensService) {
             Logger.warn('Revoked Tokens Service is not setup');
         }
-        (await this._userJwtService.revokeAccessToken(token))
-            .unwrap();
+        await this._userJwtService.revokeAccessToken(token);
     }
 
     async getJwtAuthHeader(token: string) {

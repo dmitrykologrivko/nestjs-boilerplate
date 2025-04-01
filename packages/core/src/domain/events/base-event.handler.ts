@@ -1,11 +1,18 @@
-import { Result } from '../../utils/monads/result';
 import { BaseEvent } from './base.event';
-import { EventFailedException } from './event-failed.exception';
 
 export abstract class BaseEventHandler<T extends BaseEvent, U> {
 
+    /**
+     * The event class that this handler supports
+     */
     abstract supports(): string[];
 
-    abstract handle(event: T, unitOfWork?: U): Promise<Result<void, EventFailedException>>;
+    /**
+     * Handle the event
+     * @param event
+     * @param unitOfWork
+     * @throws EventFailedException
+     */
+    abstract handle(event: T, unitOfWork?: U): Promise<void>;
 
 }
