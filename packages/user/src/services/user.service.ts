@@ -80,7 +80,7 @@ export class UserService {
 
             const user = await queryRunner.manager.findOne(
                 User,
-                new ActiveUsersQuery({ id: input.userId }).toFindOptions(),
+                new ActiveUsersQuery({ id: input.userId }).toFindManyOptions(),
             );
             const saltRounds = this.config.get(USER_PASSWORD_SALT_ROUNDS_PROPERTY);
 
@@ -110,7 +110,7 @@ export class UserService {
 
             const user = await queryRunner.manager.findOne(
                 User,
-                new ActiveUsersQuery({ username: input.username }).toFindOptions(),
+                new ActiveUsersQuery({ username: input.username }).toFindManyOptions(),
             );
 
             await user.setPassword(
@@ -138,7 +138,7 @@ export class UserService {
         await ClassValidator.validate(ForgotPasswordInput, input);
 
         const user = await this.userRepository.findOne(
-            new ActiveUsersQuery({ email: input.email }).toFindOptions(),
+            new ActiveUsersQuery({ email: input.email }).toFindManyOptions(),
         );
         const token = await this.passwordService.generateResetPasswordToken(user);
 

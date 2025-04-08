@@ -85,7 +85,7 @@ export class UserPasswordService {
         }
 
         const user = await this.userRepository.findOne(
-            new ActiveUsersQuery({ id: payload.sub }).toFindOptions(),
+            new ActiveUsersQuery({ id: payload.sub }).toFindManyOptions(),
         );
 
         if (!user || this.getResetPasswordTokenId(user) !== payload.jti) {
@@ -130,7 +130,7 @@ export class UserPasswordService {
             query = new ActiveUsersQuery({ username: idOrUsername });
         }
 
-        const user = await this.userRepository.findOne(query.toFindOptions());
+        const user = await this.userRepository.findOne(query.toFindManyOptions());
 
         if (!user) {
             throw new EntityNotFoundException();

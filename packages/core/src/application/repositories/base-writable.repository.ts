@@ -2,11 +2,12 @@ import { Repository, QueryRunner } from 'typeorm';
 import { Constructor } from '../../utils/type.utils';
 import { BaseRepository } from '../../domain/repository/base.repository';
 import { BaseEntity } from '../../domain/entities/base.entity';
-import { BaseFindQuery } from '../queries/base-find.query';
+import { BaseFindOneQuery } from '../queries/base-find-one.query';
+import { BaseFindManyQuery } from '../queries/base-find-many.query';
 import { BaseBuildableQuery } from '../queries/base-buildable.query';
 
 export abstract class BaseWritableRepository<E extends BaseEntity, W> extends BaseRepository<E,
-    BaseFindQuery<W> | BaseBuildableQuery<W>, QueryRunner> {
+    BaseFindOneQuery<W> | BaseFindManyQuery<W> | BaseBuildableQuery<W>, QueryRunner> {
 
     protected readonly alias: string;
 
@@ -19,7 +20,7 @@ export abstract class BaseWritableRepository<E extends BaseEntity, W> extends Ba
     }
 
     async find(
-        query?: BaseFindQuery<W> | BaseBuildableQuery<W>,
+        query?: BaseFindManyQuery<W> | BaseBuildableQuery<W>,
         unitOfWork?: QueryRunner,
     ): Promise<E | E[]> {
         if (Object.keys(query).includes('toQueryBuilder')) {
@@ -30,12 +31,12 @@ export abstract class BaseWritableRepository<E extends BaseEntity, W> extends Ba
             return (await queryBuilder.getMany()).map(this.toEntity);
         }
 
-        return (await this.getRepository(unitOfWork).find((query as BaseFindQuery<W>)?.toFindOptions()))
+        return (await this.getRepository(unitOfWork).find((query as BaseFindManyQuery<W>)?.toFindManyOptions()))
             .map(this.toEntity);
     }
 
     async findOne(
-        query?: BaseFindQuery<W> | BaseBuildableQuery<W>,
+        query?: BaseFindOneQuery<W> | BaseBuildableQuery<W>,
         unitOfWork?: QueryRunner,
     ): Promise<E> {
         if (Object.keys(query).includes('toQueryBuilder')) {
@@ -47,7 +48,7 @@ export abstract class BaseWritableRepository<E extends BaseEntity, W> extends Ba
         }
 
         return this.toEntity(
-            (await this.getRepository(unitOfWork).findOne((query as BaseFindQuery<W>)?.toFindOptions())),
+            (await this.getRepository(unitOfWork).findOne((query as BaseFindOneQuery<W>)?.toFindOneOptions())),
         );
     }
 
