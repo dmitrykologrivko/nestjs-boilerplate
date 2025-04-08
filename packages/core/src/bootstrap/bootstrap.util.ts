@@ -1,5 +1,6 @@
 import {
     INestApplication,
+    INestApplicationContext,
     INestMicroservice,
 } from '@nestjs/common';
 import { NestMicroserviceOptions } from '@nestjs/common/interfaces/microservices/nest-microservice-options.interface';
@@ -34,22 +35,22 @@ export class Bootstrap {
     }
 
     async startApplication<T extends INestApplication = INestApplication>(
-        meta?: Pick<ApplicationBootstrapperMeta<T>, 'adapter' | 'options' | 'onInit' | 'loaders'>,
-    ) {
-        await this.start(
+        meta?: Pick<ApplicationBootstrapperMeta<T>, 'adapter' | 'port' | 'options' | 'onInit' | 'loaders'>,
+    ): Promise<T> {
+        return await this.start<T>(
             new ApplicationBootstrapper<T>({ module: this.module, ...meta }),
         );
     }
 
-    async startMicroservice<T extends NestMicroserviceOptions = NestMicroserviceOptions>(
+    async startMicroservice<T extends NestMicroserviceOptions & object = NestMicroserviceOptions>(
         meta?: Pick<BootstrapperMeta<INestMicroservice, T>, 'options' | 'onInit' | 'loaders'>,
-    ) {
-        await this.start(
-            new MicroserviceBootstrapper<T>({ module: this.module, ...module }),
+    ): Promise<INestMicroservice> {
+        return await this.start<INestMicroservice>(
+            new MicroserviceBootstrapper<T>({ module: this.module, ...meta }),
         );
     }
 
-    protected async start(bootstrapper: BaseBootstrapper) {
+    protected async start<T extends INestApplicationContext>(bootstrapper: BaseBootstrapper<T>): Promise<T> {
         for (const altBootstrapper of this.altBootstrappers) {
             if (altBootstrapper.isApplicable) {
                 await altBootstrapper.bootstrapper.start();
@@ -57,6 +58,6 @@ export class Bootstrap {
             }
         }
 
-        await bootstrapper.start();
+        return await bootstrapper.start();
     }
 }

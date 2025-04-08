@@ -22,7 +22,7 @@ export class TestBootstrap {
             .start();
     }
 
-    async startMicroservice<T extends NestMicroserviceOptions = NestMicroserviceOptions>(
+    async startMicroservice<T extends NestMicroserviceOptions & object = NestMicroserviceOptions>(
         meta?: Omit<TestBootstrapperMeta<INestMicroservice, T>, 'module'>,
     ): Promise<INestMicroservice> {
         return await new TestMicroserviceBootstrapper<T>({ module: this.module, ...meta })

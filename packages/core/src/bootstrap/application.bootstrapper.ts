@@ -8,6 +8,7 @@ export interface ApplicationBootstrapperMeta<T extends INestApplication = INestA
     extends BootstrapperMeta<T, NestApplicationOptions> {
 
     adapter?: AbstractHttpAdapter;
+    port?: number;
 }
 
 export class ApplicationBootstrapper<T extends INestApplication = INestApplication>
@@ -29,6 +30,6 @@ export class ApplicationBootstrapper<T extends INestApplication = INestApplicati
 
     protected async onStart(container: T): Promise<void> {
         const config = container.get(PropertyConfigService);
-        await container.listen(config.get(SERVER_PORT_PROPERTY));
+        await container.listen(this.meta.port || config.get(SERVER_PORT_PROPERTY));
     }
 }

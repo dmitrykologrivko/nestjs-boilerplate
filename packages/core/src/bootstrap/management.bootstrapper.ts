@@ -15,11 +15,18 @@ export class ManagementBootstrapper extends BaseBootstrapper {
     protected async onStart(container: INestApplicationContext): Promise<void> {
         try {
             await container.get(ManagementService).exec();
+            this.exit();
         } catch (e) {
             Logger.error(e.message, e.stack);
-            process.exit(1);
+            this.abort();
         }
+    }
 
+    protected abort() {
+        process.exit(1);
+    }
+
+    protected exit() {
         process.exit(0);
     }
 }

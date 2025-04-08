@@ -8,8 +8,8 @@ import {
     TestBootstrapperMeta,
 } from './base-test.bootstrapper';
 
-export class TestMicroserviceBootstrapper<T extends NestMicroserviceOptions = NestMicroserviceOptions>
-    extends BaseTestBootstrapper<INestMicroservice, NestApplicationOptions> {
+export class TestMicroserviceBootstrapper<T extends NestMicroserviceOptions & object = NestMicroserviceOptions>
+    extends BaseTestBootstrapper<INestMicroservice, T> {
 
     constructor(protected meta: TestBootstrapperMeta<INestMicroservice, T>) {
         super(meta);
