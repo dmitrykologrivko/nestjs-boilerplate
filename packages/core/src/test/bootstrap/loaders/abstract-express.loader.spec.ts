@@ -28,7 +28,7 @@ describe('AbstractExpressLoader', () => {
         container.getHttpAdapter.mockReturnValue(httpServer);
     });
 
-    describe('#load', () => {
+    describe('#load()', () => {
         it('should check adapter type and do not abort if adapter is express', async () => {
             httpServer.getType.mockReturnValue('express');
 

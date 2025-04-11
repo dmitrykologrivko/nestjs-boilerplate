@@ -121,7 +121,7 @@ new MicroserviceBootstrapper({
     .start();
 ```
 
-Additional way to start your microservice you need to use Bootstrap class from @nestjs-boilerplate/core package.
+Additional way to start your microservice you need to use `Bootstrap` class from `@nestjs-boilerplate/core package.`
 Function `startMicroservice` that by default runs microservice using the TCP transport layer or runs
 one of alternative bootstrappers, for example if provided `--command` arg then runs management command.
 The main application module is required to be provided, also `@nestjs/microservices`

@@ -49,7 +49,7 @@ describe('ManagementBootstrapper', () => {
             .mockReturnValue(managementService);
     });
 
-    describe('#start', () => {
+    describe('#start()', () => {
         it('should start the app', async () => {
             const app = await bootstrapper.start();
 

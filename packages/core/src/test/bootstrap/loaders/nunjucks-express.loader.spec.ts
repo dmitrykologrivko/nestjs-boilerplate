@@ -26,7 +26,7 @@ describe('NunjucksExpressLoader', () => {
         nunjucksService.express.mockResolvedValue({});
     });
 
-    describe('#load', () => {
+    describe('#load()', () => {
         it('should load nunjucks and express', async () => {
             await loader.load(container);
 

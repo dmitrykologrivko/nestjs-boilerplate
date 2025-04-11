@@ -39,7 +39,7 @@ describe('ServeStaticExpressLoader', () => {
         httpServer.getType.mockReturnValue('express');
     });
 
-    describe('#load', () => {
+    describe('#load()', () => {
         it('should load express static middleware', async () => {
             await loader.load(container);
 

@@ -28,7 +28,7 @@ describe('MicroserviceBootstrapper', () => {
         bootstrapper = new MockApplicationBootstrapper(meta);
     });
 
-    describe('#start', () => {
+    describe('#start()', () => {
         it('should start the microservice', async () => {
             const app = await bootstrapper.start();
 

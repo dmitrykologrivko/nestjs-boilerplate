@@ -40,7 +40,7 @@ describe('ApplicationBootstrapper', () => {
             .mockReturnValue(propertyConfigService);
     });
 
-    describe('#start', () => {
+    describe('#start()', () => {
         it('should start the app', async () => {
             const app = await bootstrapper.start();
 
