@@ -1,5 +1,5 @@
 import { TLSSocketOptions } from 'tls';
-import { createTransport, Transporter } from 'nodemailer';
+import { createTransport, Transporter, SendMailOptions } from 'nodemailer';
 import { InfrastructureService } from '../utils/infrastructure-service.decorator';
 import { PropertyConfigService } from '../config/property-config.service';
 import { BaseMailService } from './base-mail.service';
@@ -16,7 +16,7 @@ export class SmtpMailService extends BaseMailService<Mail, Transporter> {
 
     private tlsOptions: TLSSocketOptions;
 
-    protected async onOpenConnection(mass: boolean): Promise<Transporter> {
+    protected createTransport(mass: boolean): Transporter {
         return createTransport({
             pool: mass,
             host: this.options.smtp?.host,
@@ -31,6 +31,10 @@ export class SmtpMailService extends BaseMailService<Mail, Transporter> {
         } as any);
     }
 
+    protected async onOpenConnection(mass: boolean): Promise<Transporter> {
+        return this.createTransport(mass);
+    }
+
     protected async onCloseConnection(connection: Transporter, mass: boolean) {
         connection.close();
     }
@@ -43,7 +47,7 @@ export class SmtpMailService extends BaseMailService<Mail, Transporter> {
         this.tlsOptions = options;
     }
 
-    private mapToNodemailerMail(mail: Mail) {
+    private mapToNodemailerMail(mail: Mail): SendMailOptions {
         return {
             subject: mail.subject,
             text: mail.text,
