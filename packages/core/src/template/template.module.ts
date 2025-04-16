@@ -9,7 +9,7 @@ const TEMPLATE_PATHS_LOADER_TOKEN = 'TEMPLATE_PATHS_LOADER_TOKEN';
 const TEMPLATE_GLOBAL_PATHS_TOKEN = 'TEMPLATE_GLOBAL_PATHS_TOKEN';
 const TEMPLATE_MODULE_PATHS_TOKEN = 'TEMPLATE_MODULE_PATHS_TOKEN';
 
-export interface TemplateModuleOptions<T extends BaseTemplateService = NunjucksService> {
+export interface TemplateModuleOptions<T extends BaseTemplateService = BaseTemplateService> {
     service?: Constructor<T>;
     path?: string | string[];
 }
@@ -26,7 +26,7 @@ export interface TemplateModuleOptions<T extends BaseTemplateService = NunjucksS
 })
 export class TemplateModule {
 
-    static forRoot<T extends BaseTemplateService = NunjucksService>(
+    static forRoot<T extends BaseTemplateService = BaseTemplateService>(
         options: TemplateModuleOptions<T> = {}
     ): DynamicModule {
         const templateServiceProvider = {

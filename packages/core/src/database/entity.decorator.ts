@@ -18,6 +18,7 @@ export function Entity(options: DatabaseEntityOptions = {}): ClassDecorator {
 
         if (options.swap && !options.name) {
             options.name = options.swap.name.toLowerCase();
+            EntitySwappableService.swapEntity(options.swap, constructor);
         }
 
         TypeOrmEntity(options)(constructor);
