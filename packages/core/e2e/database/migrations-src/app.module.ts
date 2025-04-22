@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CoreModule } from '../../../src/core.module';
 import { DatabaseModule } from '../../../src/database/database.module';
+import { DEFAULT_DATA_SOURCE_NAME } from '../../../src/database/database.constants';
 import { Note } from './note.entity';
 // @ts-ignore: keep this import to have migrations folder for e2e tests even if it is empty
 import * as migrations from './migrations';
@@ -13,7 +14,7 @@ import * as migrations from './migrations';
             imports: [
                 DatabaseModule.withOptions([
                     {
-                        name: 'default',
+                        name: DEFAULT_DATA_SOURCE_NAME,
                         type: 'sqlite',
                         database: ':memory:',
                         entities: [],
