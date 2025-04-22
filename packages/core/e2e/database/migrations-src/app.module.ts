@@ -16,7 +16,7 @@ import * as migrations from './migrations';
                     {
                         name: DEFAULT_DATA_SOURCE_NAME,
                         type: 'sqlite',
-                        database: ':memory:',
+                        database: 'database',
                         entities: [],
                         synchronize: false,
                     }

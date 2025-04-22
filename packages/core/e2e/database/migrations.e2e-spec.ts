@@ -1,28 +1,33 @@
-import { rmSync, mkdirSync, writeFileSync } from 'fs';
+import { rmSync, mkdirSync, writeFileSync, existsSync } from 'fs';
 import { normalize } from 'path';
 import { execSync } from 'child_process';
 
 describe('Migrations (e2e)', () => {
-    const executor = normalize('./node_modules/.bin/ts-node');
-    const script = normalize('./packages/core/e2e/database/migrations-src/main.ts');
-    const destination = normalize('./packages/core/e2e/database/migrations-src/migrations');
+    const executorPath = normalize('./node_modules/.bin/ts-node');
+    const scriptPath = normalize('./packages/core/e2e/database/migrations-src/main.ts');
+    const destinationPath = normalize('./packages/core/e2e/database/migrations-src/migrations');
+    const databasePath = normalize('./database');
 
     function stripAnsi(str: string) {
         // Strip ANSI escape codes using regex
         return str.replace(/\x1b\[[0-9;]*m/g, '');
     }
 
-    function clearMigrations() {
+    function clear() {
+        // Clear database file
+        if (existsSync(databasePath)) {
+            rmSync(normalize('./database'));
+        }
         // Clear the migrations directory
-        rmSync(destination, { recursive: true, force: true });
-        mkdirSync(destination, { recursive: true });
-        writeFileSync(normalize(`${destination}/index.ts`), '');
+        rmSync(destinationPath, { recursive: true, force: true });
+        mkdirSync(destinationPath, { recursive: true });
+        writeFileSync(normalize(`${destinationPath}/index.ts`), '');
     }
 
     async function createMigrationAndDoCheck() {
-        const createCommand = `--command migrations:create --destination=${destination} --name=TestMigration`;
+        const createCommand = `--command migrations:create --destination=${destinationPath} --name=TestMigration`;
 
-        const output = execSync(`${executor} ${script} ${createCommand}`);
+        const output = execSync(`${executorPath} ${scriptPath} ${createCommand}`);
         const outputStr = stripAnsi(output.toString());
 
         expect(outputStr).toMatch(/Migration .*-TestMigration\.ts has been generated successfully\./);
@@ -30,7 +35,7 @@ describe('Migrations (e2e)', () => {
 
     async function generateMigrationAndDoCheck() {
         const output = execSync(
-            `${executor} ${script} --command migrations:generate --destination=${destination}`
+            `${executorPath} ${scriptPath} --command migrations:generate --destination=${destinationPath}`
         );
         const outputStr = stripAnsi(output.toString());
         const timestamp = outputStr.match(
@@ -43,7 +48,7 @@ describe('Migrations (e2e)', () => {
     }
 
     async function runMigrationsAndDoCheck(migrationName: string) {
-        const output = execSync(`${executor} ${script} --command migrations:run`);
+        const output = execSync(`${executorPath} ${scriptPath} --command migrations:run`);
         const outputStr = stripAnsi(output.toString());
 
         expect(outputStr).toContain('Running pending migrations');
@@ -51,21 +56,21 @@ describe('Migrations (e2e)', () => {
     }
 
     async function showMigrationsAndDoCheck(migrationName: string) {
-        const output = execSync(`${executor} ${script} --command migrations:show`);
+        const output = execSync(`${executorPath} ${scriptPath} --command migrations:show`);
         const outputStr = stripAnsi(output.toString());
 
-        expect(outputStr).toContain(`[ ] ${migrationName}`);
+        expect(outputStr).toContain(`[X] 1 ${migrationName}`);
     }
 
     async function revertLastMigrationAndDoCheck() {
-        const output = execSync(`${executor} ${script} --command migrations:revert`);
+        const output = execSync(`${executorPath} ${scriptPath} --command migrations:revert`);
         const outputStr = stripAnsi(output.toString());
 
         expect(outputStr).toContain('Last migration is unloaded');
     }
 
-    beforeAll(() => clearMigrations());
-    afterEach(() => clearMigrations());
+    beforeAll(() => clear());
+    afterEach(() => clear());
 
     it('should create migration', async () => {
         await createMigrationAndDoCheck();
