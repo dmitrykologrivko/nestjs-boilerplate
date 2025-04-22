@@ -10,7 +10,7 @@ import { AppModule } from './microservice-src/app.module';
 import { Bootstrap } from '../../src/bootstrap/bootstrap.util';
 import { HOST, PORT } from './constants';
 
-describe('Microservice Bootstrap', () => {
+describe('Microservice Bootstrap (e2e)', () => {
     let app: INestMicroservice;
 
     const client: ClientProxy = ClientProxyFactory.create({

@@ -4,7 +4,7 @@ import { AppModule } from './application-src/app.module';
 import { Bootstrap } from '../../src/bootstrap/bootstrap.util';
 import { PORT } from './constants';
 
-describe('Application Bootstrap', () => {
+describe('Application Bootstrap (e2e)', () => {
     let app: INestApplication;
 
     beforeAll(async () => {
