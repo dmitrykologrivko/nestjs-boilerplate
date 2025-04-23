@@ -10,8 +10,8 @@ export abstract class BaseEntityEvent<T extends BaseEntity> extends BaseEvent {
 
     constructor(
         public readonly data: T,
-        protected readonly entityCls: Constructor<T>,
-        protected readonly prefix: string,
+        public readonly entityCls: Constructor<T>,
+        public readonly prefix: string,
     ) {
         super(BaseEntityEvent.getName(entityCls, prefix));
     }
