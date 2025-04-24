@@ -7,4 +7,3 @@ export * from './permissions';
 export * from './queries';
 export * from './repositories';
 export * from './service';
-export * from './utils';

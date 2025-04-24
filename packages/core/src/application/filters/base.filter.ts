@@ -2,7 +2,7 @@ import { Repository, SelectQueryBuilder } from 'typeorm';
 
 export abstract class BaseFilter<E> {
 
-    protected readonly queryBuilder: SelectQueryBuilder<E>;
+    public readonly queryBuilder: SelectQueryBuilder<E>;
 
     protected constructor(
         queryBuilderOrRepository: Repository<E> | SelectQueryBuilder<E>
