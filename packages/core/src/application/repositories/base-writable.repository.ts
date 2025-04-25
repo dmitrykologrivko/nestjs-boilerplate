@@ -6,8 +6,8 @@ import { BaseFindOneQuery } from '../queries/base-find-one.query';
 import { BaseFindManyQuery } from '../queries/base-find-many.query';
 import { BaseBuildableQuery } from '../queries/base-buildable.query';
 
-export abstract class BaseWritableRepository<E extends BaseEntity, W> extends BaseRepository<E,
-    BaseFindOneQuery<W> | BaseFindManyQuery<W> | BaseBuildableQuery<W>, QueryRunner> {
+export abstract class BaseWritableRepository<E extends BaseEntity, W>
+    extends BaseRepository<E, BaseFindOneQuery<W> | BaseFindManyQuery<W> | BaseBuildableQuery<W>, QueryRunner> {
 
     protected readonly alias: string;
 
@@ -23,7 +23,9 @@ export abstract class BaseWritableRepository<E extends BaseEntity, W> extends Ba
         query?: BaseFindManyQuery<W> | BaseBuildableQuery<W>,
         unitOfWork?: QueryRunner,
     ): Promise<E | E[]> {
-        if (Object.keys(query).includes('toQueryBuilder')) {
+        if (!query) return (await this.getRepository(unitOfWork).find()).map(this.toEntity);
+
+        if ('toQueryBuilder' in query) {
             const queryBuilder = query
                 ? (query as BaseBuildableQuery<W>).toQueryBuilder(this.alias, this.createQueryBuilder(unitOfWork))
                 : this.createQueryBuilder(unitOfWork);
@@ -36,10 +38,10 @@ export abstract class BaseWritableRepository<E extends BaseEntity, W> extends Ba
     }
 
     async findOne(
-        query?: BaseFindOneQuery<W> | BaseBuildableQuery<W>,
+        query: BaseFindOneQuery<W> | BaseBuildableQuery<W>,
         unitOfWork?: QueryRunner,
     ): Promise<E> {
-        if (Object.keys(query).includes('toQueryBuilder')) {
+        if ('toQueryBuilder' in query) {
             const queryBuilder = query
                 ? (query as BaseBuildableQuery<W>).toQueryBuilder(this.alias, this.createQueryBuilder(unitOfWork))
                 : this.createQueryBuilder(unitOfWork);
