@@ -34,7 +34,6 @@ import { BaseEntityPermission } from '../../../application/permissions/base-enti
 import { BaseFilter } from '../../../application/filters/base.filter';
 import { SearchFilter } from '../../../application/filters/search.filter';
 import { BaseCrudService } from '../../../application/service/base-crud.service';
-import {Note} from "../../../../e2e/database/migrations-src/note.entity";
 
 describe('BaseCrudService (Integration)', () => {
     // tslint:disable-next-line:max-classes-per-file
