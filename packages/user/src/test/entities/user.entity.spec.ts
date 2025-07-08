@@ -51,6 +51,41 @@ describe('UserEntity', () => {
         user.addUserPermission(writePermission);
     });
 
+    describe('#create()', () => {
+        it('when input is valid should create user instance', async () => {
+            const localUser = await User.create(
+                USERNAME,
+                PASSWORD,
+                EMAIL,
+                FIRST_NAME,
+                LAST_NAME,
+            );
+            expect(localUser).toBeInstanceOf(User);
+            expect(localUser.username).toBe(USERNAME);
+            expect(localUser.email).toBe(EMAIL);
+            expect(localUser.firstName).toBe(FIRST_NAME);
+            expect(localUser.lastName).toBe(LAST_NAME);
+        });
+
+        it('when input is not valid throw validation error', async () => {
+            try {
+                await User.create(undefined, undefined, undefined, undefined, undefined);
+            } catch (e) {
+                expect(e.validationExceptions).toHaveLength(5);
+                expect(e.validationExceptions[0].property).toBe('username');
+                expect(e.validationExceptions[0].constraints.isNotEmpty).toBe('username is empty');
+                expect(e.validationExceptions[1].property).toBe('password');
+                expect(e.validationExceptions[1].constraints.isNotEmpty).toBe('password is empty');
+                expect(e.validationExceptions[2].property).toBe('email');
+                expect(e.validationExceptions[2].constraints.isEmail).toBe('email is not email');
+                expect(e.validationExceptions[3].property).toBe('firstName');
+                expect(e.validationExceptions[3].constraints.isNotEmpty).toBe('firstName is empty');
+                expect(e.validationExceptions[4].property).toBe('lastName');
+                expect(e.validationExceptions[4].constraints.isNotEmpty).toBe('lastName is empty');
+            }
+        });
+    });
+
     describe('#changeUsername()', () => {
         it('should change current username', () => {
             const newUsername = 'bad_user';
