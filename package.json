@@ -1,13 +1,15 @@
 {
   "name": "nestjs-boilerplate",
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "description": "",
   "author": "Dmitry Kologrivko",
   "license": "MIT",
   "scripts": {
-    "postinstall": "npm run bootstrap && npm run build",
+    "postinstall": "npm run build",
     "build": "lerna run build",
-    "bootstrap": "lerna bootstrap --hoist",
     "version": "lerna version --no-git-tag-version --no-push",
     "postversion": "./node_modules/.bin/ts-node post-version.ts",
     "publish": "npm run build && lerna publish from-package",
@@ -37,7 +39,7 @@
     "glob": "^11.0.3",
     "jest": "^30.0.5",
     "jest-mock-extended": "^4.0.0",
-    "lerna": "^6.4.1",
+    "lerna": "^8.2.3",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.2",
