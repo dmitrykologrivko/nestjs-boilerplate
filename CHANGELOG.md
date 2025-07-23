@@ -1,3 +1,15 @@
+## 11.0.0
+
+### Features
+* Upgraded to support NestJS v11. Now will be using the same major number versioning as NestJS
+
+### Bug fixes
+* Various bug fixes and codebase improvements
+
+### BREAKING CHANGES
+* Removed all deprecated methods and classes
+* Removed the Result monad to unify the error-handling approach using standard practice of NestJS exceptions
+
 ## 0.7.0
 
 ### Features
