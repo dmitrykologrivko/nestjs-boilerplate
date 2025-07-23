@@ -15,22 +15,22 @@ export class UserVerificationService {
     ) {}
 
     async isEmailUnique(email: string): Promise<boolean> {
-        const query = new UsersQuery({ email }).toFindOptions();
+        const query = new UsersQuery({ email }).toFindManyOptions();
         return await this.userRepository.count(query) === 0;
     }
 
     async isEmailActive(email: string): Promise<boolean> {
-        const query = new UsersQuery({ email, isActive: true }).toFindOptions();
+        const query = new UsersQuery({ email, isActive: true }).toFindManyOptions();
         return isDefined(await this.userRepository.findOne(query));
     }
 
     async isUsernameUnique(username: string): Promise<boolean> {
-        const query = new UsersQuery({ username }).toFindOptions();
+        const query = new UsersQuery({ username }).toFindManyOptions();
         return await this.userRepository.count(query) === 0;
     }
 
     async isUsernameExists(username: string): Promise<boolean> {
-        const query = new UsersQuery({ username }).toFindOptions();
+        const query = new UsersQuery({ username }).toFindManyOptions();
         return isDefined(await this.userRepository.findOne(query));
     }
 }

@@ -33,7 +33,6 @@ export interface CrudServiceOptions<E, LO, RO, CP, CO, UP, UO> {
     createOutputCls: Constructor<CO>;
     updatePayloadCls: Constructor<UP>;
     updateOutputCls: Constructor<UO>;
-    returnShallow?: boolean;
 }
 
 export enum InputType {
@@ -87,10 +86,11 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
      */
     async list(input: LI): Promise<PC> {
         const wrapper = { type: InputType.LIST_INPUT, input };
+        const queryRunner = this.repository.queryRunner;
 
         await checkPermissions<LI>(input, this.getReadPermissions());
 
-        const queryBuilder = this.getQuery(this.repository.queryRunner, wrapper);
+        const queryBuilder = this.getQuery(queryRunner, wrapper);
 
         // Apply filters
         this.getFilters(input, queryBuilder).forEach(filter => filter.filter());
@@ -102,12 +102,12 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
             const container = await pagination.toPaginatedContainer();
             return {
                 ...container,
-                results: await this.mapListOutput(container.results, input, this.repository.queryRunner),
+                results: await this.mapListOutput(container.results, input, queryRunner),
             } as PC;
         }
 
         const entities = await queryBuilder.getMany();
-        return { results: await this.mapListOutput(entities, input, this.repository.queryRunner) } as PC;
+        return { results: await this.mapListOutput(entities, input, queryRunner) } as PC;
     }
 
     /**
@@ -118,14 +118,15 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
      */
     async retrieve(input: RI): Promise<RO> {
         const wrapper = { type: InputType.RETRIEVE_INPUT, input };
+        const queryRunner = this.repository.queryRunner;
 
         await checkPermissions<RI>(input, this.getReadPermissions());
 
-        const entity = await this.getObject({ id: input.id }, null, wrapper);
+        const entity = await this.getObject({ id: input.id }, queryRunner, wrapper);
 
         await checkEntityPermissions<RI, E>(input, entity, this.getReadEntityPermissions());
 
-        return this.mapRetrieveOutput(entity, input, this.repository.queryRunner);
+        return this.mapRetrieveOutput(entity, input, queryRunner);
     }
 
     /**
@@ -179,10 +180,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
             await preSaveHook(newEntity, this.options.entityCls, queryRunner);
 
             let entity = await this.performCreateEntity(input, queryRunner);
-
-            if (!this.options.returnShallow) {
-                entity = await this.getObject({ id: entity.id }, queryRunner, wrapper);
-            }
+            entity = await this.getObject({ id: entity.id }, queryRunner, wrapper);
 
             return {
                 entity,
@@ -246,10 +244,7 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
             await preSaveHook(entity, this.options.entityCls, queryRunner);
 
             entity = await this.performUpdateEntity(input, entity, queryRunner);
-
-            if (!this.options.returnShallow) {
-                entity = await this.getObject({ id: entity.id }, queryRunner, wrapper);
-            }
+            entity = await this.getObject({ id: entity.id }, queryRunner, wrapper);
 
             return {
                 entity,
@@ -275,11 +270,11 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         const wrapper = { type: InputType.DESTROY_INPUT, input };
 
         const preDestroyHook: (...args: any[]) => Promise<void> = this.entityEventsManager
-            ? this.entityEventsManager.onUpdatingEntity.bind(this.entityEventsManager)
+            ? this.entityEventsManager.onDestroyingEntity.bind(this.entityEventsManager)
             : (...args: any[]) => Promise.resolve(null);
 
         const postDestroyHook: (...args: any[]) => Promise<void> = this.entityEventsManager
-            ? this.entityEventsManager.onUpdatedEntity.bind(this.entityEventsManager)
+            ? this.entityEventsManager.onDestroyedEntity.bind(this.entityEventsManager)
             : (...args: any[]) => Promise.resolve(null);
 
         const handler = async (queryRunner: QueryRunner) => {

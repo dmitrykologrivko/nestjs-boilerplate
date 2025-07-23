@@ -67,7 +67,7 @@ export class UsersCommand {
         }
 
         try {
-            const result = await this.userService.createUser({
+             await this.userService.createUser({
                 username,
                 password,
                 email,
@@ -111,7 +111,7 @@ export class UsersCommand {
         }
 
         try {
-            const result = await this.userService.forceChangePassword({
+            await this.userService.forceChangePassword({
                 username,
                 newPassword: password,
             });

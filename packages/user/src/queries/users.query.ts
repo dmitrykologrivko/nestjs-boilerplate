@@ -1,8 +1,8 @@
-import { FindManyOptions } from 'typeorm';
-import { BaseFindQuery } from '@nestjs-boilerplate/core';
+import { FindOneOptions, FindManyOptions } from 'typeorm';
+import { BaseFindOneQuery, BaseFindManyQuery } from '@nestjs-boilerplate/core';
 import { User } from '../entities/user.entity';
 
-export class UsersQuery implements BaseFindQuery<User> {
+export class UsersQuery implements BaseFindOneQuery<User>, BaseFindManyQuery<User> {
     constructor(
         protected meta: {
             id?: number;
@@ -16,7 +16,7 @@ export class UsersQuery implements BaseFindQuery<User> {
         },
     ) {}
 
-    toFindOptions(): FindManyOptions<User> {
+    toFindOneOptions(): FindOneOptions<User> {
         const query: Record<string, any> = { where: {} };
 
         if (this.meta.id) {
@@ -45,5 +45,9 @@ export class UsersQuery implements BaseFindQuery<User> {
         }
 
         return query;
+    }
+
+    toFindManyOptions(): FindManyOptions<User> {
+        return this.toFindOneOptions();
     }
 }

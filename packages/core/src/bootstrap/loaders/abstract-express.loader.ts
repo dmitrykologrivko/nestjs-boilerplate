@@ -15,7 +15,7 @@ export abstract class AbstractExpressLoader extends BaseLoader<INestApplication>
             Logger.error(
                 `To use "${this.context}" you need express http adapter. The current http adapter is ${adapterType}`,
             );
-            process.exit(1);
+            this.abort();
         }
     }
 
@@ -23,5 +23,9 @@ export abstract class AbstractExpressLoader extends BaseLoader<INestApplication>
         return loadPackage('express', this.context, () =>
             require('express')
         );
+    }
+
+    protected abort() {
+        process.exit(1);
     }
 }

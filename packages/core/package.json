@@ -21,6 +21,7 @@
     "@nestjs/config": "^2.0.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/typeorm": "^9.0.0",
+    "@nestjs/microservices": "^9.0.0",
     "class-transformer": "~0.5.1",
     "class-validator": "~0.14.0",
     "reflect-metadata": "^0.1.13",
@@ -29,13 +30,14 @@
   "peerDependenciesMeta": {
     "@nestjs/platform-express": {
       "optional": true
+    },
+    "@nestjs/microservices": {
+      "optional": true
     }
   },
   "devDependencies": {
     "@types/nodemailer": "^6.4.6",
-    "@types/nunjucks": "^3.2.1",
-    "ts-node": "^10.9.1",
-    "typeorm": "^0.3.11"
+    "@types/nunjucks": "^3.2.1"
   },
   "repository": {
     "type": "git",

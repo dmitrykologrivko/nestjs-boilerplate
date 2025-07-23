@@ -3,13 +3,14 @@ import {
     Module,
     DynamicModule,
     Type,
+    Provider,
 } from '@nestjs/common';
 import { ConfigModule } from '../config/config.module';
 import { BaseMailService } from './base-mail.service';
 import { SmtpMailService } from './smtp-mail.service';
 import mailConfig from './mail.config';
 
-export interface MailModuleOptions<T extends BaseMailService = SmtpMailService> {
+export interface MailModuleOptions<T extends BaseMailService = BaseMailService> {
     service?: Type<T>;
 }
 
@@ -21,18 +22,23 @@ export interface MailModuleOptions<T extends BaseMailService = SmtpMailService> 
 })
 export class MailModule {
 
-    static forRoot<T extends BaseMailService = SmtpMailService>(
+    static forRoot<T extends BaseMailService = BaseMailService>(
         options: MailModuleOptions<T> = {},
     ): DynamicModule {
-        const mailServiceProvider = {
+        const mailServiceProvider: Provider = {
             provide: BaseMailService,
-            useExisting: options.service || SmtpMailService,
+            useExisting: options.service || SmtpMailService
         };
+
         return {
             module: MailModule,
             global: true,
-            providers: [mailServiceProvider],
-            exports: [mailServiceProvider.provide],
+            providers: [
+                mailServiceProvider,
+            ],
+            exports: [
+                mailServiceProvider.provide,
+            ],
         };
     }
 }

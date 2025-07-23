@@ -3,7 +3,8 @@
 Using query object patterns, you can define rules for querying entities from the repository. This helps to avoid
 repeating a ton of methods in the repository for filtering objects and abstract from concrete ORM implementation.
 
-NestJS Boilerplate defines `BaseQuery` interface that can be extended to concrete ORM query implementation.
+NestJS Boilerplate defines `BaseQuery` interface that can be extended to concrete ORM query implementation 
+or use build-in queries `BaseFindOneQuery` and `BaseFindManyQuery`
 
 ## Example
 
@@ -13,9 +14,9 @@ Let's define query interface for TypeORM.
 import { FindManyOptions } from 'typeorm';
 import { BaseQuery } from '@nestjs-boilerplate/core';
 
-export interface BaseFindQuery<E> extends BaseQuery {
+export interface BaseFindManyQuery<E> extends BaseQuery {
 
-    toFindOptions(): FindManyOptions<E>;
+    toFindManyOptions(): FindManyOptions<E>;
 
 }
 ```
@@ -23,15 +24,15 @@ export interface BaseFindQuery<E> extends BaseQuery {
 Now we can implement query.
 
 ```typescript
-import { BaseFindQuery } from './base-find-many.query';
+import { BaseFindManyQuery } from './base-find-many.query';
 import { User } from './user.entity';
 
-export class ActiveUsersRegisteredInYearQuery implements BaseFindQuery<User> {
+export class ActiveUsersRegisteredInYearQuery implements BaseFindManyQuery<User> {
     constructor(
         protected readonly year: string,
     ) {}
 
-    toFindOptions(): FindManyOptions<User> {
+    toFindManyOptions(): FindManyOptions<User> {
         return {
             where: {
                 isActive: true,
@@ -56,7 +57,7 @@ export class UsersService {
     
     async getActiveUsersRegisteredInYear(year: string) {
         return this.userRepository.find(
-            new ActiveUsersRegisteredInYearQuery(year).toFindOptions(),
+            new ActiveUsersRegisteredInYearQuery(year).toFindManyOptions(),
         );
     }
 }

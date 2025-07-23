@@ -31,7 +31,7 @@ export abstract class BaseAuthService {
      * @throws EntityNotFoundException
      */
     protected async findUser(query: ActiveUsersQuery): Promise<User> {
-        const user = await this.userRepository.findOne(query.toFindOptions());
+        const user = await this.userRepository.findOne(query.toFindOneOptions());
 
         if (!user) {
             throw new EntityNotFoundException();

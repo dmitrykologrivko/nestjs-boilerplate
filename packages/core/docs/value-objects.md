@@ -127,9 +127,9 @@ import { Person } from './person.entity';
 
 @Element({
     single: true,
-    parent: Person,
+    parent: () => Person,
 })
-class Address extends BaseElement {
+class Address extends BaseElement<Person> {
 
     @Column()
     address1: string;
@@ -175,7 +175,7 @@ export class Person extends BaseEntity {
     @Column()
     age: number;
     
-    @SingleElement(() => Address)
+    @SingleElement<Address>(() => Address)
     address: Address;
 
 }
@@ -192,7 +192,7 @@ import { Element, BaseElement } from '@nestjs-boilerplate/core';
 import { Person } from './person.entity';
 
 @Element({ parent: Person })
-class Address extends BaseElement {
+class Address extends BaseElement<Person> {
 
     @Column()
     address1: string;
@@ -238,7 +238,7 @@ export class Person extends BaseEntity {
     @Column()
     age: number;
     
-    @ElementCollection(() => Address)
+    @ElementCollection<Address>(() => Address)
     addresses: Address[];
 
 }

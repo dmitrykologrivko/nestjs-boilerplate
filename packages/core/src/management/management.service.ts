@@ -9,7 +9,7 @@ export class ManagementService {
     constructor(private readonly scanner: CommandsScanner) {}
 
     async exec() {
-        const args = minimist(process.argv.slice(2));
+        const args = minimist(this.getArguments());
 
         if (!args.command) {
             throw new Error('Command name is not provided! Please provide --command argument');
@@ -30,6 +30,10 @@ export class ManagementService {
         }
 
         await command.instance[handler.methodName](...this.bindArguments(args, handler.arguments));
+    }
+
+    protected getArguments(): string[] {
+        return process.argv.slice(2);
     }
 
     private findCommand(name: string): Command {

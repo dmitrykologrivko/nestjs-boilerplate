@@ -113,7 +113,7 @@ export class UserJwtService {
      */
     private async findUser(username: string): Promise<User> {
         const user = await this.userRepository.findOne(
-            new ActiveUsersQuery({ username }).toFindOptions(),
+            new ActiveUsersQuery({ username }).toFindOneOptions(),
         );
 
         if (!user) {

@@ -7,28 +7,32 @@ import { EventsFailedException } from './events-failed.exception';
 @Injectable()
 export class EventBus {
 
-    private handlers: BaseEventHandler<any, any>[];
+    private _handlers: BaseEventHandler<any, any>[];
 
     constructor() {
-        this.handlers = [];
+        this._handlers = [];
+    }
+
+    get handlers(): BaseEventHandler<any, any>[] {
+        return this._handlers;
     }
 
     registerHandler(handler: BaseEventHandler<any, any>) {
-        this.handlers.push(handler);
+        this._handlers.push(handler);
     }
 
     unregisterHandler(handler: BaseEventHandler<any, any>) {
-        this.handlers = this.handlers.filter(value => value !== handler);
+        this._handlers = this._handlers.filter(value => value !== handler);
     }
 
     unregisterAll(eventName?: string) {
         if (eventName) {
-            this.handlers = this.handlers.filter(
+            this._handlers = this._handlers.filter(
                 handler => handler.supports()?.includes(eventName)
             );
             return;
         }
-        this.handlers = [];
+        this._handlers = [];
     }
 
     /**
@@ -40,11 +44,11 @@ export class EventBus {
     async publish<U>(event: BaseEvent, unitOfWork?: U): Promise<void> {
         const container: EventsFailedException = new EventsFailedException();
 
-        for (const handler of this.handlers) {
+        for (const handler of this._handlers) {
             if (handler.supports()?.includes(event.name)) {
                 // The EventBus handles all handlers even if any of them return/throw an exception
                 try {
-                    const result = await handler.handle(event, unitOfWork);
+                    await handler.handle(event, unitOfWork);
                 } catch(e) {
                     container.add(new EventFailedException(e));
                 }

@@ -83,7 +83,7 @@ export class AuthHostModule {
         } else if (options.jwt && options.jwt.type === 'async') {
             providers.push({
                 ...options.jwt.value,
-                provide: AUTH_PASSPORT_OPTIONS_TOKEN,
+                provide: AUTH_JWT_OPTIONS_TOKEN,
             });
         } else {
             providers.push(defaultJwtOptionsProvider);

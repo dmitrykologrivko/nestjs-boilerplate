@@ -17,8 +17,8 @@ instance of `Mail` object or array with it. If you provide an array of the `Mail
 single connection for sending all provided mail else for each `Mail` object will be used separated connection.
 
 ```typescript
-import {Injectable} from '@nestjs/common';
-import {BaseEmailService} from 'packages/core/dist/index';
+import { Injectable } from '@nestjs/common';
+import { BaseEmailService } from 'packages/core/dist/index';
 
 @Injectable()
 class WelcomeService {
@@ -29,7 +29,7 @@ class WelcomeService {
     async sendWelcomeEmail(username: string, email: string) {
         await this.emailService.sendEmail({
             from: 'noreply@example.com',
-            to: [email],
+            to: email,
             subject: 'Welcome Email!',
             text: `Welcome ${username}!`,
         });

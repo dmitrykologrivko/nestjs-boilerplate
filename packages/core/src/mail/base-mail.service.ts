@@ -39,7 +39,6 @@ export abstract class BaseMailService<T extends Mail = Mail, V = any> {
             }
 
             await this.onCloseConnection(connection, mass);
-            return null;
         } catch (e) {
             throw new SendMailFailedException(e.stackTrace);
         }

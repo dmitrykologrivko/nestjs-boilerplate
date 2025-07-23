@@ -1,3 +1,4 @@
+import { ValidationContainerException } from '@nestjs-boilerplate/core';
 import { Group, Permission } from '../../entities';
 import {
     expectHasPermission,
@@ -23,6 +24,26 @@ describe('GroupEntity', () => {
         group = Group.create('Managers Group');
         group.setPermission(readPermission);
         group.setPermission(writePermission);
+    });
+
+    describe('#create()', () => {
+        it('when input is valid should create group instance', () => {
+            const localGroup = Group.create('Test Group');
+            expect(localGroup).toBeInstanceOf(Group);
+            expect(localGroup.name).toBe('Test Group');
+            expect(localGroup.permissions).toBeUndefined();
+        });
+
+        it('when input is not valid throw validation error', () => {
+            try {
+                Group.create(undefined);
+            } catch (e) {
+                expect(e).toBeInstanceOf(ValidationContainerException);
+                expect(e.validationExceptions).toHaveLength(1);
+                expect(e.validationExceptions[0].property).toBe('name');
+                expect(e.validationExceptions[0].constraints.isNotEmpty).toBe('name is empty');
+            }
+        });
     });
 
     describe('#hasPermission()', () => {

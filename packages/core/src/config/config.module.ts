@@ -16,7 +16,7 @@ export type ConfigFactory = NestConfigFactory;
 })
 export class ConfigModule {
 
-    static forRoot(options: ConfigModuleOptions): DynamicModule {
+    static forRoot(options?: ConfigModuleOptions): DynamicModule {
         return {
             module: ConfigModule,
             imports: [NestConfigModule.forRoot(options)],

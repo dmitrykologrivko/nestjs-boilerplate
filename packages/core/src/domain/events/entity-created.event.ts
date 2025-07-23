@@ -4,7 +4,7 @@ import { BaseEntityEvent } from './base-entity.event';
 
 export class EntityCreatedEvent<T extends BaseEntity> extends BaseEntityEvent<T> {
 
-    private static PREFIX = 'created';
+    static PREFIX = 'created';
 
     static getName<T extends BaseEntity>(entityCls: Constructor<T>) {
         return super.getName(entityCls, EntityCreatedEvent.PREFIX);
@@ -12,7 +12,7 @@ export class EntityCreatedEvent<T extends BaseEntity> extends BaseEntityEvent<T>
 
     constructor(
         public readonly data: T,
-        protected readonly entityCls: Constructor<T>,
+        public readonly entityCls: Constructor<T>,
     ) {
         super(data, entityCls, EntityCreatedEvent.PREFIX);
     }

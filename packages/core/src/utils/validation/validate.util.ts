@@ -548,7 +548,7 @@ export class Validate {
      * If validation is ok, returns true, else return false accordingly
      */
     isValid(): boolean {
-        return !!this.exception;
+        return !this.exception;
     }
 
     private shouldSkip() {

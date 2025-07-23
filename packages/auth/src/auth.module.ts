@@ -70,11 +70,11 @@ export class AuthModule implements OnModuleInit {
     static forRoot(options: AuthModuleOptions = {}): DynamicModule {
         const controllers = [];
 
-        if (!options.enableAuthJwtApi || options.enableAuthJwtApi === true) {
+        if (options.enableAuthJwtApi === undefined || options.enableAuthJwtApi === true) {
             controllers.push(AuthJwtController);
         }
 
-        if (!options.enableAuthPasswordApi || options.enableAuthPasswordApi === true) {
+        if (options.enableAuthPasswordApi === undefined || options.enableAuthPasswordApi === true) {
             controllers.push(AuthPasswordController);
         }
 

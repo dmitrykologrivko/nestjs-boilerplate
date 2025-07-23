@@ -1,4 +1,4 @@
-import { FindManyOptions } from 'typeorm';
+import { FindOneOptions, FindManyOptions } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { UsersQuery } from './users.query';
 
@@ -17,11 +17,15 @@ export class ActiveUsersQuery extends UsersQuery {
         super(meta);
     }
 
-    toFindOptions(): FindManyOptions<User> {
-        const query: Record<string, any> = super.toFindOptions();
+    toFindOneOptions(): FindOneOptions<User> {
+        const query: Record<string, any> = super.toFindOneOptions();
 
         query.where.isActive = true;
 
         return query;
+    }
+
+    toFindManyOptions(): FindManyOptions<User> {
+        return this.toFindOneOptions();
     }
 }

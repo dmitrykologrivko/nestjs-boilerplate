@@ -1,6 +1,6 @@
-import { Inject } from '@nestjs/common';
-import { getTargetName } from './entity-swappable.service';
+import { InjectRepository as NestInjectRepository } from '@nestjs/typeorm';
+import { getTargetEntity } from './entity-swappable.service';
 
 export function InjectRepository(entity: Function) {
-    return Inject(`${getTargetName(entity)}Repository`);
+    return NestInjectRepository(getTargetEntity(entity));
 }

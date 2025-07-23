@@ -8,7 +8,6 @@ import { EntityUpdatedEvent } from './entity-updated.event';
 import { EntityUpdatingEvent } from './entity-updating.event';
 import { EntityDestroyedEvent } from './entity-destroyed.event';
 import { EntityDestroyingEvent } from './entity-destroying.event';
-import { EventsFailedException } from './events-failed.exception';
 
 @Injectable()
 export class EntityEventsManager<E extends BaseEntity, U> {

@@ -21,9 +21,9 @@ export interface Mail<T extends Attachment = Attachment> {
     html?: string;
     headers?: { key: string, value: string }[];
     attachments?: T[];
-    to: (string | Address)[];
-    cc?: (string | Address)[];
-    bcc?: (string | Address)[];
+    to: string | Address | (string | Address)[];
+    cc?: string | Address | (string | Address)[];
+    bcc?: string | Address | (string | Address)[];
     from?: string | Address;
     replyTo?: string | Address;
 }

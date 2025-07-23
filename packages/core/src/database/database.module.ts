@@ -41,15 +41,19 @@ export class DatabaseModule {
     }
 
     static withConfig(
-        properties: Property<DatabaseModuleOptions>[] = [ DEFAULT_DATABASE_PROPERTY ],
+        configMappings: { property: Property<DatabaseModuleOptions>, name: string }[] = [{
+            property: DEFAULT_DATABASE_PROPERTY,
+            name: DEFAULT_DATA_SOURCE_NAME
+        }],
     ): DynamicModule {
         return {
             module: DatabaseModule,
-            imports: properties.map(value => (
+            imports: configMappings.map(value => (
                 TypeOrmModule.forRootAsync({
+                    name: value.name,
                     imports: [ConfigModule],
                     useFactory: (config: PropertyConfigService) => {
-                        const options = config.get(value);
+                        const options = config.get(value.property);
                         return this.extendDatabaseOptions(
                             options.name || DEFAULT_DATA_SOURCE_NAME,
                             options,
