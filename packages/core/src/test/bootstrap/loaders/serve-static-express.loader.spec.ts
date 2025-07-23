@@ -43,14 +43,14 @@ describe('ServeStaticExpressLoader', () => {
         it('should load express static middleware', async () => {
             await loader.load(container);
 
-            expect(container.getHttpAdapter).toBeCalledTimes(1);
-            expect(httpServer.getType).toBeCalledTimes(1);
-            expect(container.use).toBeCalledTimes(1);
+            expect(container.getHttpAdapter).toHaveBeenCalledTimes(1);
+            expect(httpServer.getType).toHaveBeenCalledTimes(1);
+            expect(container.use).toHaveBeenCalledTimes(1);
             expect(container.use.mock.calls[0][0]).toBe(URL);
             expect(container.use.mock.calls[0][1]).toBeDefined();
             expect(typeof container.use.mock.calls[0][1] === 'object').toBeTruthy();
-            expect(mockExpress.static).toBeCalledTimes(1);
-            expect(mockExpress.static).toBeCalledWith(ROOT_URL, options);
+            expect(mockExpress.static).toHaveBeenCalledTimes(1);
+            expect(mockExpress.static).toHaveBeenCalledWith(ROOT_URL, options);
         });
     });
 });

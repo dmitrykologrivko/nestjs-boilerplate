@@ -10,14 +10,17 @@
     "prebuild": "../../node_modules/ts-node/dist/bin.js pre-build.ts",
     "build": "rm -rf dist && ../../node_modules/.bin/tsc -p tsconfig.json"
   },
+  "dependencies": {
+    "uuid": "^9.0.0"
+  },
   "peerDependencies": {
     "@nestjs-boilerplate/core": "^0.7.0",
     "@nestjs-boilerplate/user": "^0.7.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/jwt": "^10.0.1",
     "@nestjs/passport": "^9.0.0",
-    "class-transformer": "~0.5.1",
-    "class-validator": "~0.14.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "typeorm": "^0.3.0"

@@ -33,7 +33,7 @@ describe('EntitySwappableService', () => {
         it('should throw an error when swapping an entity that is not allowed', () => {
             expect(() => {
                 EntitySwappableService.swapEntity(TestEntity, SwappableEntity);
-            }).toThrowError('TestEntity is not allowed to be swapped');
+            }).toThrow('TestEntity is not allowed to be swapped');
         });
     });
 

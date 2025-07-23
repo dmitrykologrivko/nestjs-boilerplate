@@ -55,14 +55,14 @@ describe('ManagementBootstrapper', () => {
 
             expect(app).toBeDefined();
             expect(app).toEqual(mockContainer);
-            expect(meta.onInit).toBeCalledTimes(1);
-            expect(meta.onInit).toBeCalledWith(mockContainer);
-            expect(loader1.load).toBeCalledTimes(1);
-            expect(loader1.load).toBeCalledWith(mockContainer);
-            expect(loader2.load).toBeCalledTimes(1);
-            expect(loader2.load).toBeCalledWith(mockContainer);
-            expect(mockContainer.get).toBeCalledWith(ManagementService);
-            expect(managementService.exec).toBeCalledTimes(1);
+            expect(meta.onInit).toHaveBeenCalledTimes(1);
+            expect(meta.onInit).toHaveBeenCalledWith(mockContainer);
+            expect(loader1.load).toHaveBeenCalledTimes(1);
+            expect(loader1.load).toHaveBeenCalledWith(mockContainer);
+            expect(loader2.load).toHaveBeenCalledTimes(1);
+            expect(loader2.load).toHaveBeenCalledWith(mockContainer);
+            expect(mockContainer.get).toHaveBeenCalledWith(ManagementService);
+            expect(managementService.exec).toHaveBeenCalledTimes(1);
             expect(isProcessExited).toBeTruthy();
             expect(isProcessAborted).toBeFalsy();
         });
@@ -76,14 +76,14 @@ describe('ManagementBootstrapper', () => {
 
             expect(app).toBeDefined();
             expect(app).toEqual(mockContainer);
-            expect(meta.onInit).toBeCalledTimes(1);
-            expect(meta.onInit).toBeCalledWith(mockContainer);
-            expect(loader1.load).toBeCalledTimes(1);
-            expect(loader1.load).toBeCalledWith(mockContainer);
-            expect(loader2.load).toBeCalledTimes(1);
-            expect(loader2.load).toBeCalledWith(mockContainer);
-            expect(mockContainer.get).toBeCalledWith(ManagementService);
-            expect(managementService.exec).toBeCalledTimes(1);
+            expect(meta.onInit).toHaveBeenCalledTimes(1);
+            expect(meta.onInit).toHaveBeenCalledWith(mockContainer);
+            expect(loader1.load).toHaveBeenCalledTimes(1);
+            expect(loader1.load).toHaveBeenCalledWith(mockContainer);
+            expect(loader2.load).toHaveBeenCalledTimes(1);
+            expect(loader2.load).toHaveBeenCalledWith(mockContainer);
+            expect(mockContainer.get).toHaveBeenCalledWith(ManagementService);
+            expect(managementService.exec).toHaveBeenCalledTimes(1);
             expect(isProcessExited).toBeFalsy();
             expect(isProcessAborted).toBeTruthy();
         });

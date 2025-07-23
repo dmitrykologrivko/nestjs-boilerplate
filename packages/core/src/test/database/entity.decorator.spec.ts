@@ -106,6 +106,6 @@ describe('Entity Decorator (Integration)', () => {
 
         expect(() => {
             Entity({ swappable: true, swap: InvalidEntity })(InvalidEntity);
-        }).toThrowError('InvalidEntity cannot be swappable and have swap entity at the same time');
+        }).toThrow('InvalidEntity cannot be swappable and have swap entity at the same time');
     });
 });

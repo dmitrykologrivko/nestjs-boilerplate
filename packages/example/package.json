@@ -14,8 +14,8 @@
   "peerDependencies": {
     "@nestjs-boilerplate/core": "^0.7.0",
     "@nestjs/common": "^9.0.0",
-    "class-transformer": "~0.5.1",
-    "class-validator": "~0.14.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
     "typeorm": "^0.3.0"
   },
   "devDependencies": {
