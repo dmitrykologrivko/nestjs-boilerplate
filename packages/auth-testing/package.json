@@ -15,9 +15,9 @@
     "@nestjs-boilerplate/core": "^0.7.0",
     "@nestjs-boilerplate/testing": "^0.7.0",
     "@nestjs-boilerplate/user": "^0.7.0",
-    "@nestjs/common": "^9.0.0",
-    "@nestjs/core": "^9.0.0",
-    "@nestjs/testing": "^9.0.0"
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/core": "^11.0.0",
+    "@nestjs/testing": "^11.0.0"
   },
   "devDependencies": {
     "@nestjs-boilerplate/auth": "^0.7.0",

@@ -11,20 +11,20 @@
   },
   "dependencies": {
     "create-ts-index": "^1.14.0",
-    "minimist": "^1.2.7",
-    "nodemailer": "^6.9.0",
-    "nunjucks": "^3.2.3",
-    "sqlite3": "^5.1.4"
+    "minimist": "^1.2.8",
+    "nodemailer": "^7.0.5",
+    "nunjucks": "^3.2.4",
+    "sqlite3": "^5.1.7"
   },
   "peerDependencies": {
-    "@nestjs/common": "^9.0.0",
-    "@nestjs/config": "^2.0.0",
-    "@nestjs/core": "^9.0.0",
-    "@nestjs/typeorm": "^9.0.0",
-    "@nestjs/microservices": "^9.0.0",
-    "class-transformer": "~0.5.1",
-    "class-validator": "~0.14.0",
-    "reflect-metadata": "^0.1.13",
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/config": "^4.0.0",
+    "@nestjs/core": "^11.0.0",
+    "@nestjs/typeorm": "^11.0.0",
+    "@nestjs/microservices": "^11.0.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
+    "reflect-metadata": "^0.2.2",
     "typeorm": "^0.3.0"
   },
   "peerDependenciesMeta": {
@@ -36,8 +36,9 @@
     }
   },
   "devDependencies": {
-    "@types/nodemailer": "^6.4.6",
-    "@types/nunjucks": "^3.2.1"
+    "@types/nodemailer": "^6.4.17",
+    "@types/nunjucks": "^3.2.6",
+    "@types/minimist": "^1.2.5"
   },
   "repository": {
     "type": "git",

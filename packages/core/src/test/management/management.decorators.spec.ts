@@ -29,7 +29,6 @@ describe('Management Decorators', () => {
 
     describe('Handler', () => {
         it('should set handler metadata on a method', () => {
-            // tslint:disable-next-line:max-classes-per-file
             class TestCommand {
                 @Handler({ shortcut: 'default', description: 'Default handler' })
                 handle() {
@@ -44,7 +43,6 @@ describe('Management Decorators', () => {
 
     describe('DefaultHandler', () => {
         it('should set default handler metadata on a method', () => {
-            // tslint:disable-next-line:max-classes-per-file
             class TestCommand {
                 @DefaultHandler()
                 handle() {
@@ -59,7 +57,6 @@ describe('Management Decorators', () => {
 
     describe('CliArgument', () => {
         it('should set CLI argument metadata on a method parameter', () => {
-            // tslint:disable-next-line:max-classes-per-file
             class TestCommand {
                 handle(
                     @CliArgument({ name: 'arg1', description: 'Argument 1', optional: false })
@@ -74,7 +71,6 @@ describe('Management Decorators', () => {
         });
 
         it('should accumulate multiple CLI arguments on a method', () => {
-            // tslint:disable-next-line:max-classes-per-file
             class TestCommand {
                 handle(
                     @CliArgument({ name: 'arg1', description: 'Argument 1', optional: false })

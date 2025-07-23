@@ -10,16 +10,15 @@
     "build": "rm -rf dist && ../../node_modules/.bin/tsc -p tsconfig.json"
   },
   "dependencies": {
-    "bcrypt": "^5.1.0",
-    "prompt-sync": "^4.2.0",
-    "uuid": "^9.0.0"
+    "bcrypt": "^6.0.0",
+    "prompt-sync": "^4.2.0"
   },
   "peerDependencies": {
     "@nestjs-boilerplate/core": "^0.7.0",
-    "@nestjs/common": "^9.0.0",
-    "@nestjs/jwt": "^10.0.1",
-    "class-transformer": "~0.5.1",
-    "class-validator": "~0.14.0",
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/jwt": "^11.0.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
     "typeorm": "^0.3.0"
   },
   "devDependencies": {

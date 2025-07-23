@@ -63,7 +63,6 @@ describe('SearchFilter (Integration)', () => {
         let isErrorThrown = false;
 
         try {
-            // tslint:disable-next-line:no-unused-expression
             new SearchFilter(repository, { search: '' }, { searchFields: [] });
         } catch (error) {
             expect(error).toBeInstanceOf(Error);

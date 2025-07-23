@@ -104,7 +104,7 @@ describe('AuthModule (Integration)', () => {
             await createTestingModule({
                 enableAuthJwtApi: false
             });
-            expect(() => module.get(AuthJwtController)).toThrowError(
+            expect(() => module.get(AuthJwtController)).toThrow(
                 /Nest could not find AuthJwtController element/
             );
         });
@@ -113,7 +113,7 @@ describe('AuthModule (Integration)', () => {
             await createTestingModule({
                 enableAuthPasswordApi: false
             });
-            expect(() => module.get(AuthPasswordController)).toThrowError(
+            expect(() => module.get(AuthPasswordController)).toThrow(
                 /Nest could not find AuthPasswordController element/
             );
         });
@@ -208,7 +208,6 @@ describe('AuthModule (Integration)', () => {
                 }
             }
 
-            // tslint:disable-next-line:max-classes-per-file
             @Global()
             @Module({
                 providers: [CustomRevokedTokensService],

@@ -18,7 +18,6 @@ describe('BaseFilter (Integration)', () => {
         name: string;
     }
 
-    // tslint:disable-next-line:max-classes-per-file
     class TestFilter extends BaseFilter<Person> {
         constructor(
             queryBuilderOrRepository: Repository<Person> | SelectQueryBuilder<Person>,

@@ -14,7 +14,6 @@ import { Embedded } from '../../../application/entities/embedded.decorator';
 
 describe('Entity Decorators (Integration)', () => {
     describe('Element and SingleElement decorators', () => {
-        // tslint:disable-next-line:max-classes-per-file
         @Element({ single: true, parent: () => Person })
         class Address extends BaseElement<Person> {
             @Column()
@@ -33,7 +32,6 @@ describe('Entity Decorators (Integration)', () => {
             country: string;
         }
 
-        // tslint:disable-next-line:max-classes-per-file
         @Entity()
         class Person extends BaseTypeormEntity {
             @Column()
@@ -88,7 +86,6 @@ describe('Entity Decorators (Integration)', () => {
     });
 
     describe('Element and ElementCollection decorators', () => {
-        // tslint:disable-next-line:max-classes-per-file
         @Element({ parent: () => Person })
         class Address extends BaseElement<Person> {
             @Column()
@@ -107,7 +104,6 @@ describe('Entity Decorators (Integration)', () => {
             country: string;
         }
 
-        // tslint:disable-next-line:max-classes-per-file
         @Entity()
         class Person extends BaseTypeormEntity {
             @Column()
@@ -179,7 +175,6 @@ describe('Entity Decorators (Integration)', () => {
     });
 
     describe('Embedded decorator', () => {
-        // tslint:disable-next-line:max-classes-per-file
         class Address extends BaseValueObject {
             @Column()
             address1: string;
@@ -197,7 +192,6 @@ describe('Entity Decorators (Integration)', () => {
             country: string;
         }
 
-        // tslint:disable-next-line:max-classes-per-file
         @Entity()
         class Person extends BaseTypeormEntity {
             @Column()

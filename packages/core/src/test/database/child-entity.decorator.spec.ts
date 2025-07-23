@@ -14,7 +14,6 @@ describe('ChildEntity Decorator (Integration)', () => {
         id!: number;
     }
 
-    // tslint:disable-next-line:max-classes-per-file
     @ChildEntity({ discriminatorValue: 'child' })
     class ChildEntityExample extends BaseEntity {}
 

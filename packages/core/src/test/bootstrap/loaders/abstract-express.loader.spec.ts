@@ -34,8 +34,8 @@ describe('AbstractExpressLoader', () => {
 
             await loader.load(container);
 
-            expect(container.getHttpAdapter).toBeCalledTimes(1);
-            expect(httpServer.getType).toBeCalledTimes(1);
+            expect(container.getHttpAdapter).toHaveBeenCalledTimes(1);
+            expect(httpServer.getType).toHaveBeenCalledTimes(1);
             expect(loaderIsAborted).toBeFalsy();
         });
 
@@ -44,8 +44,8 @@ describe('AbstractExpressLoader', () => {
 
             await loader.load(container);
 
-            expect(container.getHttpAdapter).toBeCalledTimes(1);
-            expect(httpServer.getType).toBeCalledTimes(1);
+            expect(container.getHttpAdapter).toHaveBeenCalledTimes(1);
+            expect(httpServer.getType).toHaveBeenCalledTimes(1);
             expect(loaderIsAborted).toBeTruthy();
         });
     });

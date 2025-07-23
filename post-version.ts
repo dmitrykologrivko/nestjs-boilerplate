@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
-import * as glob from 'glob';
+import { globSync } from 'glob';
 
 function getProjectVersion(): string {
     const file = readFileSync(resolve(__dirname, 'lerna.json'));
@@ -22,9 +22,5 @@ function updatePeerVersions(paths: string[], verison: string) {
     }
 }
 
-glob(`${resolve(__dirname, 'packages')}/*/package.json`, {}, (err, paths) => {
-    if (err) {
-        throw err;
-    }
-    updatePeerVersions(paths, getProjectVersion());
-});
+const globPaths = globSync(resolve(__dirname, '../packages/*/package.json'));
+updatePeerVersions(globPaths, getProjectVersion());

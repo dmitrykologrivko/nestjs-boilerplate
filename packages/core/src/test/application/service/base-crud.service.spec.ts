@@ -36,14 +36,12 @@ import { SearchFilter } from '../../../application/filters/search.filter';
 import { BaseCrudService } from '../../../application/service/base-crud.service';
 
 describe('BaseCrudService (Integration)', () => {
-    // tslint:disable-next-line:max-classes-per-file
     @Entity()
     class Note extends BaseTypeormEntity {
         @Column()
         note: string;
     }
 
-    // tslint:disable-next-line:max-classes-per-file
     @Exclude()
     class NoteDto extends BaseEntityDto {
         @IsNotEmpty({ always: true })
@@ -62,7 +60,6 @@ describe('BaseCrudService (Integration)', () => {
     const eventBus = new EventBus();
     const eventManager = new EntityEventsManager(eventBus);
 
-    // tslint:disable-next-line:max-classes-per-file
     class NoteCreatingEventHandler extends BaseEventHandler<EntityCreatingEvent<Note>, any> {
         supports(): string[] {
             return [EntityCreatingEvent.getName(Note)];
@@ -73,7 +70,6 @@ describe('BaseCrudService (Integration)', () => {
         }
     }
 
-    // tslint:disable-next-line:max-classes-per-file
     class NoteCreatedEventHandler extends BaseEventHandler<EntityCreatedEvent<Note>, any> {
         supports(): string[] {
             return [EntityCreatingEvent.getName(Note)];
@@ -84,7 +80,6 @@ describe('BaseCrudService (Integration)', () => {
         }
     }
 
-    // tslint:disable-next-line:max-classes-per-file
     class NoteUpdatingEventHandler extends BaseEventHandler<EntityUpdatingEvent<Note>, any> {
         supports(): string[] {
             return [EntityUpdatingEvent.getName(Note)];
@@ -95,7 +90,6 @@ describe('BaseCrudService (Integration)', () => {
         }
     }
 
-    // tslint:disable-next-line:max-classes-per-file
     class NoteUpdatedEventHandler extends BaseEventHandler<EntityUpdatedEvent<Note>, any> {
         supports(): string[] {
             return [EntityUpdatedEvent.getName(Note)];
@@ -106,7 +100,6 @@ describe('BaseCrudService (Integration)', () => {
         }
     }
 
-    // tslint:disable-next-line:max-classes-per-file
     class NoteDestroyingEventHandler extends BaseEventHandler<EntityDestroyingEvent<Note>, any> {
         supports(): string[] {
             return [EntityDestroyingEvent.getName(Note)];
@@ -117,7 +110,6 @@ describe('BaseCrudService (Integration)', () => {
         }
     }
 
-    // tslint:disable-next-line:max-classes-per-file
     class NoteDestroyedEventHandler extends BaseEventHandler<EntityDestroyedEvent<Note>, any> {
         supports(): string[] {
             return [EntityDestroyedEvent.getName(Note)];
@@ -135,14 +127,12 @@ describe('BaseCrudService (Integration)', () => {
     eventBus.registerHandler(new NoteDestroyingEventHandler());
     eventBus.registerHandler(new NoteDestroyedEventHandler());
 
-    // tslint:disable-next-line:max-classes-per-file
     class User implements Identifiable {
         id: number;
         name: string;
         isAdmin: boolean;
     }
 
-    // tslint:disable-next-line:max-classes-per-file
     class OnlyAdminCanReadPermission extends BasePermission {
         constructor() {
             super('Only admin can access this resource');
@@ -153,7 +143,6 @@ describe('BaseCrudService (Integration)', () => {
         }
     }
 
-    // tslint:disable-next-line:max-classes-per-file
     class OnlyAdminCanReadFirstEntityPermission extends BaseEntityPermission {
         constructor() {
             super('You can only access the first entity');
@@ -164,7 +153,6 @@ describe('BaseCrudService (Integration)', () => {
         }
     }
 
-    // tslint:disable-next-line:max-classes-per-file
     class OnlyAdminCanWritePermission extends BasePermission {
         constructor() {
             super('Only admin can write to this resource');
@@ -175,7 +163,6 @@ describe('BaseCrudService (Integration)', () => {
         }
     }
 
-    // tslint:disable-next-line:max-classes-per-file
     class OnlyAdminCanWriteFirstEntityPermission extends BaseEntityPermission {
         constructor() {
             super('Only admin can write to this resource');
@@ -186,7 +173,6 @@ describe('BaseCrudService (Integration)', () => {
         }
     }
 
-    // tslint:disable-next-line:max-classes-per-file
     class NoteService extends BaseCrudService<Note, NoteDto> {
         private _shouldThrowError = false;
 

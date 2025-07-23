@@ -16,7 +16,6 @@ describe('ValidationExceptionsPipe (Integration)', () => {
         name: string;
     }
 
-    // tslint:disable-next-line:max-classes-per-file
     @Controller('test')
     class TestController {
         @Post()

@@ -37,12 +37,12 @@ describe('BaseBootstrapper', () => {
 
             expect(app).toBeDefined();
             expect(app).toEqual(mockContainer);
-            expect(meta.onInit).toBeCalledTimes(1);
-            expect(meta.onInit).toBeCalledWith(mockContainer);
-            expect(loader1.load).toBeCalledTimes(1);
-            expect(loader1.load).toBeCalledWith(mockContainer);
-            expect(loader2.load).toBeCalledTimes(1);
-            expect(loader2.load).toBeCalledWith(mockContainer);
+            expect(meta.onInit).toHaveBeenCalledTimes(1);
+            expect(meta.onInit).toHaveBeenCalledWith(mockContainer);
+            expect(loader1.load).toHaveBeenCalledTimes(1);
+            expect(loader1.load).toHaveBeenCalledWith(mockContainer);
+            expect(loader2.load).toHaveBeenCalledTimes(1);
+            expect(loader2.load).toHaveBeenCalledWith(mockContainer);
         });
     });
 });

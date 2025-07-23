@@ -6,7 +6,7 @@ import {
 
 describe('EntitySwappableService', () => {
     class TestEntity {}
-    // tslint:disable-next-line:max-classes-per-file
+
     class SwappableEntity {}
 
     beforeEach(async () => EntitySwappableService.clear());
@@ -33,7 +33,7 @@ describe('EntitySwappableService', () => {
         it('should throw an error when swapping an entity that is not allowed', () => {
             expect(() => {
                 EntitySwappableService.swapEntity(TestEntity, SwappableEntity);
-            }).toThrowError('TestEntity is not allowed to be swapped');
+            }).toThrow('TestEntity is not allowed to be swapped');
         });
     });
 
@@ -69,10 +69,8 @@ describe('#getTargetName()', () => {
     beforeEach(async () => EntitySwappableService.clear());
     afterEach(async () => EntitySwappableService.clear());
 
-    // tslint:disable-next-line:max-classes-per-file
     class TestEntity {}
 
-    // tslint:disable-next-line:max-classes-per-file
     class SwappableEntity {}
 
     it('should return target entity name', () => {
@@ -91,10 +89,8 @@ describe('#getTargetEntity()', () => {
     beforeEach(async () => EntitySwappableService.clear());
     afterEach(async () => EntitySwappableService.clear());
 
-    // tslint:disable-next-line:max-classes-per-file
     class TestEntity {}
 
-    // tslint:disable-next-line:max-classes-per-file
     class SwappableEntity {}
 
     it('should return target entity name', () => {

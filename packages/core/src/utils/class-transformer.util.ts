@@ -42,7 +42,6 @@ export class ClassTransformer {
      * @param options "class-transformer" library options
      * @return plain (literal) object
      */
-    // tslint:disable-next-line:ban-types
     static toLiteralObject<T>(object: T, options?: ClassTransformOptions): Object {
         return instanceToPlain(object, options);
     }
@@ -53,7 +52,6 @@ export class ClassTransformer {
      * @param options "class-transformer" library options
      * @return array of plain (literal) objects
      */
-    // tslint:disable-next-line:ban-types
     static toLiteralObjects<T>(object: T[], options?: ClassTransformOptions): Object[] {
         // @ts-ignore
         return instanceToPlain(object, options);
@@ -107,7 +105,6 @@ export class ClassTransformer {
      * @param options "class-transformer" library options
      * @return plain (literal) object
      */
-    // tslint:disable-next-line:ban-types
     toLiteralObject<T>(object: T, options?: ClassTransformOptions): Object {
         return ClassTransformer.toLiteralObject(object, options);
     }
@@ -118,7 +115,6 @@ export class ClassTransformer {
      * @param options "class-transformer" library options
      * @return array of plain (literal) objects
      */
-    // tslint:disable-next-line:ban-types
     toLiteralObjects<T>(object: T[], options?: ClassTransformOptions): Object[] {
         // @ts-ignore
         return ClassTransformer.toLiteralObjects(object, options);

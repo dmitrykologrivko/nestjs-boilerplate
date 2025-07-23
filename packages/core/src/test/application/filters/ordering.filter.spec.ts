@@ -67,7 +67,6 @@ describe('OrderingFilter (Integration)', () => {
         let isErrorThrown = false;
 
         try {
-            // tslint:disable-next-line:no-unused-expression
             new OrderingFilter(repository, { sortBy: [] }, { orderingFields: [] });
         } catch (error) {
             expect(error).toBeInstanceOf(Error);

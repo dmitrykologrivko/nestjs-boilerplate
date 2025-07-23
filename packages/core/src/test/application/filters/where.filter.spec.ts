@@ -78,7 +78,6 @@ describe('WhereFilter (Integration)', () => {
         let isErrorThrown = false;
 
         try {
-            // tslint:disable-next-line:no-unused-expression
             new WhereFilter(repository, { where: [] }, { filterFields: [] });
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
