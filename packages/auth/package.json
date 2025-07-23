@@ -11,7 +11,7 @@
     "build": "rm -rf dist && ../../node_modules/.bin/tsc -p tsconfig.json"
   },
   "dependencies": {
-    "uuid": "^9.0.0"
+    "uuid": "^11.1.0"
   },
   "peerDependencies": {
     "@nestjs-boilerplate/core": "^0.7.0",
