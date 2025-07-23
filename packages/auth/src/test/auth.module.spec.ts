@@ -208,7 +208,6 @@ describe('AuthModule (Integration)', () => {
                 }
             }
 
-            // tslint:disable-next-line:max-classes-per-file
             @Global()
             @Module({
                 providers: [CustomRevokedTokensService],

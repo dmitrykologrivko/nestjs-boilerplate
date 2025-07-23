@@ -10,7 +10,6 @@ describe('Permissions Utils', () => {
         role: string;
     }
 
-    // tslint:disable-next-line:max-classes-per-file
     class AdminPermission extends BasePermission<TestInput> {
         constructor() {
             super('Admin permission required');
@@ -21,14 +20,12 @@ describe('Permissions Utils', () => {
         }
     }
 
-    // tslint:disable-next-line:max-classes-per-file
     class TestEntity extends BaseEntity {
         id: number;
         name: string;
         userId: number;
     }
 
-    // tslint:disable-next-line:max-classes-per-file
     class GetEntityInput extends BaseInput {
         userId: number;
     }

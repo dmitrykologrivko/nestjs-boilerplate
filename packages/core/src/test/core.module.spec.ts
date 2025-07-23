@@ -75,7 +75,6 @@ describe('CoreModule (Integration)', () => {
                 }
             }
 
-            // tslint:disable-next-line:max-classes-per-file
             @Global()
             @Module({
                 providers: [
@@ -102,7 +101,6 @@ describe('CoreModule (Integration)', () => {
         });
 
         it('should set custom template service', async () => {
-            // tslint:disable-next-line:max-classes-per-file
             @Injectable()
             class TestTemplateService extends BaseTemplateService {
                 render(template: string, context?: object): Promise<string> {
@@ -110,7 +108,6 @@ describe('CoreModule (Integration)', () => {
                 }
             }
 
-            // tslint:disable-next-line:max-classes-per-file
             @Global()
             @Module({
                 providers: [

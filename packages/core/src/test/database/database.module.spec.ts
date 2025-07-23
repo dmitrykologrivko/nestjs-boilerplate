@@ -212,13 +212,12 @@ describe('DatabaseModule (Integration)', () => {
         });
 
         it('should register feature entities with swappable logic', async () => {
-            // tslint:disable-next-line:max-classes-per-file
             @Entity({ swappable: true })
             class User {
                 @PrimaryGeneratedColumn()
                 id!: number;
             }
-            // tslint:disable-next-line:max-classes-per-file
+
             @Entity({ swap: User })
             class CustomUser extends User {
                 name!: string;
@@ -246,7 +245,6 @@ describe('DatabaseModule (Integration)', () => {
 
     describe('#withMigrations()', () => {
         it('should add migrations to metadata storage', () => {
-            // tslint:disable-next-line:max-classes-per-file
             class FakeMigration {}
 
             DatabaseModule.withMigrations([FakeMigration], {

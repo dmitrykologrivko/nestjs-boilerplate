@@ -21,7 +21,6 @@ describe('InjectRepository Decorator (Integration)', () => {
             id!: number;
         }
 
-        // tslint:disable-next-line:max-classes-per-file
         @Injectable()
         class TestService {
             constructor(
@@ -60,21 +59,18 @@ describe('InjectRepository Decorator (Integration)', () => {
     });
 
     describe('swappable entity', () => {
-        // tslint:disable-next-line:max-classes-per-file
         @Entity({ swappable: true })
         class User {
             @PrimaryGeneratedColumn()
             id!: number;
         }
 
-        // tslint:disable-next-line:max-classes-per-file
         @Entity({ swap: User })
         class CustomUser {
             @Column()
             username!: string;
         }
 
-        // tslint:disable-next-line:max-classes-per-file
         @Injectable()
         class TestService {
             constructor(

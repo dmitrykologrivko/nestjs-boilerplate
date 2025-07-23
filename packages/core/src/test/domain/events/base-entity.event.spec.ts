@@ -4,7 +4,6 @@ import { BaseEntityEvent } from '../../../domain/events/base-entity.event';
 describe('BaseEntityEvent', () => {
     class TestEntity extends BaseEntity {}
 
-    // tslint:disable-next-line:max-classes-per-file
     class TestEntityEvent extends BaseEntityEvent<TestEntity> {}
 
     it('test event construction', () => {

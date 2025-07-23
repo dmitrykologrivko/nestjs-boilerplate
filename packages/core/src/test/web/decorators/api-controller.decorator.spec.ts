@@ -14,7 +14,6 @@ describe('ApiController Decorator (Integration)', () => {
         }
     }
 
-    // tslint:disable-next-line:max-classes-per-file
     @ApiController({
         path: 'options',
         rootPrefix: 'root',

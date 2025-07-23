@@ -46,7 +46,6 @@ describe('Entity Decorator (Integration)', () => {
     });
 
     it('should register and swap a swappable entity', async () => {
-        // tslint:disable-next-line:max-classes-per-file
         @Entity({ swappable: true })
         class User {
             @PrimaryGeneratedColumn()
@@ -56,7 +55,6 @@ describe('Entity Decorator (Integration)', () => {
             username!: string;
         }
 
-        // tslint:disable-next-line:max-classes-per-file
         @Entity()
         class Token {
             @PrimaryGeneratedColumn()
@@ -69,7 +67,6 @@ describe('Entity Decorator (Integration)', () => {
             user: User;
         }
 
-        // tslint:disable-next-line:max-classes-per-file
         @Entity({ swap: User })
         class CustomUser extends User {
             @Column()
@@ -101,7 +98,6 @@ describe('Entity Decorator (Integration)', () => {
     });
 
     it('should throw error if swappable and swap provided', async () => {
-        // tslint:disable-next-line:max-classes-per-file
         class InvalidEntity {}
 
         expect(() => {

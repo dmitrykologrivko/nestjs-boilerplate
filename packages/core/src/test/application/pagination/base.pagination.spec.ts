@@ -21,7 +21,6 @@ describe('BasePagination (Integration)', () => {
 
     interface TestPaginatedContainer extends BasePaginatedContainer<Person> {}
 
-    // tslint:disable-next-line:max-classes-per-file
     class TestPagination extends BasePagination<Person, TestPaginatedContainer> {
         constructor(
             queryBuilderOrRepository: Repository<Person> | SelectQueryBuilder<Person>,

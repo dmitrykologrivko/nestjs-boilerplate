@@ -13,12 +13,10 @@ describe('BaseCrudController', () => {
         name: string;
     }
 
-    // tslint:disable-next-line:max-classes-per-file
     class TestEntityDto extends BaseEntityDto {
         name: string;
     }
 
-    // tslint:disable-next-line:max-classes-per-file
     class TestCrudController extends BaseCrudController<TestEntityDto, any> {
         constructor(service: BaseCrudService<TestEntity, TestEntityDto>) {
             super(service);

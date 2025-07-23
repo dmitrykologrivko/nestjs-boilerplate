@@ -24,14 +24,12 @@ class PersonWritable {
     name: string;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 class Person extends BaseEntity {
     id: number;
     name: string;
     idName: string;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 class PersonWritableRepository extends BaseWritableRepository<Person, PersonWritable> {
     protected toEntity(writable: PersonWritable): Person {
         return { ...writable, idName: `${writable.id}-${writable.name}` };
@@ -42,7 +40,6 @@ class PersonWritableRepository extends BaseWritableRepository<Person, PersonWrit
     }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 class PersonFindOneQuery implements BaseFindOneQuery<PersonWritable> {
     constructor(
         protected readonly id: number,
@@ -53,7 +50,6 @@ class PersonFindOneQuery implements BaseFindOneQuery<PersonWritable> {
     }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 class PersonFindManyQuery implements BaseFindManyQuery<PersonWritable> {
     constructor(
         protected readonly name: string,
@@ -64,7 +60,6 @@ class PersonFindManyQuery implements BaseFindManyQuery<PersonWritable> {
     }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 class PersonBuildableQuery implements BaseBuildableQuery<PersonWritable> {
     constructor(
         protected readonly name: string,

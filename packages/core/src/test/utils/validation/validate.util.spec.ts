@@ -518,7 +518,6 @@ describe('Validate', () => {
 
     describe('#isInstance()', () => {
         it('should validate an instance of a class', () => {
-            // tslint:disable-next-line:max-classes-per-file
             class TestClass {}
             const result = Validate.withProperty('testKey', new TestClass())
                 .isInstance(TestClass)
@@ -527,7 +526,6 @@ describe('Validate', () => {
         });
 
         it('should throw an error for a value not an instance of a class', () => {
-            // tslint:disable-next-line:max-classes-per-file
             class TestClass {}
             const result = Validate.withProperty('testKey', {})
                 .isInstance(TestClass)
