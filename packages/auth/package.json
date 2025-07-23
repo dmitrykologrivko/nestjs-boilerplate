@@ -1,6 +1,6 @@
 {
   "name": "@nestjs-boilerplate/auth",
-  "version": "0.7.0",
+  "version": "11.0.0",
   "description": "",
   "author": "Dmitry Kologrivko",
   "license": "MIT",
@@ -26,9 +26,9 @@
     "typeorm": "^0.3.0"
   },
   "devDependencies": {
-    "@nestjs-boilerplate/core": "^0.7.0",
-    "@nestjs-boilerplate/testing": "^0.7.0",
-    "@nestjs-boilerplate/user": "^0.7.0"
+    "@nestjs-boilerplate/core": "^11.0.0",
+    "@nestjs-boilerplate/testing": "^11.0.0",
+    "@nestjs-boilerplate/user": "^11.0.0"
   },
   "repository": {
     "type": "git",

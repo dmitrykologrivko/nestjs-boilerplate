@@ -1,6 +1,6 @@
 {
   "name": "@nestjs-boilerplate/auth-testing",
-  "version": "0.7.0",
+  "version": "11.0.0",
   "description": "",
   "author": "Dmitry Kologrivko",
   "license": "MIT",
@@ -20,10 +20,10 @@
     "@nestjs/testing": "^11.0.0"
   },
   "devDependencies": {
-    "@nestjs-boilerplate/auth": "^0.7.0",
-    "@nestjs-boilerplate/core": "^0.7.0",
-    "@nestjs-boilerplate/testing": "^0.7.0",
-    "@nestjs-boilerplate/user": "^0.7.0",
+    "@nestjs-boilerplate/auth": "^11.0.0",
+    "@nestjs-boilerplate/core": "^11.0.0",
+    "@nestjs-boilerplate/testing": "^11.0.0",
+    "@nestjs-boilerplate/user": "^11.0.0",
     "create-ts-index": "^1.14.0"
   },
   "repository": {
