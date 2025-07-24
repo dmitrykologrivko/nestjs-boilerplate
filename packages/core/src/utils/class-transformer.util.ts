@@ -42,7 +42,7 @@ export class ClassTransformer {
      * @param options "class-transformer" library options
      * @return plain (literal) object
      */
-    static toLiteralObject<T>(object: T, options?: ClassTransformOptions): Object {
+    static toLiteralObject<T>(object: T, options?: ClassTransformOptions): object {
         return instanceToPlain(object, options);
     }
 
@@ -52,9 +52,8 @@ export class ClassTransformer {
      * @param options "class-transformer" library options
      * @return array of plain (literal) objects
      */
-    static toLiteralObjects<T>(object: T[], options?: ClassTransformOptions): Object[] {
-        // @ts-ignore
-        return instanceToPlain(object, options);
+    static toLiteralObjects<T>(object: T[], options?: ClassTransformOptions): object[] {
+        return instanceToPlain(object, options) as object[];
     }
 
     /**
@@ -105,7 +104,7 @@ export class ClassTransformer {
      * @param options "class-transformer" library options
      * @return plain (literal) object
      */
-    toLiteralObject<T>(object: T, options?: ClassTransformOptions): Object {
+    toLiteralObject<T>(object: T, options?: ClassTransformOptions): object {
         return ClassTransformer.toLiteralObject(object, options);
     }
 
@@ -115,8 +114,7 @@ export class ClassTransformer {
      * @param options "class-transformer" library options
      * @return array of plain (literal) objects
      */
-    toLiteralObjects<T>(object: T[], options?: ClassTransformOptions): Object[] {
-        // @ts-ignore
+    toLiteralObjects<T>(object: T[], options?: ClassTransformOptions): object[] {
         return ClassTransformer.toLiteralObjects(object, options);
     }
 

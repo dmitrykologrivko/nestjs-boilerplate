@@ -1,10 +1,11 @@
 import { EventFailedException } from './event-failed.exception';
 
-export class EventsFailedException {
+export class EventsFailedException extends Error {
 
     exceptions: EventFailedException[];
 
     constructor() {
+        super();
         this.exceptions = [];
     }
 

@@ -115,12 +115,16 @@ export class UsersCommand {
                 username,
                 newPassword: password,
             });
-        } catch (e) {
-            const message = e instanceof ValidationContainerException
-                ? e.validationExceptions
+        } catch (e: unknown) {
+            let message = '';
+
+            if (e instanceof ValidationContainerException) {
+                message = e.validationExceptions
                     .map(exception => exception.toString())
-                    .join('')
-                : e.toString();
+                    .join('');
+            } else if (e instanceof Error) {
+                message = e.message;
+            }
 
             Logger.error(message);
         }

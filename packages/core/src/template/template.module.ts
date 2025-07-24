@@ -46,7 +46,7 @@ export class TemplateModule {
                 templateGlobalPathsProvider,
                 {
                     provide: TEMPLATE_PATHS_LOADER_TOKEN,
-                    useFactory: (paths, globalPaths) => {
+                    useFactory: (paths: string[], globalPaths: string[]) => {
                         globalPaths.forEach(value => paths.push(value));
                         return;
                     },
@@ -85,7 +85,7 @@ export class TemplateModule {
                 templateModulePathsProvider,
                 {
                     provide: TEMPLATE_PATHS_LOADER_TOKEN,
-                    useFactory: (paths, modulePaths) => {
+                    useFactory: (paths: string[], modulePaths: string[]) => {
                         modulePaths.forEach(value => paths.push(value));
                         return;
                     },

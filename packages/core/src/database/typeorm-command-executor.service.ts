@@ -228,7 +228,7 @@ export class TypeormCommandExecutorService {
         } else {
             entities = Object.keys(entities)
                 .filter(key => typeof entities[key] === 'string')
-                .map(key => entities[key]);
+                .map(key => entities[key] as string);
         }
 
         if (Array.isArray(migrations)) {
@@ -236,7 +236,7 @@ export class TypeormCommandExecutorService {
         } else {
             migrations = Object.keys(migrations)
                 .filter(key => typeof migrations[key] === 'string')
-                .map(key => migrations[key]);
+                .map(key => migrations[key] as string);
         }
 
         const config = `
@@ -270,7 +270,7 @@ export class TypeormCommandExecutorService {
     }
 
     private getDataSourceByName(name: string): DataSource {
-        const dataSource = this.moduleRef.get(getDataSourceToken(name) as string, { strict: false });
+        const dataSource = this.moduleRef.get<DataSource>(getDataSourceToken(name) as string, { strict: false });
 
         if (dataSource) {
             return dataSource;

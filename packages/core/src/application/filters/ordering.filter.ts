@@ -56,7 +56,7 @@ export class OrderingFilter<E> extends BaseFilter<E> {
         }).filter(order => {
             return Array.isArray(this.meta.orderingFields)
                 ? this.meta.orderingFields.includes(order[0])
-                : this.meta.orderingFields.hasOwnProperty(order[0]);
+                : Object.prototype.hasOwnProperty.call(this.meta.orderingFields, order[0]);
         }).map(order => {
             return Array.isArray(this.meta.orderingFields)
                 ? [this.adaptFieldName(order[0]), order[1]]

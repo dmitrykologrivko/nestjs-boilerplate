@@ -15,8 +15,14 @@ This bootstrapper by default runs web server on 8000 port. The main application 
 import { ApplicationBootstrapper } from '@nestjs-boilerplate/core';
 import { AppModule } from './app.module';
 
-new ApplicationBootstrapper({module: AppModule})
-    .start();
+async function bootstrap() {
+    await new ApplicationBootstrapper({module: AppModule}).start();
+}
+
+bootstrap().catch((err) => {
+    console.error('Fatal startup error:', err);
+    process.exit(1);
+});
 ```
 
 If you want to additionally configure application then you need to provide one of the following: `options` object,
@@ -26,7 +32,8 @@ If you want to additionally configure application then you need to provide one o
 import { ApplicationBootstrapper, NunjucksExpressLoader } from '@nestjs-boilerplate/core';
 import { AppModule } from './app.module';
 
-new ApplicationBootstrapper({
+async function bootstrap() {
+    await new ApplicationBootstrapper({
         module: AppModule,
         options: {
             cors: true,
@@ -35,8 +42,13 @@ new ApplicationBootstrapper({
             container.setGlobalPrefix('api');
         },
         loaders: [new NunjucksExpressLoader()],
-    })
-    .start();
+    }).start();
+}
+
+bootstrap().catch((err) => {
+    console.error('Fatal startup error:', err);
+    process.exit(1);
+});
 ```
 
 By default, Nest makes use of the Express framework, as an alternative you can use Fastify or other compatible
@@ -51,11 +63,17 @@ import {
 } from '@nestjs/platform-fastify';
 import { AppModule } from './app.module';
 
-new ApplicationBootstrapper<NestFastifyApplication>({
+async function bootstrap() {
+    await new ApplicationBootstrapper<NestFastifyApplication>({
         module: AppModule,
         adapter: new FastifyAdapter(),
-    })
-    .start();
+    }).start();
+}
+
+bootstrap().catch((err) => {
+    console.error('Fatal startup error:', err);
+    process.exit(1);
+});
 ```
 
 Additional way to start your application you need to use `Bootstrap` class from `@nestjs-boilerplate/core` package.
@@ -68,8 +86,14 @@ this bootstrapper under the hood.
 import { Bootstrap } from '@nestjs-boilerplate/core';
 import { AppModule } from './app.module';
 
-new Bootstrap(AppModule)
-    .startApplication();
+async function bootstrap() {
+    await new Bootstrap(AppModule).startApplication();
+}
+
+bootstrap().catch((err) => {
+    console.error('Fatal startup error:', err);
+    process.exit(1);
+});
 ```
 
 This is a more declarative way to declare your application bootstrapping logic if it requires additional
@@ -80,14 +104,20 @@ import { Bootstrap } from '@nestjs-boilerplate/core';
 import { AppModule } from './app.module';
 import { CronBootstappeer } from './cron.bootstrapper';
 
-new Bootstrap(
+async function bootstrap() {
+    await new Bootstrap(
         AppModule,
         [{
             bootstrapper: new CronBootstappeer(),
             isApplicable: process.argv.includes('cron'),
         }],
-    )
-    .startApplication();
+    ).startApplication();
+}
+
+bootstrap().catch((err) => {
+    console.error('Fatal startup error:', err);
+    process.exit(1);
+});
 ```
 
 ## Bootstrapping Microservice
@@ -100,8 +130,14 @@ is required to be provided, also `@nestjs/microservices` package is required to 
 import { MicroserviceBootstrapper } from '@nestjs-boilerplate/core';
 import { AppModule } from './app.module';
 
-new MicroserviceBootstrapper({ module: AppModule })
-    .start();
+async function bootstrap() {
+    await new MicroserviceBootstrapper({ module: AppModule }).start();
+}
+
+bootstrap().catch((err) => {
+    console.error('Fatal startup error:', err);
+    process.exit(1);
+});
 ```
 
 If you want to additionally configure microservice then you need to provide one of the following: `options` object,
@@ -112,13 +148,19 @@ import { Transport } from '@nestjs/microservices';
 import { MicroserviceBootstrapper } from '@nestjs-boilerplate/core';
 import { AppModule } from './app.module';
 
-new MicroserviceBootstrapper({
+async function bootstrap() {
+    await new MicroserviceBootstrapper({
         module: AppModule,
         options: {
             transport: Transport.TCP,
         },
-    })
-    .start();
+    }).start();
+}
+
+bootstrap().catch((err) => {
+    console.error('Fatal startup error:', err);
+    process.exit(1);
+});
 ```
 
 Additional way to start your microservice you need to use `Bootstrap` class from `@nestjs-boilerplate/core package.`
@@ -132,8 +174,14 @@ because it uses this bootstrapper under the hood.
 import { Bootstrap } from '@nestjs-boilerplate/core';
 import { AppModule } from './app.module';
 
-new Bootstrap(AppModule)
-    .startMicroservice();
+async function bootstrap() {
+    await new Bootstrap(AppModule).startMicroservice();
+}
+
+bootstrap().catch((err) => {
+    console.error('Fatal startup error:', err);
+    process.exit(1);
+});
 ```
 
 This is a more declarative way to declare your application bootstrapping logic if it requires additional alternative
@@ -144,14 +192,20 @@ import { Bootstrap } from '@nestjs-boilerplate/core';
 import { AppModule } from './app.module';
 import { CronBootstappeer } from './cron.bootstrapper';
 
-new Bootstrap(
+async function bootstrap() {
+    await new Bootstrap(
         AppModule,
         [{
             bootstrapper: new CronBootstappeer(),
             isApplicable: process.argv.includes('cron'),
         }],
-    )
-    .startMicroservice();
+    ).startMicroservice();
+}
+
+bootstrap().catch((err) => {
+    console.error('Fatal startup error:', err);
+    process.exit(1);
+});
 ```
 
 ## Bootstrapping Standalone Application
@@ -173,8 +227,14 @@ management commands.
 import { ManagementBootstrapper } from '@nestjs-boilerplate/core';
 import { AppModule } from './app.module';
 
-new ManagementBootstrapper({ module: AppModule })
-    .start();
+async function bootstrap() {
+    await new ManagementBootstrapper({ module: AppModule }).start();
+}
+
+bootstrap().catch((err) => {
+    console.error('Fatal startup error:', err);
+    process.exit(1);
+});
 ```
 
 Depending on your needs can implement and run your own bootstrapper for standalone applications.
@@ -214,8 +274,14 @@ Using bootstrapper:
 import { ApplicationBootstrapper } from './application.boostrapper';
 import { AppModule } from './app.module';
 
-new ApplicationBootstrapper({ module: AppModule })
-    .start();
+async function bootstrap() {
+    await new ApplicationBootstrapper({ module: AppModule }).start();
+}
+
+bootstrap().catch((err) => {
+    console.error('Fatal startup error:', err);
+    process.exit(1);
+});
 ```
 
 ### Bootstrapper lifecycle
@@ -272,11 +338,17 @@ import { AppModule } from './app.module';
 const staticAssetsDir = join(__dirname, '..', 'public');
 const baseViewsDir = join(__dirname, '..', 'views');
 
-new ApplicationBootstrapper({
+async function bootstrap() {
+    await new ApplicationBootstrapper({
         module: AppModule,
         loaders: [new TemplateExpressLoader(staticAssetsDir, baseViewsDir)],
-    })
-    .start();
+    }).start();
+}
+
+bootstrap().catch((err) => {
+    console.error('Fatal startup error:', err);
+    process.exit(1);
+});
 ```
 
 NestJS Boilerplate contains build-in loaders such as:\

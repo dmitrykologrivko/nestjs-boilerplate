@@ -1,9 +1,14 @@
 import { URL } from 'url';
 
-export function replaceUrlQueryParam(url: string, key: string, value: any) {
+export function replaceUrlQueryParam(
+    url: string,
+    key: string,
+    value: string | number | boolean | null | undefined
+) {
     try {
         const parsedUrl = new URL(url);
-        parsedUrl.searchParams.set(key, value.toString());
+        const safeValue = value !== null && value !== undefined ? String(value) : '';
+        parsedUrl.searchParams.set(key, safeValue);
         return parsedUrl.toString();
     } catch (e) {
         return null;

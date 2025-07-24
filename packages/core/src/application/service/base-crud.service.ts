@@ -437,13 +437,15 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         input?: LI,
         queryRunner?: QueryRunner,
     ): Promise<LO[]> {
-        return ClassTransformer.toClassObjects(
-            this.options.listOutputCls,
-            entities,
-            {
-                ...this.getClassTransformOptions(),
-                groups: [CrudOperations.READ]
-            },
+        return Promise.resolve(
+            ClassTransformer.toClassObjects(
+                this.options.listOutputCls,
+                entities,
+                {
+                    ...this.getClassTransformOptions(),
+                    groups: [CrudOperations.READ]
+                },
+            )
         );
     }
 
@@ -452,13 +454,15 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         input?: RI,
         queryRunner?: QueryRunner,
     ): Promise<RO> {
-        return ClassTransformer.toClassObject(
-            this.options.retrieveOutputCls,
-            entity,
-            {
-                ...this.getClassTransformOptions(),
-                groups: [CrudOperations.READ],
-            },
+        return Promise.resolve(
+            ClassTransformer.toClassObject(
+                this.options.retrieveOutputCls,
+                entity,
+                {
+                    ...this.getClassTransformOptions(),
+                    groups: [CrudOperations.READ],
+                },
+            )
         );
     }
 
@@ -466,13 +470,15 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         input: CI,
         queryRunner: QueryRunner,
     ): Promise<E> {
-        return ClassTransformer.toClassObject(
-            this.options.entityCls,
-            {
-                ...input.payload,
-                id: null,
-            },
-            this.getClassTransformOptions(),
+        return Promise.resolve(
+            ClassTransformer.toClassObject(
+                this.options.entityCls,
+                {
+                    ...input.payload,
+                    id: null,
+                },
+                this.getClassTransformOptions(),
+            )
         );
     }
 
@@ -481,13 +487,15 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         input?: CI,
         queryRunner?: QueryRunner,
     ): Promise<CO> {
-        return ClassTransformer.toClassObject(
-            this.options.createOutputCls,
-            entity,
-            {
-                ...this.getClassTransformOptions(),
-                groups: [CrudOperations.READ],
-            },
+        return Promise.resolve(
+            ClassTransformer.toClassObject(
+                this.options.createOutputCls,
+                entity,
+                {
+                    ...this.getClassTransformOptions(),
+                    groups: [CrudOperations.READ],
+                },
+            )
         );
     }
 
@@ -496,13 +504,15 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         entity: E,
         queryRunner: QueryRunner,
     ): Promise<E> {
-        return ClassTransformer.toClassObject(
-            this.options.entityCls,
-            {
-                ...input.payload,
-                id: entity.id,
-            },
-            this.getClassTransformOptions(),
+        return Promise.resolve(
+            ClassTransformer.toClassObject(
+                this.options.entityCls,
+                {
+                    ...input.payload,
+                    id: entity.id,
+                },
+                this.getClassTransformOptions(),
+            )
         );
     }
 
@@ -511,13 +521,15 @@ export abstract class BaseCrudService<E extends object & BaseEntity, D extends B
         input?: UI,
         queryRunner?: QueryRunner,
     ): Promise<UO> {
-        return ClassTransformer.toClassObject(
-            this.options.updateOutputCls,
-            entity,
-            {
-                ...this.getClassTransformOptions(),
-                groups: [CrudOperations.READ],
-            },
+        return Promise.resolve(
+            ClassTransformer.toClassObject(
+                this.options.updateOutputCls,
+                entity,
+                {
+                    ...this.getClassTransformOptions(),
+                    groups: [CrudOperations.READ],
+                },
+            )
         );
     }
 }

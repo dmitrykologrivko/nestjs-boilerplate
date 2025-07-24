@@ -1,12 +1,11 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { extractPagePaginationQuery } from '../utils/query.utils';
-import { Request } from '../request/request';
-import { fromExpressRequest } from '../request/request.utils';
+import { fromExpressRequest, RequestFactory } from '../request/request.utils';
 
 export const Page = (
-    requestFactory: (req: any) => Request = fromExpressRequest,
+    requestFactory: RequestFactory = fromExpressRequest,
 ): ParameterDecorator => {
-    return createParamDecorator((data: any, ctx: ExecutionContext) => {
+    return createParamDecorator<{ requestFactory: RequestFactory }>((data, ctx: ExecutionContext) => {
         const request = data.requestFactory(
             ctx.switchToHttp().getRequest(),
         );

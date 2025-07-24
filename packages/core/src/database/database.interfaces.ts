@@ -1,4 +1,5 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { TFunction } from '../utils/type.utils';
 
 export type DatabaseModuleOptions = TypeOrmModuleOptions;
 
@@ -12,7 +13,7 @@ export interface Metadata {
     /**
      * Entities or Migrations class (constructor) objects
      */
-    constructors?: Function[];
+    constructors?: TFunction[];
 
     /**
      * Paths or globs to entity or migration files for using in cli tools

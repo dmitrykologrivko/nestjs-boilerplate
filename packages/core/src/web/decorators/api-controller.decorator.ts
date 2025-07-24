@@ -29,7 +29,7 @@ export function ApiController(prefixOrOptions: string | ApiControllerOptions) {
 
     const prefix = !prefixOrOptions.path
         ? ''
-        : prefixOrOptions.path;
+        : Array.isArray(prefixOrOptions.path) ? prefixOrOptions.path.toString() : prefixOrOptions.path;
 
     prefixOrOptions.path = `${rootPrefix}${versionPrefix}${additionalPrefixes}${prefix}`;
 

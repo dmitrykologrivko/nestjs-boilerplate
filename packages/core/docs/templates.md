@@ -112,13 +112,20 @@ import {
 } from '@nestjs-boilerplate/core';
 import { AppModule } from './app.module';
 
-new Bootstrap(AppModule)
-    .startApplication({
-        loaders: [
-            new NunjucksExpressLoader(),
-            new ServeStaticExpressLoader(join(__dirname, '..', 'public'), '/public'),
-        ],
-    });
+async function bootstrap() {
+   await new Bootstrap(AppModule)
+           .startApplication({
+              loaders: [
+                 new NunjucksExpressLoader(),
+                 new ServeStaticExpressLoader(join(__dirname, '..', 'public'), '/public'),
+              ],
+           });
+}
+
+bootstrap().catch((err) => {
+   console.error('Fatal startup error:', err);
+   process.exit(1);
+});
 ```
 
 `NunjucksExpressLoader` will attach Nunjucks to the express HTTP provider as template engine by default.\
@@ -299,13 +306,20 @@ import {
 import { AppModule } from './app.module';
 import { HandlebarsExpressLoader } from './handlebars-express.loader';
 
-new Bootstrap(AppModule)
-    .startApplication({
-        loaders: [
-            new HandlebarsExpressLoader(),
-            new ServeStaticExpressLoader(join(__dirname, '..', 'public'), '/public'),
-        ],
-    });
+async function bootstrap() {
+   await new Bootstrap(AppModule)
+           .startApplication({
+              loaders: [
+                 new HandlebarsExpressLoader(),
+                 new ServeStaticExpressLoader(join(__dirname, '..', 'public'), '/public'),
+              ],
+           });
+}
+
+bootstrap().catch((err) => {
+   console.error('Fatal startup error:', err);
+   process.exit(1);
+});
 ```
 
 ## Template rendering in external packages

@@ -1,1 +1,1 @@
-export interface BaseQuery {}
+export type BaseQuery = object

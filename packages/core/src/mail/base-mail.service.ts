@@ -31,11 +31,11 @@ export abstract class BaseMailService<T extends Mail = Mail, V = any> {
             const connection = await this.onOpenConnection(mass);
 
             if (mass) {
-                for (const item of mail as T[]) {
+                for (const item of mail) {
                     await this.onSendMail(this.extendMail(item), connection);
                 }
             } else {
-                await this.onSendMail(this.extendMail(mail as T), connection);
+                await this.onSendMail(this.extendMail(mail), connection);
             }
 
             await this.onCloseConnection(connection, mass);

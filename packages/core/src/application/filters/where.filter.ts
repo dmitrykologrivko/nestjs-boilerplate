@@ -89,7 +89,7 @@ export class WhereFilter<E> extends BaseFilter<E> {
 
             return Array.isArray(this.meta.filterFields)
                 ? this.meta.filterFields.includes(queryTuple[0])
-                : this.meta.filterFields.hasOwnProperty(queryTuple[0]);
+                : Object.prototype.hasOwnProperty.call(this.meta.filterFields, queryTuple[0]);
         }).map(queryTuple => {
             const [queryName, queryCondition, queryValue] = queryTuple;
 
@@ -147,15 +147,16 @@ export class WhereFilter<E> extends BaseFilter<E> {
                 case QUERY_CONDITIONS.notnull:
                     whereCondition = [`${field} IS NOT NULL`, null];
                     break;
-                case QUERY_CONDITIONS.between:
+                case QUERY_CONDITIONS.between: {
                     const val1Index = this.getParamIndex(`${field}_val1`);
                     const val2Index = this.getParamIndex(`${field}_val2`);
                     const [val1, val2] = queryValue.split(',').filter(value => !!value);
                     whereCondition = [
                         `${field} BETWEEN :${val1Index} AND :${val2Index}`,
-                        { [val1Index]: val1, [val2Index]: val2 },
+                        {[val1Index]: val1, [val2Index]: val2},
                     ];
                     break;
+                }
             }
 
             return whereCondition;

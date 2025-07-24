@@ -13,7 +13,7 @@ export class PasswordMatchConstraint {
     ) {}
 
     async validate(password: string, args: ValidationArguments) {
-        if (!password || !args.object.hasOwnProperty(USER_ID_PROPERTY)) {
+        if (!password || !Object.prototype.hasOwnProperty.call(args.object, USER_ID_PROPERTY)) {
             return false;
         }
 

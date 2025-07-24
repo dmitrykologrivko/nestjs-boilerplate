@@ -14,6 +14,8 @@ export class NunjucksService extends BaseTemplateService {
     }
 
     async render(template: string, context?: object): Promise<string> {
-        return this.nunjucks.render(template, context);
+        return Promise.resolve(
+            this.nunjucks.render(template, context)
+        );
     }
 }

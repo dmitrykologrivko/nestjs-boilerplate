@@ -32,11 +32,12 @@ export class SmtpMailService extends BaseMailService<Mail, Transporter> {
     }
 
     protected async onOpenConnection(mass: boolean): Promise<Transporter> {
-        return this.createTransport(mass);
+        return Promise.resolve(this.createTransport(mass));
     }
 
     protected async onCloseConnection(connection: Transporter, mass: boolean) {
         connection.close();
+        return Promise.resolve();
     }
 
     protected async onSendMail(mail: Mail, connection: Transporter) {

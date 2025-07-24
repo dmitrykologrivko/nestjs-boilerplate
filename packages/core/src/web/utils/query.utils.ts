@@ -4,6 +4,7 @@ import { WhereQuery, QUERY_NAME_CONDITION_REGEX } from '../../application/filter
 import { PagePaginationQuery } from '../../application/pagination/page.pagination';
 import { LimitOffsetPaginationQuery } from '../../application/pagination/limit-offset.pagination';
 import { ListQuery } from '../../application/dto/list-query.interface';
+import { safeParseInt } from '../../utils/safe.utils';
 import { Request } from '../request/request';
 
 export function extractSearchQuery(request: Request): SearchQuery {
@@ -81,8 +82,8 @@ function buildUrlFromRequest(request: Request) {
 export function extractPagePaginationQuery(request: Request): PagePaginationQuery {
     const { query } = request;
 
-    const page = query.page ? parseInt(query.page.toString(), 10) : undefined;
-    const limit = query.limit ? parseInt(query.limit.toString(), 10) : undefined;
+    const page = query.page ? safeParseInt(query.page) : undefined;
+    const limit = query.limit ? safeParseInt(query.limit) : undefined;
 
     return {
         page: !isNaN(page) ? page : undefined,
@@ -94,8 +95,8 @@ export function extractPagePaginationQuery(request: Request): PagePaginationQuer
 export function extractLimitOffsetPaginationQuery(request: Request): LimitOffsetPaginationQuery {
     const { query } = request;
 
-    const limit = query.limit ? parseInt(query.limit.toString(), 10) : undefined;
-    const offset = query.offset ? parseInt(query.offset.toString(), 10) : undefined;
+    const limit = query.limit ? safeParseInt(query.limit) : undefined;
+    const offset = query.offset ? safeParseInt(query.offset) : undefined;
 
     return {
         limit: !isNaN(limit) ? limit : undefined,

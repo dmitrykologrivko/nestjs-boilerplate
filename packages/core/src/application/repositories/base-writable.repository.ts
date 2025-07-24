@@ -23,18 +23,19 @@ export abstract class BaseWritableRepository<E extends BaseEntity, W>
         query?: BaseFindManyQuery<W> | BaseBuildableQuery<W>,
         unitOfWork?: QueryRunner,
     ): Promise<E | E[]> {
-        if (!query) return (await this.getRepository(unitOfWork).find()).map(this.toEntity);
+        if (!query) return (await this.getRepository(unitOfWork).find())
+            .map((writable: W)=> this.toEntity(writable));
 
         if ('toQueryBuilder' in query) {
             const queryBuilder = query
-                ? (query as BaseBuildableQuery<W>).toQueryBuilder(this.alias, this.createQueryBuilder(unitOfWork))
+                ? (query).toQueryBuilder(this.alias, this.createQueryBuilder(unitOfWork))
                 : this.createQueryBuilder(unitOfWork);
 
-            return (await queryBuilder.getMany()).map(this.toEntity);
+            return (await queryBuilder.getMany()).map((writable: W) => this.toEntity(writable));
         }
 
-        return (await this.getRepository(unitOfWork).find((query as BaseFindManyQuery<W>)?.toFindManyOptions()))
-            .map(this.toEntity);
+        return (await this.getRepository(unitOfWork).find((query)?.toFindManyOptions()))
+            .map((writable: W) => this.toEntity(writable));
     }
 
     async findOne(
@@ -43,33 +44,35 @@ export abstract class BaseWritableRepository<E extends BaseEntity, W>
     ): Promise<E> {
         if ('toQueryBuilder' in query) {
             const queryBuilder = query
-                ? (query as BaseBuildableQuery<W>).toQueryBuilder(this.alias, this.createQueryBuilder(unitOfWork))
+                ? (query).toQueryBuilder(this.alias, this.createQueryBuilder(unitOfWork))
                 : this.createQueryBuilder(unitOfWork);
 
             return this.toEntity((await queryBuilder.getOne()));
         }
 
         return this.toEntity(
-            (await this.getRepository(unitOfWork).findOne((query as BaseFindOneQuery<W>)?.toFindOneOptions())),
+            (await this.getRepository(unitOfWork).findOne((query)?.toFindOneOptions())),
         );
     }
 
     async save(entity: E | E[], unitOfWork?: QueryRunner): Promise<E | E[]> {
         const writable = Array.isArray(entity)
-            ? entity.map(this.toWritable)
+            ? entity.map((entity: E) => this.toWritable(entity))
             : [this.toWritable(entity)];
 
-        const result = (await this.getRepository(unitOfWork).save(writable)).map(this.toEntity);
+        const result = (await this.getRepository(unitOfWork).save(writable))
+            .map((writable: W) => this.toEntity(writable));
 
         return result.length === 1 ? result[0] : result;
     }
 
     async remove(entity: E | E[], unitOfWork?: QueryRunner) {
         const writable = Array.isArray(entity)
-            ? entity.map(this.toWritable)
+            ? entity.map((entity: E) => this.toWritable(entity))
             : [this.toWritable(entity)];
 
-        const result = (await this.getRepository(unitOfWork).remove(writable)).map(this.toEntity);
+        const result = (await this.getRepository(unitOfWork).remove(writable))
+            .map((writable: W) => this.toEntity(writable));
 
         return result.length === 1 ? result[0] : result;
     }

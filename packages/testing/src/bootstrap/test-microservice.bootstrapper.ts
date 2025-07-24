@@ -1,7 +1,4 @@
-import {
-    INestMicroservice,
-    NestApplicationOptions,
-} from '@nestjs/common';
+import { INestMicroservice } from '@nestjs/common';
 import { NestMicroserviceOptions } from '@nestjs/common/interfaces/microservices/nest-microservice-options.interface';
 import {
     BaseTestBootstrapper,

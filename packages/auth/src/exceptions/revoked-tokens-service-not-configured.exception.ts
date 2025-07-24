@@ -1,1 +1,1 @@
-export class RevokedTokensServiceNotConfiguredException {}
+export class RevokedTokensServiceNotConfiguredException extends Error {}

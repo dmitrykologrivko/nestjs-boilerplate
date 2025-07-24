@@ -64,7 +64,7 @@ export class Validate {
     static withResults(results: ValidationResult[]): void {
         const errorResults = results.filter(result => result instanceof ValidationException);
         if (errorResults.length > 0) {
-            throw new ValidationContainerException(errorResults as ValidationException[]);
+            throw new ValidationContainerException(errorResults);
         }
     }
 

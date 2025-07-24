@@ -1,5 +1,6 @@
 import * as minimist from 'minimist';
 import { Injectable } from '@nestjs/common';
+import { Fn } from '../utils/type.utils';
 import { CommandsScanner } from './commands-scanner';
 import { Command, Handler, CliArgument } from './management.interfaces';
 import { HANDLER_DEFAULT_NAME } from './management.constants';
@@ -15,7 +16,7 @@ export class ManagementService {
             throw new Error('Command name is not provided! Please provide --command argument');
         }
 
-        const [name, shortcut = HANDLER_DEFAULT_NAME] = args.command.split(':');
+        const [name, shortcut = HANDLER_DEFAULT_NAME] = (args.command as string).split(':');
 
         const command = this.findCommand(name);
 
@@ -29,7 +30,7 @@ export class ManagementService {
             throw new Error(`Handler "${shortcut}" is not registered in command "${name}"`);
         }
 
-        await command.instance[handler.methodName](...this.bindArguments(args, handler.arguments));
+        await (command.instance[handler.methodName] as Fn)(...this.bindArguments(args, handler.arguments));
     }
 
     protected getArguments(): string[] {

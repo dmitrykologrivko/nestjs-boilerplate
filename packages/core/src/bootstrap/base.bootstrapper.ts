@@ -25,6 +25,7 @@ export abstract class BaseBootstrapper<T extends INestApplicationContext = INest
     protected async onInit(container: T) {
         // Set dependency injection container for class validator
         useContainer(container.select(this.meta.module), { fallbackOnErrors: true });
+        return Promise.resolve();
     }
 
     protected async runLoaders(container: T) {

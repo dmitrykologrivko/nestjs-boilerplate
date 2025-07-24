@@ -1,10 +1,10 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { Request, fromExpressRequest } from '@nestjs-boilerplate/core';
+import { fromExpressRequest, RequestFactory } from '@nestjs-boilerplate/core';
 
 export const AuthorizedUser = (
-    requestFactory: (req: any) => Request = fromExpressRequest,
+    requestFactory: RequestFactory = fromExpressRequest,
 ): ParameterDecorator => {
-    return createParamDecorator((data: any, ctx: ExecutionContext) => {
+    return createParamDecorator<{ requestFactory: RequestFactory }>((data, ctx: ExecutionContext) => {
         const request = data.requestFactory(
             ctx.switchToHttp().getRequest(),
         );

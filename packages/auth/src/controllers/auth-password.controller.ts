@@ -76,6 +76,6 @@ export class AuthPasswordController {
 
     @Post('reset/validate')
     async validateResetPasswordToken(@Body() body: ValidateResetPasswordTokenRequest) {
-        return;
+        return Promise.resolve();
     }
 }

@@ -1,13 +1,16 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { extractListQuery } from '../utils/query.utils';
-import { Request } from '../request/request';
-import { fromExpressRequest } from '../request/request.utils';
+import { fromExpressRequest, RequestFactory } from '../request/request.utils';
 
 export const ListFilter = (
     fieldSeparator?: string,
-    requestFactory: (req: any) => Request = fromExpressRequest,
+    requestFactory: RequestFactory = fromExpressRequest,
 ): ParameterDecorator => {
-    return createParamDecorator((data: any, ctx: ExecutionContext) => {
+    type DataType = {
+        requestFactory: RequestFactory;
+        fieldSeparator?: string;
+    };
+    return createParamDecorator<DataType>((data, ctx: ExecutionContext) => {
         const request = data.requestFactory(
             ctx.switchToHttp().getRequest(),
         );

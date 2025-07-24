@@ -20,8 +20,8 @@ export interface CliArgument {
     optional?: boolean;
 }
 
-export interface CommandOptions extends Pick<Command, 'name' | 'description'> {}
+export type CommandOptions = Pick<Command, 'name' | 'description'>
 
-export interface HandlerOptions extends Pick<Handler, 'shortcut' | 'description'> {}
+export type HandlerOptions = Pick<Handler, 'shortcut' | 'description'>
 
-export interface CliArgumentOptions extends Pick<CliArgument, keyof CliArgument> {}
+export type CliArgumentOptions = Pick<CliArgument, keyof CliArgument>

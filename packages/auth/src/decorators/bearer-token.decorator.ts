@@ -1,17 +1,17 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { Request, fromExpressRequest } from '@nestjs-boilerplate/core';
+import { fromExpressRequest, RequestFactory } from '@nestjs-boilerplate/core';
 
 const AUTHORIZATION_HEADER = 'authorization';
 
 export const BearerToken = (
-    requestFactory: (req: any) => Request = fromExpressRequest,
+    requestFactory: RequestFactory = fromExpressRequest,
 ): ParameterDecorator => {
-    return createParamDecorator((data: any, ctx: ExecutionContext) => {
+    return createParamDecorator<{ requestFactory: RequestFactory }>((data, ctx: ExecutionContext) => {
         const request = data.requestFactory(
             ctx.switchToHttp().getRequest(),
         );
 
-        if (!request.headers.hasOwnProperty(AUTHORIZATION_HEADER)) {
+        if (!Object.prototype.hasOwnProperty.call(request.headers, AUTHORIZATION_HEADER)) {
             return null;
         }
 

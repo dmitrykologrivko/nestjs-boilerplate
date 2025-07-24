@@ -2,13 +2,15 @@
  * Validation exception
  * Indicates invalid data across the application
  */
-export class ValidationException {
+export class ValidationException extends Error {
     constructor(
         public property: string,
         public value: unknown,
         public constraints: { [type: string]: string; },
         public children: ValidationException[] = [],
-    ) {}
+    ) {
+        super();
+    }
 
     toString(hasParent: boolean = false, parentPath: string = ''): string {
         return this.formatMessage(parentPath) +

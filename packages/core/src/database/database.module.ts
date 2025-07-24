@@ -1,8 +1,10 @@
 import { Module, DynamicModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Constructor } from '../utils/type.utils';
 import { ConfigModule } from '../config/config.module';
 import { Property } from '../config/property.interface';
 import { PropertyConfigService } from '../config/property-config.service';
+import { TFunction } from '../utils/type.utils';
 import { DEFAULT_DATA_SOURCE_NAME } from './database.constants';
 import { DEFAULT_DATABASE_PROPERTY } from './database.properties';
 import { MigrationsCommand } from './migrations.command';
@@ -67,7 +69,7 @@ export class DatabaseModule {
     }
 
     static withEntities(
-        entities: Function[] = [],
+        entities: TFunction[] = [],
         options: Pick<Metadata, 'cli' | 'dataSource'> = {},
     ): DynamicModule {
         entities = entities.map(entity => EntitySwappableService.findSwappable(entity) || entity);
@@ -87,7 +89,7 @@ export class DatabaseModule {
     }
 
     static withMigrations(
-        migrations: Function[] | { [key: string]: Function } = [],
+        migrations: TFunction[] | { [key: string]: TFunction } = [],
         options: Pick<Metadata, 'cli' | 'dataSource'> = {},
     ): DynamicModule {
         let constructors;
@@ -123,11 +125,11 @@ export class DatabaseModule {
         if (Array.isArray(entities)) {
             entityNames = entities
                 .filter(entity => typeof entity === 'function')
-                .map(entity => (entity as Function).name);
+                .map(entity => entity.name);
         } else {
             entityNames = Object.keys(entities)
                 .filter(key => typeof entities[key] === 'function')
-                .map(key => entities[key].name);
+                .map(key => (entities[key] as Constructor).name);
         }
 
         let migrations = databaseOptions.migrations || [];
@@ -136,11 +138,11 @@ export class DatabaseModule {
         if (Array.isArray(migrations)) {
             migrationNames = migrations
                 .filter(migration => typeof migration === 'function')
-                .map(migration => (migration as Function).name);
+                .map(migration => migration.name);
         } else {
             migrationNames = Object.keys(migrations)
                 .filter(key => typeof migrations[key] === 'function')
-                .map(key => migrations[key].name);
+                .map(key => (migrations[key] as Constructor).name);
         }
 
         for (const item of metadata) {

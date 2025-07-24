@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common';
+import { Fn } from '../../utils/type.utils';
 import { AbstractExpressLoader } from './abstract-express.loader';
 
 /**
@@ -44,7 +45,7 @@ export class ServeStaticExpressLoader extends AbstractExpressLoader {
     async load(container: INestApplication): Promise<void> {
         await super.load(container);
 
-        const express = this.loadExpress();
+        const express: { static: Fn } = this.loadExpress();
 
         container.use(
             this.url,

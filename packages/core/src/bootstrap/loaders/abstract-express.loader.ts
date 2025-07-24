@@ -17,10 +17,12 @@ export abstract class AbstractExpressLoader extends BaseLoader<INestApplication>
             );
             this.abort();
         }
+        return Promise.resolve();
     }
 
-    protected loadExpress() {
+    protected loadExpress(): any {
         return loadPackage('express', this.context, () =>
+            // eslint-disable-next-line @typescript-eslint/no-require-imports,@typescript-eslint/no-unsafe-return
             require('express')
         );
     }

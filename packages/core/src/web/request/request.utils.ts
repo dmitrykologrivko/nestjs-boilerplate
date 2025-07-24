@@ -1,5 +1,7 @@
 import { Request } from './request';
 
+export type RequestFactory<T = any> = (req: T) => Request;
+
 export function fromExpressRequest(req: any): Request {
     return new Request(
         req.query,
