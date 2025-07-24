@@ -7,7 +7,7 @@ function getProjectVersion(): string {
     return JSON.parse(file.toString())?.version as string;
 }
 
-function updatePeerVersions(paths: string[], verison: string) {
+function updatePeerVersions(paths: string[], version: string) {
     for (const path of paths) {
         const file = readFileSync(path);
         const manifest = JSON.parse(file.toString());
@@ -16,7 +16,7 @@ function updatePeerVersions(paths: string[], verison: string) {
             .filter(value => value.includes('@nestjs-boilerplate'));
 
         if (keys?.length > 0) {
-            keys.forEach(key => manifest.peerDependencies[key] = `^${verison}`);
+            keys.forEach(key => manifest.peerDependencies[key] = `^${version}`);
             writeFileSync(path, JSON.stringify(manifest, null, 2));
         }
     }
