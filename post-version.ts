@@ -4,7 +4,7 @@ import { globSync } from 'glob';
 
 function getProjectVersion(): string {
     const file = readFileSync(resolve(__dirname, 'lerna.json'));
-    return JSON.parse(file.toString())?.version;
+    return JSON.parse(file.toString())?.version as string;
 }
 
 function updatePeerVersions(paths: string[], verison: string) {
@@ -22,5 +22,5 @@ function updatePeerVersions(paths: string[], verison: string) {
     }
 }
 
-const globPaths = globSync(resolve(__dirname, '../packages/*/package.json'));
+const globPaths = globSync(resolve(__dirname, './packages/*/package.json'));
 updatePeerVersions(globPaths, getProjectVersion());
