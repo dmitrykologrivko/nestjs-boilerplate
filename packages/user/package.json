@@ -1,6 +1,6 @@
 {
   "name": "@nestjs-boilerplate/user",
-  "version": "11.0.0",
+  "version": "11.0.1",
   "description": "",
   "author": "Dmitry Kologrivko",
   "license": "MIT",
@@ -14,7 +14,7 @@
     "prompt-sync": "^4.2.0"
   },
   "peerDependencies": {
-    "@nestjs-boilerplate/core": "^0.7.0",
+    "@nestjs-boilerplate/core": "^11.0.1",
     "@nestjs/common": "^11.0.0",
     "@nestjs/jwt": "^11.0.0",
     "class-transformer": "^0.5.1",
@@ -22,8 +22,8 @@
     "typeorm": "^0.3.0"
   },
   "devDependencies": {
-    "@nestjs-boilerplate/core": "^11.0.0",
-    "@nestjs-boilerplate/testing": "^11.0.0",
+    "@nestjs-boilerplate/core": "^11.0.1",
+    "@nestjs-boilerplate/testing": "^11.0.1",
     "@types/bcrypt": "^6.0.0",
     "@types/prompt-sync": "^4.2.3"
   },
