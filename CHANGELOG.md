@@ -1,3 +1,12 @@
+## 11.0.1
+### Features
+* Added the following types `TFunction`, `Fn`, `RequestFactory`
+* Added `safeParseInt` function
+* Code cleanup and improvements
+
+### Bug fixes
+* Fixed peer dependencies versions
+
 ## 11.0.0
 
 ### Features
